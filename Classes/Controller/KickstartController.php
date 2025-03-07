@@ -21,6 +21,8 @@ use StefanFroemken\ExtKickstarter\Model\Output;
 use StefanFroemken\ExtKickstarter\Service\BuildExtensionService;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerInterface;
 
 /**
@@ -30,12 +32,23 @@ class KickstartController implements ControllerInterface
 {
     public function __construct(
         readonly private ModuleTemplateFactory $moduleTemplateFactory,
-        readonly private BuildExtensionService $buildExtensionService
+        readonly private BuildExtensionService $buildExtensionService,
+        readonly private IconFactory $iconFactory
     ) {}
 
     public function processRequest(ServerRequestInterface $request): ResponseInterface
     {
         $moduleTemplate = $this->moduleTemplateFactory->create($request);
+
+        $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
+        $createExtensionButton = $buttonBar->makeInputButton()
+            ->setTitle('Create Extension')
+            ->setName('createExtension')
+            ->setValue('1')
+            ->setShowLabelText(true)
+            ->setDataAttributes(['ext-kickstarter' => 'create-extension'])
+            ->setIcon($this->iconFactory->getIcon('actions-document-save', Icon::SIZE_SMALL));
+        $buttonBar->addButton($createExtensionButton);
 
         return $moduleTemplate->renderResponse('Kickstarter.html');
     }

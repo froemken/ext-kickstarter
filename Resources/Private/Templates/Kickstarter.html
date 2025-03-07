@@ -2,14 +2,11 @@
       data-namespace-typo3-fluid="true"
       xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers">
 
-<f:asset.css identifier="litegraph" href="EXT:ext_kickstarter/Resources/Public/Css/litegraph.css"/>
+<f:layout name="Module"/>
 
-<f:asset.script identifier="litegraph" src="EXT:ext_kickstarter/Resources/Public/JavaScript/Contrib/Litegraph/litegraph.js"/>
-<f:asset.script identifier="ext-kickstarter" src="EXT:ext_kickstarter/Resources/Public/JavaScript/Kickstarter.js"/>
-
-<f:be.pageRenderer includeJavaScriptModules="{0: '@stefanfroemken/ext-kickstarter/KickstarterModule.js'}"/>
-
-<div id="graph-container">
-    <button id="buildExtension" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%);">Build Extension</button>
-</div>
+<f:section name="Content">
+    <f:asset.css identifier="ext-kickstarter" href="EXT:ext_kickstarter/Resources/Public/Css/ext-kickstarter.css"/>
+    <f:be.pageRenderer includeJavaScriptModules="{0: '@stefanfroemken/ext-kickstarter/KickstarterModule.js'}"/>
+    <div id="erd-editor"></div>
+</f:section>
 </html>

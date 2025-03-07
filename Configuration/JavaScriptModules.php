@@ -12,6 +12,9 @@ return [
         'backend',
         'core',
     ],
+    'tags' => [
+        'backend.module',
+    ],
     'imports' => [
         '@stefanfroemken/ext-kickstarter/' => [
             'path' => 'EXT:ext_kickstarter/Resources/Public/JavaScript/',
@@ -20,5 +23,6 @@ return [
                 'EXT:ext_kickstarter/Resources/Public/JavaScript/Contrib/',
             ],
         ],
+        'erd-editor' => 'EXT:ext_kickstarter/Resources/Public/JavaScript/Contrib/ErdEditor/erd-editor.js',
     ],
 ];
