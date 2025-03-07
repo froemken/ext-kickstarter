@@ -1,0 +1,44 @@
+{
+	"name": "stefanfroemken/ext-kickstarter",
+	"type": "typo3-cms-extension",
+	"description": "Kickstart TYPO3 Extension",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"typo3",
+		"TYPO3 CMS",
+		"extbase",
+		"builder",
+		"kickstart"
+	],
+	"homepage": "https://www.typo3lexikon.de/",
+	"authors": [
+		{
+			"name": "Stefan Froemken",
+			"email": "froemken@gmail.com",
+			"role": "Lead Developer"
+		}
+	],
+	"support": {
+		"email": "froemken@gmail.com",
+		"issues": "https://github.com/froemken/ext_kickstarter/issues",
+		"source": "https://github.com/froemken/ext_kickstarter"
+	},
+	"require": {
+		"ext-pdo": "*",
+		"typo3/cms-core": "^12.4.8"
+	},
+	"autoload": {
+		"psr-4": {
+			"StefanFroemken\\ExtKickstarter\\": "Classes"
+		}
+	},
+	"replace": {
+		"typo3-ter/ext_kickstarer": "self.version",
+		"typo3-ter/ext-kickstarer": "self.version"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "ext_kickstarter"
+		}
+	}
+}
