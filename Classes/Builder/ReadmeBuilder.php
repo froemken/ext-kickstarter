@@ -14,14 +14,14 @@ namespace StefanFroemken\ExtKickstarter\Builder;
 use StefanFroemken\ExtKickstarter\Model\Graph;
 
 /**
- * Get file content for composer.json
+ * Get file content for README.md
  */
-class ComposerJsonBuilder implements BuilderInterface
+class ReadmeBuilder implements BuilderInterface
 {
     public function build(Graph $graph, string $extPath): void
     {
         file_put_contents(
-            $extPath . 'composer.json',
+            $extPath . 'README.md',
             $this->getFileContent($graph)
         );
     }
@@ -32,16 +32,12 @@ class ComposerJsonBuilder implements BuilderInterface
 
         return str_replace(
             [
-                '{{NAME}}',
+                '{{TITLE}}',
                 '{{DESCRIPTION}}',
-                '{{HOMEPAGE}}',
-                '{{EXTENSION_KEY}}',
             ],
             [
-                $extensionNode->getComposerName(),
+                $extensionNode->getTitle() ?? '',
                 $extensionNode->getDescription(),
-                $extensionNode->getProperties()['homepage'] ?? '',
-                $extensionNode->getExtensionKey(),
             ],
             $this->getTemplate()
         );
@@ -50,27 +46,9 @@ class ComposerJsonBuilder implements BuilderInterface
     private function getTemplate(): string
     {
         return <<<'EOT'
-{
-	"name": "{{NAME}}",
-	"type": "typo3-cms-extension",
-	"description": "{{DESCRIPTION}}",
-	"license": "GPL-2.0-or-later",
-	"keywords": [
-		"typo3"
-	],
-	"homepage": "{{HOMEPAGE}}}}",
-	"require": {
-		"typo3/cms-core": "^12.4.0"
-	},
-	"replace": {
-		"typo3-ter/{{EXTENSION_KEY}}": "self.version"
-	},
-	"extra": {
-		"typo3/cms": {
-			"extension-key": "{{EXTENSION_KEY}}"
-		}
-	}
-}
+# {{TITLE}}
+
+{{DESCRIPTION}}
 EOT;
     }
 }

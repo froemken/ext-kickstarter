@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Builder;
 
 use StefanFroemken\ExtKickstarter\Model\Graph;
-use StefanFroemken\ExtKickstarter\Model\Node;
+use StefanFroemken\ExtKickstarter\Model\AbstractNode;
 
 /**
  * Get file content for ext_emconf.php
@@ -30,7 +30,7 @@ class ExtEmConfBuilder implements BuilderInterface
     private function getFileContent(Graph $graph): string
     {
         $extensionNode = $graph->getExtensionNode();
-        $authors = $this->getAuthors($graph->getLinkedOutputNodesByName($extensionNode, 'authors'));
+        $authors = $this->getAuthors($extensionNode->getAuthorNodes());
 
         return str_replace(
             [
@@ -43,7 +43,7 @@ class ExtEmConfBuilder implements BuilderInterface
             ],
             [
                 $extensionNode->getTitle() ?? '',
-                $extensionNode->getProperties()['description'] ?? '',
+                $extensionNode->getDescription(),
                 $authors['name'],
                 $authors['email'],
                 $authors['company'],
@@ -62,7 +62,7 @@ class ExtEmConfBuilder implements BuilderInterface
             'role' => [],
         ];
 
-        /** @var Node $authorNode */
+        /** @var AbstractNode $authorNode */
         foreach ($authorNodes as $authorNode) {
             $authorProperties = $authorNode->getProperties();
 

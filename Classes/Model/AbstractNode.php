@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Model;
 
-class Node
+abstract class AbstractNode
 {
     public function __construct(
         private readonly int $id,
@@ -19,7 +19,8 @@ class Node
         private readonly ?string $title,
         private readonly \SplObjectStorage $inputs,
         private readonly \SplObjectStorage $outputs,
-        private readonly array $properties
+        private readonly array $properties,
+        protected Graph $graph,
     ) {}
 
     public function getId(): int
@@ -32,9 +33,9 @@ class Node
         return $this->type;
     }
 
-    public function getTitle(): string
+    public function getDescription(): string
     {
-        return $this->title ?? '';
+        return $this->getProperties()['description'] ?? '';
     }
 
     /**

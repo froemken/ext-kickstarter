@@ -11,13 +11,17 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Model;
 
+use StefanFroemken\ExtKickstarter\Model\Node\Typo3\ExtensionNode;
+
 class Graph
 {
-    public function __construct(
-        private readonly \SplObjectStorage $nodes,
-        private readonly \SplObjectStorage $links
-    )
-    {
+    private \SplObjectStorage $nodes;
+
+    private \SplObjectStorage $links;
+
+    public function __construct() {
+        $this->nodes = new \SplObjectStorage();
+        $this->links = new \SplObjectStorage();
     }
 
     public function getNodes(): \SplObjectStorage
@@ -25,15 +29,25 @@ class Graph
         return $this->nodes;
     }
 
+    public function addNode(AbstractNode $node): void
+    {
+        $this->nodes->attach($node);
+    }
+
     public function getLinks(): \SplObjectStorage
     {
         return $this->links;
     }
 
-    public function getExtensionNode(): ?Node
+    public function addLink(Link $link): void
+    {
+        $this->links->attach($link);
+    }
+
+    public function getExtensionNode(): ?ExtensionNode
     {
         foreach ($this->getNodes() as $node) {
-            if ($node->getType() === 'TYPO3/Extension') {
+            if ($node instanceof ExtensionNode) {
                 return $node;
             }
         }
@@ -41,7 +55,7 @@ class Graph
         return null;
     }
 
-    public function getLinkedOutputNodesByName(Node $node, string $name): \SplObjectStorage
+    public function getLinkedOutputNodesByName(AbstractNode $node, string $name): \SplObjectStorage
     {
         $nodes = new \SplObjectStorage();
         foreach ($node->getOutputs() as $outputNode) {
@@ -51,7 +65,7 @@ class Graph
 
             foreach ($outputNode->getLinks() as $linkId) {
                 $targetNode = $this->getTargetNodeByLinkId($linkId);
-                if ($targetNode instanceof Node) {
+                if ($targetNode instanceof AbstractNode) {
                     $nodes->attach($targetNode);
                 }
             }
@@ -60,7 +74,7 @@ class Graph
         return $nodes;
     }
 
-    public function getTargetNodeByLinkId(int $linkId): ?Node
+    public function getTargetNodeByLinkId(int $linkId): ?AbstractNode
     {
         $link = $this->getLinkById($linkId);
         if (!$link instanceof Link) {
@@ -70,7 +84,7 @@ class Graph
         return $this->getNodeById($link->getTargetNodeId());
     }
 
-    public function getNodeById(int $id): ?Node
+    public function getNodeById(int $id): ?AbstractNode
     {
         foreach ($this->getNodes() as $node) {
             if ($node->getId() === $id) {

@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package stefanfroemken/ext-kickstarter.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
+namespace StefanFroemken\ExtKickstarter\Model\Node\Extbase;
+
+use StefanFroemken\ExtKickstarter\Model\AbstractNode;
+
+class ControllerNode extends AbstractNode
+{
+    public function getControllerName(): string
+    {
+        return $this->getProperties()['controllerName'] ?? '';
+    }
+
+    public function getControllerClass(): string
+    {
+        return sprintf(
+            '%s\\%s\\%s',
+            $this->graph->getExtensionNode()->getNamespacePrefix(),
+            'Controller',
+            $this->getControllerName(),
+        );
+    }
+
+    /**
+     * @return \SplObjectStorage|ControllerActionNode[]
+     */
+    public function getControllerActionNodes(): \SplObjectStorage
+    {
+        return $this->graph->getLinkedOutputNodesByName($this, 'extbaseControllerActions');
+    }
+
+    /**
+     * @return \SplObjectStorage|ControllerActionNode[]
+     */
+    public function getUncachedControllerActionNodes(): \SplObjectStorage
+    {
+        $cachedControllerActions = new \SplObjectStorage();
+
+        foreach ($this->getControllerActionNodes() as $controllerAction) {
+            if ($controllerAction->isUncached()) {
+                $cachedControllerActions->attach($controllerAction);
+            }
+        }
+
+        return $cachedControllerActions;
+    }
+
+    public function getControllerActionDefinitionString(bool $isUncached): string
+    {
+        if ($isUncached) {
+            $controllerActionNodes = $this->getUncachedControllerActionNodes();
+        } else {
+            $controllerActionNodes = $this->getControllerActionNodes();
+        }
+
+        $controllerActionNames = [];
+        foreach ($controllerActionNodes as $controllerAction) {
+            $controllerActionNames[] = substr($controllerAction->getActionName(), 0, -6);
+        }
+
+        return sprintf(
+            '%s::class => \'%s\',',
+            $this->getControllerClass(),
+            implode(',', $controllerActionNames)
+        );
+    }
+}

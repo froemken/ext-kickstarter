@@ -16,8 +16,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\Input;
 use StefanFroemken\ExtKickstarter\Model\Link;
-use StefanFroemken\ExtKickstarter\Model\Node;
 use StefanFroemken\ExtKickstarter\Model\Output;
+use StefanFroemken\ExtKickstarter\Model\Node;
 use StefanFroemken\ExtKickstarter\Service\BuildExtensionService;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Http\JsonResponse;
@@ -28,6 +28,15 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ControllerInterface;
  */
 class KickstartController implements ControllerInterface
 {
+    private const NODE_TYPE_MAPPING = [
+        'TYPO3/Extension' => Node\Typo3\ExtensionNode::class,
+        'TYPO3/Author' => Node\Typo3\AuthorNode::class,
+        'Extbase/Controller' => Node\Extbase\ControllerNode::class,
+        'Extbase/ControllerAction' => Node\Extbase\ControllerActionNode::class,
+        'Extbase/Module' => Node\Extbase\ModuleNode::class,
+        'Extbase/Plugin' => Node\Extbase\PluginNode::class,
+    ];
+
     public function __construct(
         readonly private ModuleTemplateFactory $moduleTemplateFactory,
         readonly private BuildExtensionService $buildExtensionService
@@ -42,18 +51,22 @@ class KickstartController implements ControllerInterface
 
     public function build(ServerRequestInterface $request): ResponseInterface
     {
-        $this->buildExtensionService->build(
-            $this->buildGraphTree(\json_decode((string)$request->getBody(), true))
-        );
-
-        return new JsonResponse([
-            'status' => 'ok',
-        ]);
+        try {
+            return $this->buildExtensionService->build(
+                $this->buildGraphTree(\json_decode((string)$request->getBody(), true))
+            );
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     private function buildGraphTree(array $graph): Graph
     {
-        $nodes = new \SplObjectStorage();
+        $graphTree = new Graph();
+
         foreach ($graph['nodes'] as $nodeGraph) {
             $inputs = new \SplObjectStorage();
             foreach ($nodeGraph['inputs'] as $inputGraph) {
@@ -67,23 +80,32 @@ class KickstartController implements ControllerInterface
 
             $properties = $nodeGraph['properties'] ?? [];
 
-            $node = new Node(
+            // Skip invalid nodes
+            if (($nodeGraph['type'] ?? '') === '') {
+                throw new \InvalidArgumentException('Node must have a type defined');
+            }
+            if ((int)($nodeGraph['id'] ?? 0) === 0) {
+                throw new \InvalidArgumentException('Node must have an ID. NodeType: ' . $nodeGraph['type']);
+            }
+
+            $className = self::NODE_TYPE_MAPPING[$nodeGraph['type']];
+            $node = new $className(
                 (int)$nodeGraph['id'],
-                $nodeGraph['type'] ?? '',
-                $nodeGraph['title'] ?? '',
+                $nodeGraph['type'],
+                $nodeGraph['title'],
                 $inputs,
                 $outputs,
-                $properties
+                $properties,
+                $graphTree
             );
 
-            $nodes->attach($node);
+            $graphTree->addNode($node);
         }
 
-        $links = new \SplObjectStorage();
         foreach ($graph['links'] as $link) {
-            $links->attach(new Link($link[0], $link[1], $link[3], $link[5]));
+            $graphTree->addLink(new Link($link[0], $link[1], $link[3], $link[5]));
         }
 
-        return new Graph($nodes, $links);
+        return $graphTree;
     }
 }

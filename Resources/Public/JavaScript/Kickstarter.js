@@ -2,15 +2,20 @@ class Extension extends LiteGraph.LGraphNode {
     constructor() {
         super();
 
-        this.title = "My Extension";
-        this.addOutput("authors", "ExtensionAuthor");
-        this.addOutput("plugins", "Plugin");
-        this.addOutput("modules", "Module");
+        this.title = "Extension";
+
+        this.addOutput("authors", "ExtensionAuthors");
+        this.addOutput("extbasePlugins", "ExtensionExtbasePlugins");
+        this.addOutput("extbaseModules", "ExtensionExtbaseModules");
+
         this.properties = {
             extensionKey: "my_extension",
-            version: "0.0.1",
-            composerName: "my-vendor/my-package",
+            vendorName: "MyVendor",
+            extensionName: "MyExtension",
+            composerName: "",
+            title: "My Extension",
             description: "With this extension you can...",
+            version: "0.0.1",
             homepage: "https://example.com"
         };
     }
@@ -24,10 +29,16 @@ class Extension extends LiteGraph.LGraphNode {
             this.properties.extensionKey = lowerCasedExtensionKey.replace(/[^a-z0-9]/g, "_");
             return true;
         }
-    }
-
-    onExecute() {
-        // Definieren Sie hier Ihre Logik
+        if (propertyName === "vendorName") {
+            const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
+            this.properties.extensionKey = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            return true;
+        }
+        if (propertyName === "extensionName") {
+            const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
+            this.properties.extensionKey = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            return true;
+        }
     }
 }
 LiteGraph.registerNodeType("TYPO3/Extension", Extension);
@@ -37,7 +48,9 @@ class Author extends LiteGraph.LGraphNode {
         super();
 
         this.title = "Author";
-        this.addInput("Extension", "ExtensionAuthor");
+
+        this.addInput("Extension", "ExtensionAuthors");
+
         this.properties = {
             name: "Max Mustermann",
             email: "max.mustermann@example.com",
@@ -45,66 +58,92 @@ class Author extends LiteGraph.LGraphNode {
             role: "Lead Developer"
         };
     }
-
-    onExecute() {
-        // Definieren Sie hier Ihre Logik
-    }
 }
 LiteGraph.registerNodeType("TYPO3/Author", Author);
 
-class ControllerNode extends LiteGraph.LGraphNode {
+class ExtbasePlugin extends LiteGraph.LGraphNode {
     constructor() {
         super();
 
-        this._controllerName = "DefaultController";
-        // Fügen Sie Eingänge / Ausgänge hinzu
-        this.addOutput("actions", "Action");
-        // Fügen Sie Eigenschaften hinzu
-        this.properties = {controllerName: ""};
-    }
+        this.title = "Extbase Plugin";
 
-    // Override node title. Make sure controller name is capitalized first and ends with "Controller"
-    set title(controllerName) {
-        const capitalizedControllerName = controllerName.charAt(0).toUpperCase() + controllerName.slice(1);
-        const shouldAppendController = !capitalizedControllerName.endsWith("Controller");
-        this._controllerName = capitalizedControllerName + (shouldAppendController ? "Controller" : "");
-    }
+        this.addInput("extension", "ExtensionExtbasePlugins");
+        this.addOutput("extbaseControllers", "ExtbasePluginControllers");
 
-    get title() {
-        return this._controllerName;
-    }
-
-    onExecute() {
-        // Definieren Sie hier Ihre Logik
+        this.properties = {
+            pluginName: "MyPlugin",
+            pluginType: "plugin",
+        };
     }
 }
-LiteGraph.registerNodeType("extbase/controller", ControllerNode);
+LiteGraph.registerNodeType("Extbase/Plugin", ExtbasePlugin);
 
-class ControllerActionNode extends LiteGraph.LGraphNode {
+class ExtbaseModule extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "Extbase Module";
+
+        this.addInput("extension", "ExtensionExtbaseModules");
+        this.addOutput("extbaseControllers", "ExtbaseModuleControllers");
+
+        this.properties = {
+            moduleName: "MyModule",
+        };
+    }
+}
+LiteGraph.registerNodeType("Extbase/Module", ExtbaseModule);
+
+class ExtbaseController extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "Extbase Controller";
+
+        this.addInput("extbasePlugins", "ExtbasePluginControllers");
+        this.addInput("extbaseModules", "ExtbaseModuleControllers");
+        this.addOutput("extbaseControllerActions", "ExtbaseControllerActions");
+
+        this.properties = {
+            controllerName: "DefaultController",
+        };
+    }
+
+    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
+        if (propertyName === "controllerName") {
+            const capitalizedControllerName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
+            const shouldAppendController = !capitalizedControllerName.endsWith("Controller");
+            this.properties.controllerName = capitalizedControllerName + (shouldAppendController ? "Controller" : "");
+            return true;
+        }
+    }
+}
+LiteGraph.registerNodeType("Extbase/Controller", ExtbaseController);
+
+class ExtbaseControllerAction extends LiteGraph.LGraphNode {
     constructor(){
         super();
 
-        this._actionName = "indexAction";
-        this.addInput("controller", "Controller");
-        this.properties = {actionName: ""};
+        this.title = "Index Action";
+
+        this.addInput("extbaseController", "ExtbaseControllerActions");
+
+        this.properties = {
+            actionName: "indexAction",
+            uncached: false,
+        };
     }
 
-    // Override node title. Make sure action name is lower case first and ends with "Action"
-    set title(actionName) {
-        const lowerCasedActionName = actionName.charAt(0).toLowerCase() + actionName.slice(1);
-        const shouldAppendAction = !lowerCasedActionName.endsWith("Action");
-        this._actionName = lowerCasedActionName + (shouldAppendAction ? "Action" : "");
-    }
-
-    get title() {
-        return this._actionName;
-    }
-
-    onExecute() {
-        // Definieren Sie hier Ihre Logik
+    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
+        if (propertyName === "actionName") {
+            const lowerCasedActionName = newPropertyValue.charAt(0).toLowerCase() + newPropertyValue.slice(1);
+            const shouldAppendAction = !lowerCasedActionName.endsWith("Action");
+            this.properties.actionName = lowerCasedActionName + (shouldAppendAction ? "Action" : "");
+            return true;
+        }
     }
 }
-LiteGraph.registerNodeType("extbase/action", ControllerActionNode);
+LiteGraph.registerNodeType("Extbase/ControllerAction", ExtbaseControllerAction);
 
 // Container auswählen
 const container = document.getElementById("graph-container");

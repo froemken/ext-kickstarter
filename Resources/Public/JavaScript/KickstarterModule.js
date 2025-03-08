@@ -13,10 +13,6 @@ document.getElementById('buildExtension').addEventListener('click', function() {
     promise.then(async function (response) {
         const responseObj = await response.resolve();
 
-        if (responseObj.status === "ok") {
-            alert("Extension saved");
-        } else {
-            alert("Error while storing extension");
-        }
+        alert(responseObj.message);
     });
 });

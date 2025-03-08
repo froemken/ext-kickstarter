@@ -14,7 +14,8 @@ namespace StefanFroemken\ExtKickstarter\Service;
 use Psr\Http\Message\ResponseInterface;
 use StefanFroemken\ExtKickstarter\Builder\BuilderInterface;
 use StefanFroemken\ExtKickstarter\Model\Graph;
-use StefanFroemken\ExtKickstarter\Model\Node;
+use StefanFroemken\ExtKickstarter\Model\AbstractNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Typo3\ExtensionNode;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -36,13 +37,14 @@ class BuildExtensionService
 
         return new JsonResponse([
             'status' => 'ok',
+            'message' => 'Extension was created successfully',
         ]);
     }
 
     private function validate(Graph $graph): bool
     {
         // Extension node is a must-have
-        return $graph->getExtensionNode() instanceof Node;
+        return $graph->getExtensionNode() instanceof ExtensionNode;
     }
 
     private function getExtPath(Graph $graph): string
