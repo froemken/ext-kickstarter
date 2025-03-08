@@ -25,7 +25,7 @@ class OverwritePluginControllerActionMappingNode extends AbstractNode
     {
         return sprintf(
             '%s\\%s\\%s',
-            $this->graph->getExtensionNode()->getNamespacePrefix(),
+            $this->graph->getExtensionNode()->getClassnamePrefix(),
             'Controller',
             $this->getControllerName(),
         );

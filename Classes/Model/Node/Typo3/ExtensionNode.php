@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Model\Node\Typo3;
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ModuleNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\PluginNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Extbase\RepositoryNode;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ExtensionNode extends AbstractNode
@@ -51,9 +52,14 @@ class ExtensionNode extends AbstractNode
         return $composerName;
     }
 
-    public function getNamespacePrefix(): string
+    public function getClassnamePrefix(): string
     {
         return '\\' . $this->getVendorName() . '\\' . $this->getExtensionName();
+    }
+
+    public function getNamespacePrefix(): string
+    {
+        return $this->getVendorName() . '\\' . $this->getExtensionName();
     }
 
     /**
@@ -89,5 +95,13 @@ class ExtensionNode extends AbstractNode
     public function getExtbaseControllerNodes(): \SplObjectStorage
     {
         return $this->graph->getNodesByType('Extbase/Controller');
+    }
+
+    /**
+     * @return \SplObjectStorage|RepositoryNode[]
+     */
+    public function getExtbaseRepositoryNodes(): \SplObjectStorage
+    {
+        return $this->graph->getNodesByType('Extbase/Repository');
     }
 }

@@ -215,6 +215,31 @@ class OverwritePluginControllerActionMapping extends LiteGraph.LGraphNode {
 
 LiteGraph.registerNodeType("Extbase/OverwritePluginControllerActionMapping", OverwritePluginControllerActionMapping);
 
+class ExtbaseRepository extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "Default Repository";
+
+        this.addInput("extbaseController", "ExtbaseControllerActions");
+
+        this.properties = {
+            repositoryName: "DefaultRepository"
+        };
+    }
+
+    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
+        if (propertyName === "repositoryName") {
+            const capitalizedRepositoryName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
+            const shouldAppendRepository = !capitalizedRepositoryName.endsWith("Repository");
+            this.properties.repositoryName = capitalizedRepositoryName + (shouldAppendRepository ? "Repository" : "");
+            return true;
+        }
+    }
+}
+
+LiteGraph.registerNodeType("Extbase/Repository", ExtbaseRepository);
+
 // Container auswählen
 const container = document.getElementById("graph-container");
 
