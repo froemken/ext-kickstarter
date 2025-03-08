@@ -35,6 +35,7 @@ class KickstartController implements ControllerInterface
         'Extbase/ControllerAction' => Node\Extbase\ControllerActionNode::class,
         'Extbase/Module' => Node\Extbase\ModuleNode::class,
         'Extbase/Plugin' => Node\Extbase\PluginNode::class,
+        'Extbase/OverwritePluginControllerActionMapping' => Node\Extbase\OverwritePluginControllerActionMappingNode::class,
     ];
 
     public function __construct(

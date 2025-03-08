@@ -54,12 +54,20 @@ class ControllerNode extends AbstractNode
         return $cachedControllerActions;
     }
 
+    /**
+     * Returns the "Controller::class -> 'index, update, edit'" string
+     */
     public function getControllerActionDefinitionString(bool $isUncached): string
     {
         if ($isUncached) {
             $controllerActionNodes = $this->getUncachedControllerActionNodes();
         } else {
             $controllerActionNodes = $this->getControllerActionNodes();
+        }
+
+        // Early return, if no desired actions could be found
+        if ($controllerActionNodes->count() === 0) {
+            return '';
         }
 
         $controllerActionNames = [];

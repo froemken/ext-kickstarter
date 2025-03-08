@@ -67,7 +67,7 @@ class Graph
         return null;
     }
 
-    public function getLinkedOutputNodesByName(AbstractNode $node, string $name): \SplObjectStorage
+    public function getLinkedOutputNodesByName(AbstractNode $node, string $name, string $targetType = ''): \SplObjectStorage
     {
         $nodes = new \SplObjectStorage();
         foreach ($node->getOutputs() as $outputNode) {
@@ -78,7 +78,9 @@ class Graph
             foreach ($outputNode->getLinks() as $linkId) {
                 $targetNode = $this->getTargetNodeByLinkId($linkId);
                 if ($targetNode instanceof AbstractNode) {
-                    $nodes->attach($targetNode);
+                    if ($targetType === '' || $targetType === $targetNode->getType()) {
+                        $nodes->attach($targetNode);
+                    }
                 }
             }
         }

@@ -13,7 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Builder;
 
 use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
-use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ControllerNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Extbase\PluginNode;
 
 /**
  * Get file content for ext_localconf.php
@@ -57,14 +57,12 @@ class ExtLocalConfBuilder implements BuilderInterface
 
         $plugins = [];
         foreach ($extbasePluginNodes as $extbasePluginNode) {
-            $controllerNodes = $extbasePluginNode->getControllerNodes();
-
             $pluginLines = [
                 '\'' . $extensionNode->getExtensionName() . '\',',
                 '\'' . ($extbasePluginNode->getProperties()['pluginName'] ?? '') . '\',',
             ];
-            array_push($pluginLines, ...$this->getExtbaseControllerActionDefinitionLines($controllerNodes, false));
-            array_push($pluginLines, ...$this->getExtbaseControllerActionDefinitionLines($controllerNodes, true));
+            array_push($pluginLines, ...$this->getExtbaseControllerActionDefinitionLines($extbasePluginNode, false));
+            array_push($pluginLines, ...$this->getExtbaseControllerActionDefinitionLines($extbasePluginNode, true));
             $pluginLines[] = $this->getPluginType($extbasePluginNode) . ',';
 
             $plugins[] = implode(
@@ -81,18 +79,9 @@ class ExtLocalConfBuilder implements BuilderInterface
         return implode(chr(10), $plugins);
     }
 
-    /**
-     * @param \SplObjectStorage|ControllerNode[] $controllerNodes
-     */
-    private function getExtbaseControllerActionDefinitionLines(
-        \SplObjectStorage $controllerNodes,
-        bool $isUncached
-    ): array {
-        $controllerActionDefinition = [];
-        foreach ($controllerNodes as $controllerNode) {
-            $controllerActionDefinition[] = $controllerNode->getControllerActionDefinitionString($isUncached);
-        }
-
+    private function getExtbaseControllerActionDefinitionLines(PluginNode $extbasePluginNode, bool $isUncached): array
+    {
+        $controllerActionDefinition = $extbasePluginNode->getControllerActionDefinitionStrings($isUncached);
         if ($controllerActionDefinition === []) {
             return ['[],'];
         }
