@@ -21,10 +21,13 @@ class PluginNode extends AbstractNode
     }
 
     /**
+     * This will only collect controllers/actions which have to be added in plugin configuration
+     * To retrieve really all controllers you should use ExtensionNode::getExtbaseControllerNodes()
+     *
      * @return \SplObjectStorage|ControllerNode[]
      */
     public function getControllerNodes(): \SplObjectStorage
     {
-        return $this->graph->getLinkedOutputNodesByName($this, 'extbaseControllers');
+        return $this->graph->getLinkedOutputNodesByName($this, 'useExtbaseControllers');
     }
 }

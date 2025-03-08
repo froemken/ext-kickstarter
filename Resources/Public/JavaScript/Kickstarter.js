@@ -1,3 +1,5 @@
+LiteGraph.clearRegisteredTypes();
+
 class Extension extends LiteGraph.LGraphNode {
     constructor() {
         super();
@@ -22,8 +24,7 @@ class Extension extends LiteGraph.LGraphNode {
 
     onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
         if (propertyName === "extensionKey") {
-            const lowerCasedFirstLetterExtensionKey = newPropertyValue.charAt(0).toLowerCase() + newPropertyValue.slice(1);
-            const lowerCasedExtensionKey = lowerCasedFirstLetterExtensionKey.replace(/([A-Z])/g, function(match) {
+            const lowerCasedExtensionKey = newPropertyValue.toLowerCase().replace(/([A-Z])/g, function (match) {
                 return '_' + match.toLowerCase();
             });
             this.properties.extensionKey = lowerCasedExtensionKey.replace(/[^a-z0-9]/g, "_");
@@ -31,16 +32,17 @@ class Extension extends LiteGraph.LGraphNode {
         }
         if (propertyName === "vendorName") {
             const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            this.properties.extensionKey = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            this.properties.vendorName = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
             return true;
         }
         if (propertyName === "extensionName") {
-            const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            this.properties.extensionKey = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            const upperCasedFirstLetterExtensionName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
+            this.properties.extensionName = upperCasedFirstLetterExtensionName.replace(/[^a-zA-Z0-9]/g, "");
             return true;
         }
     }
 }
+
 LiteGraph.registerNodeType("TYPO3/Extension", Extension);
 
 class Author extends LiteGraph.LGraphNode {
@@ -59,23 +61,47 @@ class Author extends LiteGraph.LGraphNode {
         };
     }
 }
+
 LiteGraph.registerNodeType("TYPO3/Author", Author);
 
 class ExtbasePlugin extends LiteGraph.LGraphNode {
+    pluginTypes = {
+        "Plugin": "plugin",
+        "Content Element": "content"
+    }
+
     constructor() {
         super();
 
         this.title = "Extbase Plugin";
 
         this.addInput("extension", "ExtensionExtbasePlugins");
-        this.addOutput("extbaseControllers", "ExtbasePluginControllers");
+        this.addOutput("useExtbaseControllers", "ExtbasePluginControllers");
 
         this.properties = {
-            pluginName: "MyPlugin",
-            pluginType: "plugin",
-        };
+            "pluginName": "MyPlugin"
+        }
+
+        this.addProperty("pluginType", "plugin", "enum", {
+            values: this.pluginTypes
+        });
+
+        this.constructor["@pluginType"] = {
+            type: "enum",
+            title: "Plugin Type",
+            values: this.pluginTypes
+        }
+    }
+
+    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
+        if (propertyName === "pluginName") {
+            const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
+            this.properties.pluginName = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            return true;
+        }
     }
 }
+
 LiteGraph.registerNodeType("Extbase/Plugin", ExtbasePlugin);
 
 class ExtbaseModule extends LiteGraph.LGraphNode {
@@ -85,23 +111,35 @@ class ExtbaseModule extends LiteGraph.LGraphNode {
         this.title = "Extbase Module";
 
         this.addInput("extension", "ExtensionExtbaseModules");
-        this.addOutput("extbaseControllers", "ExtbaseModuleControllers");
+        this.addOutput("useExtbaseControllers", "ExtbaseModuleControllers");
 
         this.properties = {
             moduleName: "MyModule",
         };
     }
+
+    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
+        if (propertyName === "moduleName") {
+            const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
+            this.properties.moduleName = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            return true;
+        }
+    }
 }
+
 LiteGraph.registerNodeType("Extbase/Module", ExtbaseModule);
 
 class ExtbaseController extends LiteGraph.LGraphNode {
+    inputExtbasePluginCounter = 1;
+    inputExtbaseModuleCounter = 1;
+
     constructor() {
         super();
 
         this.title = "Extbase Controller";
 
-        this.addInput("extbasePlugins", "ExtbasePluginControllers");
-        this.addInput("extbaseModules", "ExtbaseModuleControllers");
+        this.addInput("extbasePlugin" + this.inputExtbasePluginCounter, "ExtbasePluginControllers");
+        this.addInput("extbaseModule" + this.inputExtbaseModuleCounter, "ExtbaseModuleControllers");
         this.addOutput("extbaseControllerActions", "ExtbaseControllerActions");
 
         this.properties = {
@@ -117,11 +155,30 @@ class ExtbaseController extends LiteGraph.LGraphNode {
             return true;
         }
     }
+
+    onConnectInput = function (inputIndex, outputType, outputSlot, outputNode, outputIndex) {
+        if (outputType === "ExtbasePluginControllers") {
+            this.addInput(`extbasePlugin${++this.inputExtbasePluginCounter}`, "ExtbasePluginControllers");
+        }
+        if (outputType === "ExtbaseModuleControllers") {
+            this.addInput(`extbaseModule${++this.inputExtbaseModuleCounter}`, "ExtbaseModuleControllers");
+        }
+        return true;
+    }
+
+    onConnectionsChange = function (type, slotIndex, isConnected, link, ioSlot) {
+        if (type === LiteGraph.INPUT && link.type === "ExtbasePluginControllers" && !isConnected) {
+            if (link.type === "ExtbasePluginControllers" || link.type === "ExtbaseModuleControllers") {
+                this.removeInput(slotIndex);
+            }
+        }
+    }
 }
+
 LiteGraph.registerNodeType("Extbase/Controller", ExtbaseController);
 
 class ExtbaseControllerAction extends LiteGraph.LGraphNode {
-    constructor(){
+    constructor() {
         super();
 
         this.title = "Index Action";
@@ -143,6 +200,7 @@ class ExtbaseControllerAction extends LiteGraph.LGraphNode {
         }
     }
 }
+
 LiteGraph.registerNodeType("Extbase/ControllerAction", ExtbaseControllerAction);
 
 // Container auswählen

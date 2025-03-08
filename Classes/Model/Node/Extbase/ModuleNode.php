@@ -25,6 +25,6 @@ class ModuleNode extends AbstractNode
      */
     public function getControllerNodes(): \SplObjectStorage
     {
-        return $this->graph->getLinkedOutputNodesByName($this, 'extbaseControllers');
+        return $this->graph->getLinkedOutputNodesByName($this, 'useExtbaseControllers');
     }
 }

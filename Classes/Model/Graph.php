@@ -15,8 +15,14 @@ use StefanFroemken\ExtKickstarter\Model\Node\Typo3\ExtensionNode;
 
 class Graph
 {
+    /**
+     * @var \SplObjectStorage|AbstractNode[]
+     */
     private \SplObjectStorage $nodes;
 
+    /**
+     * @var \SplObjectStorage|Link[]
+     */
     private \SplObjectStorage $links;
 
     public function __construct() {
@@ -24,6 +30,9 @@ class Graph
         $this->links = new \SplObjectStorage();
     }
 
+    /**
+     * @return \SplObjectStorage|AbstractNode[]
+     */
     public function getNodes(): \SplObjectStorage
     {
         return $this->nodes;
@@ -34,6 +43,9 @@ class Graph
         $this->nodes->attach($node);
     }
 
+    /**
+     * @return \SplObjectStorage|Link[]
+     */
     public function getLinks(): \SplObjectStorage
     {
         return $this->links;
@@ -104,5 +116,18 @@ class Graph
         }
 
         return null;
+    }
+
+    public function getNodesByType(string $nodeType): \SplObjectStorage
+    {
+        $nodes = new \SplObjectStorage();
+
+        foreach ($this->getNodes() as $node) {
+            if ($node->getType() === $nodeType) {
+                $nodes->attach($node);
+            }
+        }
+
+        return $nodes;
     }
 }

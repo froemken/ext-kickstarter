@@ -79,4 +79,15 @@ class ExtensionNode extends AbstractNode
     {
         return $this->graph->getLinkedOutputNodesByName($this, 'extbaseModules');
     }
+
+    /**
+     * This will return ALL extbase controllers.
+     * Regardless of their relation to a plugin.
+     *
+     * @return \SplObjectStorage|PluginNode[]
+     */
+    public function getExtbaseControllerNodes(): \SplObjectStorage
+    {
+        return $this->graph->getNodesByType('Extbase/Controller');
+    }
 }
