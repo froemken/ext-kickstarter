@@ -14,12 +14,15 @@ namespace StefanFroemken\ExtKickstarter\Builder;
 use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\PluginNode;
+use StefanFroemken\ExtKickstarter\Traits\WrapTrait;
 
 /**
  * Get file content for ext_localconf.php
  */
 class ExtLocalConfBuilder implements BuilderInterface
 {
+    use WrapTrait;
+
     public function build(Graph $graph, string $extPath): void
     {
         $fileContent = $this->getFileContent($graph);
@@ -69,8 +72,8 @@ class ExtLocalConfBuilder implements BuilderInterface
                 chr(10),
                 $this->wrap(
                     $pluginLines,
-                    '\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(',
-                    ');',
+                    ['\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('],
+                    [');'],
                     2
                 )
             );
@@ -86,29 +89,12 @@ class ExtLocalConfBuilder implements BuilderInterface
             return ['[],'];
         }
 
-        return $this->wrap($controllerActionDefinition, '[', '],', 1);
-    }
-
-    private function wrap(array $lines, string $before, string $after, int $indents): array
-    {
-        $indent = '    ';
-
-        $indentBefore = str_repeat($indent, $indents - 1);
-        $indentLines = str_repeat($indent, $indents);
-        $indentAfter = str_repeat($indent, $indents - 1);
-
-        foreach ($lines as $key => $line) {
-            $lines[$key] = $indentLines . $line;
-        }
-
-        $indentedLines = [
-            $indentBefore . $before,
-        ];
-
-        array_push($indentedLines, ...$lines);
-        $indentedLines[] = $indentAfter . $after;
-
-        return $indentedLines;
+        return $this->wrap(
+            $controllerActionDefinition,
+            ['['],
+            ['],'],
+            1
+        );
     }
 
     private function getPluginType(AbstractNode $extbasePluginNode): string

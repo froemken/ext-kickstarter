@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Builder;
 use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ControllerNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\RepositoryNode;
+use StefanFroemken\ExtKickstarter\Traits\WrapTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -21,6 +22,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ControllerBuilder implements BuilderInterface
 {
+    use WrapTrait;
+
     public function build(Graph $graph, string $extPath): void
     {
         $controllerNodes = $graph->getExtensionNode()->getExtbaseControllerNodes();
@@ -45,17 +48,103 @@ class ControllerBuilder implements BuilderInterface
             [
                 '{{COMPOSER_NAME}}',
                 '{{NAMESPACE}}',
+                '{{IMPORTS}}',
                 '{{MODEL}}',
                 '{{CONTROLLER_NAME}}',
+                '{{METHODS}}',
             ],
             [
                 $graph->getExtensionNode()->getComposerName(),
                 $controllerNode->getNamespace(),
+                implode(chr(10), $this->getImports($controllerNode)),
                 $controllerNode->getModelName(),
                 $controllerNode->getControllerName(),
+                implode(chr(10), $this->getMethods($controllerNode)),
             ],
             $this->getTemplate()
         );
+    }
+
+    private function getImports(ControllerNode $controllerNode): array
+    {
+        $imports = [
+            'TYPO3\\CMS\\Extbase\\Mvc\\Controller\\ActionController',
+            'Psr\\Http\\Message\\ResponseInterface',
+        ];
+
+        foreach ($controllerNode->getRepositoryNodes() as $repositoryNode) {
+            $imports[] = $repositoryNode->getNamespace() . '\\' . $repositoryNode->getRepositoryName();
+        }
+
+        sort($imports);
+
+        foreach ($imports as $key => $import) {
+            $imports[$key] = 'use ' . $import . ';';
+        }
+
+        return $imports;
+    }
+
+    private function getMethods(ControllerNode $controllerNode): array
+    {
+        $methodLines = [];
+        array_push($methodLines, ...$this->getConstructorLines($controllerNode));
+        $methodLines[] = '';
+        array_push($methodLines, ...$this->getActionLines($controllerNode));
+
+        return $methodLines;
+    }
+
+    private function getConstructorLines(ControllerNode $controllerNode): array
+    {
+        $repositoryNodes = $controllerNode->getRepositoryNodes();
+        if ($repositoryNodes->count() === 0) {
+            return [];
+        }
+
+        $repositoryLines = [];
+        foreach ($repositoryNodes as $repositoryNode) {
+            $repositoryLines[] = sprintf(
+                'private %s %s,',
+                $repositoryNode->getRepositoryName(),
+                $repositoryNode->getRepositoryVariableName()
+            );
+        }
+
+        return $this->wrap(
+            $repositoryLines,
+            ['public function __construct('],
+            [') {}'],
+            2
+        );
+    }
+
+    private function getActionLines(ControllerNode $controllerNode): array
+    {
+        $controllerActions = $controllerNode->getControllerActionNodes();
+        if ($controllerActions->count() === 0) {
+            return [];
+        }
+
+        $actionMethodLines = [];
+        foreach ($controllerActions as $controllerAction) {
+            array_push($actionMethodLines, ...$this->wrap(
+                [
+                    'return $this->htmlResponse();',
+                ],
+                [
+                    sprintf('public function %s(): ResponseInterface', $controllerAction->getActionName()),
+                    '{',
+                ],
+                ['}'],
+                2
+            ));
+            $actionMethodLines[] = '';
+        }
+
+        array_pop($actionMethodLines);
+
+        return $actionMethodLines;
     }
 
     private function getTemplate(): string
@@ -74,14 +163,14 @@ declare(strict_types=1);
 
 namespace {{NAMESPACE}};
 
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+{{IMPORTS}}
 
 /**
  * Controller class to manage {{MODEL}} objects
  */
 class {{CONTROLLER_NAME}} extends ActionController
 {
-
+{{METHODS}}
 }
 EOT;
     }

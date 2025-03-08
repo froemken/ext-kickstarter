@@ -25,6 +25,11 @@ class RepositoryNode extends AbstractNode
         return $this->getRepositoryName() . '.php';
     }
 
+    public function getRepositoryVariableName(): string
+    {
+        return '$' . lcfirst($this->getRepositoryName());
+    }
+
     public function getModelName(): string
     {
         return substr($this->getRepositoryName(), 0, -10);

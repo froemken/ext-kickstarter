@@ -48,12 +48,21 @@ class ControllerNode extends AbstractNode
             'Controller'
         );
     }
+
     /**
      * @return \SplObjectStorage|ControllerActionNode[]
      */
     public function getControllerActionNodes(): \SplObjectStorage
     {
         return $this->graph->getLinkedOutputNodesByName($this, 'extbaseControllerActions');
+    }
+
+    /**
+     * @return \SplObjectStorage|RepositoryNode[]
+     */
+    public function getRepositoryNodes(): \SplObjectStorage
+    {
+        return $this->graph->getLinkedOutputNodesByName($this, 'extbaseRepositories');
     }
 
     /**
