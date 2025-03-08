@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Model\Node\Typo3;
 
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ControllerNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ModuleNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\PluginNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\RepositoryNode;
@@ -90,7 +91,7 @@ class ExtensionNode extends AbstractNode
      * This will return ALL extbase controllers.
      * Regardless of their relation to a plugin.
      *
-     * @return \SplObjectStorage|PluginNode[]
+     * @return \SplObjectStorage|ControllerNode[]
      */
     public function getExtbaseControllerNodes(): \SplObjectStorage
     {

@@ -138,6 +138,7 @@ class ExtbaseController extends LiteGraph.LGraphNode {
         this.addInput("extbasePlugin", "ExtbasePluginControllers");
         this.addInput("extbaseModule", "ExtbaseModuleControllers");
         this.addOutput("extbaseControllerActions", "ExtbaseControllerActions");
+        this.addOutput("extbaseRepositories", "ExtbaseControllerRepositories");
 
         this.properties = {
             controllerName: "DefaultController",
@@ -221,7 +222,7 @@ class ExtbaseRepository extends LiteGraph.LGraphNode {
 
         this.title = "Default Repository";
 
-        this.addInput("extbaseController", "ExtbaseControllerActions");
+        this.addInput("extbaseController", "ExtbaseControllerRepositories");
 
         this.properties = {
             repositoryName: "DefaultRepository"

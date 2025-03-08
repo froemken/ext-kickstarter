@@ -20,6 +20,11 @@ class ControllerNode extends AbstractNode
         return $this->getProperties()['controllerName'] ?? '';
     }
 
+    public function getControllerFilename(): string
+    {
+        return $this->getControllerName() . '.php';
+    }
+
     public function getControllerClass(): string
     {
         return sprintf(
@@ -30,6 +35,19 @@ class ControllerNode extends AbstractNode
         );
     }
 
+    public function getModelName(): string
+    {
+        return substr($this->getControllerName(), 0, -10);
+    }
+
+    public function getNamespace(): string
+    {
+        return sprintf(
+            '%s\\%s',
+            $this->graph->getExtensionNode()->getNamespacePrefix(),
+            'Controller'
+        );
+    }
     /**
      * @return \SplObjectStorage|ControllerActionNode[]
      */

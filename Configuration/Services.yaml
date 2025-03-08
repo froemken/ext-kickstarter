@@ -33,6 +33,10 @@ services:
     tags:
       - name: 'ext-kickstarter.builder'
         priority: 10
+  StefanFroemken\ExtKickstarter\Builder\ControllerBuilder:
+    tags:
+      - name: 'ext-kickstarter.builder'
+        priority: 10
   StefanFroemken\ExtKickstarter\Builder\RepositoryBuilder:
     tags:
       - name: 'ext-kickstarter.builder'
