@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Builder;
 
 use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ControllerNode;
+use StefanFroemken\ExtKickstarter\Traits\GetClassHeaderTrait;
 use StefanFroemken\ExtKickstarter\Traits\WrapTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -21,6 +22,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ControllerBuilder implements BuilderInterface
 {
+    use GetClassHeaderTrait;
     use WrapTrait;
 
     public function build(Graph $graph, string $extPath): void
@@ -45,14 +47,14 @@ class ControllerBuilder implements BuilderInterface
     {
         return str_replace(
             [
-                '{{COMPOSER_NAME}}',
+                '{{CLASS_HEADER}}',
                 '{{NAMESPACE}}',
                 '{{IMPORTS}}',
                 '{{CONTROLLER_NAME}}',
                 '{{METHODS}}',
             ],
             [
-                $graph->getExtensionNode()->getComposerName(),
+                $this->getClassHeader($graph->getExtensionNode()),
                 $controllerNode->getNamespace(),
                 implode(chr(10), $this->getImports($controllerNode)),
                 $controllerNode->getControllerName(),
@@ -151,12 +153,7 @@ class ControllerBuilder implements BuilderInterface
 
 declare(strict_types=1);
 
-/*
- * This file is part of the package {{COMPOSER_NAME}}.
- *
- * For the full copyright and license information, please read the
- * LICENSE file that was distributed with this source code.
- */
+{{CLASS_HEADER}}
 
 namespace {{NAMESPACE}};
 

@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Builder;
 
 use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\RepositoryNode;
+use StefanFroemken\ExtKickstarter\Traits\GetClassHeaderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -20,6 +21,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RepositoryBuilder implements BuilderInterface
 {
+    use GetClassHeaderTrait;
+
     public function build(Graph $graph, string $extPath): void
     {
         $repositoryNodes = $graph->getExtensionNode()->getExtbaseRepositoryNodes();
@@ -42,12 +45,12 @@ class RepositoryBuilder implements BuilderInterface
     {
         return str_replace(
             [
-                '{{COMPOSER_NAME}}',
+                '{{CLASS_HEADER}}',
                 '{{NAMESPACE}}',
                 '{{REPOSITORY_NAME}}',
             ],
             [
-                $graph->getExtensionNode()->getComposerName(),
+                $this->getClassHeader($graph->getExtensionNode()),
                 $repositoryNode->getNamespace(),
                 $repositoryNode->getRepositoryName(),
             ],
@@ -62,12 +65,7 @@ class RepositoryBuilder implements BuilderInterface
 
 declare(strict_types=1);
 
-/*
- * This file is part of the package {{COMPOSER_NAME}}.
- *
- * For the full copyright and license information, please read the
- * LICENSE file that was distributed with this source code.
- */
+{{CLASS_HEADER}}
 
 namespace {{NAMESPACE}};
 
