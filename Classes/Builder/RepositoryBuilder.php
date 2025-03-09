@@ -44,13 +44,11 @@ class RepositoryBuilder implements BuilderInterface
             [
                 '{{COMPOSER_NAME}}',
                 '{{NAMESPACE}}',
-                '{{MODEL}}',
                 '{{REPOSITORY_NAME}}',
             ],
             [
                 $graph->getExtensionNode()->getComposerName(),
                 $repositoryNode->getNamespace(),
-                $repositoryNode->getModelName(),
                 $repositoryNode->getRepositoryName(),
             ],
             $this->getTemplate()
@@ -75,9 +73,6 @@ namespace {{NAMESPACE}};
 
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
-/**
- * Repository to collect {{MODEL}} objects
- */
 class {{REPOSITORY_NAME}} extends Repository {}
 EOT;
     }

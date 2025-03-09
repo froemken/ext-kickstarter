@@ -13,7 +13,6 @@ namespace StefanFroemken\ExtKickstarter\Builder;
 
 use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ControllerNode;
-use StefanFroemken\ExtKickstarter\Model\Node\Extbase\RepositoryNode;
 use StefanFroemken\ExtKickstarter\Traits\WrapTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -49,7 +48,6 @@ class ControllerBuilder implements BuilderInterface
                 '{{COMPOSER_NAME}}',
                 '{{NAMESPACE}}',
                 '{{IMPORTS}}',
-                '{{MODEL}}',
                 '{{CONTROLLER_NAME}}',
                 '{{METHODS}}',
             ],
@@ -57,7 +55,6 @@ class ControllerBuilder implements BuilderInterface
                 $graph->getExtensionNode()->getComposerName(),
                 $controllerNode->getNamespace(),
                 implode(chr(10), $this->getImports($controllerNode)),
-                $controllerNode->getModelName(),
                 $controllerNode->getControllerName(),
                 implode(chr(10), $this->getMethods($controllerNode)),
             ],
@@ -165,9 +162,6 @@ namespace {{NAMESPACE}};
 
 {{IMPORTS}}
 
-/**
- * Controller class to manage {{MODEL}} objects
- */
 class {{CONTROLLER_NAME}} extends ActionController
 {
 {{METHODS}}
