@@ -74,7 +74,7 @@ class ExtLocalConfBuilder implements BuilderInterface
                     $pluginLines,
                     ['\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('],
                     [');'],
-                    2
+                    1
                 )
             );
         }
