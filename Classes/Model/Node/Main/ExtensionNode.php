@@ -9,13 +9,14 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Model\Node\Typo3;
+namespace StefanFroemken\ExtKickstarter\Model\Node\Main;
 
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ControllerNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ModuleNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\PluginNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Extbase\RepositoryNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Tca\TableNode;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ExtensionNode extends AbstractNode
@@ -75,6 +76,14 @@ class ExtensionNode extends AbstractNode
     public function getAuthorNodes(): \SplObjectStorage
     {
         return $this->graph->getLinkedOutputNodesByName($this, 'authors');
+    }
+
+    /**
+     * @return \SplObjectStorage|TableNode[]
+     */
+    public function getTableNodes(): \SplObjectStorage
+    {
+        return $this->graph->getNodesByType('Tca/Table');
     }
 
     /**

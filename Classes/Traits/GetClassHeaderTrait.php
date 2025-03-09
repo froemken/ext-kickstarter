@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Traits;
 
-use StefanFroemken\ExtKickstarter\Model\Node\Typo3\ExtensionNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Main\ExtensionNode;
 
 trait GetClassHeaderTrait
 {

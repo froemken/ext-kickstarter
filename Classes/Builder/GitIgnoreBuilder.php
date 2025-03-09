@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Builder;
 
 use StefanFroemken\ExtKickstarter\Model\Graph;
-use StefanFroemken\ExtKickstarter\Model\Node\Typo3\ExtensionNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Main\ExtensionNode;
 
 /**
  * Get file content for .gitignore

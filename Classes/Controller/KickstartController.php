@@ -28,17 +28,6 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ControllerInterface;
  */
 class KickstartController implements ControllerInterface
 {
-    private const NODE_TYPE_MAPPING = [
-        'TYPO3/Extension' => Node\Typo3\ExtensionNode::class,
-        'TYPO3/Author' => Node\Typo3\AuthorNode::class,
-        'Extbase/Controller' => Node\Extbase\ControllerNode::class,
-        'Extbase/ControllerAction' => Node\Extbase\ControllerActionNode::class,
-        'Extbase/Module' => Node\Extbase\ModuleNode::class,
-        'Extbase/Plugin' => Node\Extbase\PluginNode::class,
-        'Extbase/OverwritePluginControllerActionMapping' => Node\Extbase\OverwritePluginControllerActionMappingNode::class,
-        'Extbase/Repository' => Node\Extbase\RepositoryNode::class,
-    ];
-
     public function __construct(
         readonly private ModuleTemplateFactory $moduleTemplateFactory,
         readonly private BuildExtensionService $buildExtensionService
@@ -90,7 +79,11 @@ class KickstartController implements ControllerInterface
                 throw new \InvalidArgumentException('Node must have an ID. NodeType: ' . $nodeGraph['type']);
             }
 
-            $className = self::NODE_TYPE_MAPPING[$nodeGraph['type']];
+            $className = $this->getNodeClassName($nodeGraph['type']);
+            if ($className === null) {
+                throw new \InvalidArgumentException('No PHP classname for node type found: ' . $nodeGraph['type']);
+            }
+
             $node = new $className(
                 (int)$nodeGraph['id'],
                 $nodeGraph['type'],
@@ -109,5 +102,18 @@ class KickstartController implements ControllerInterface
         }
 
         return $graphTree;
+    }
+
+    private function getNodeClassName(string $nodeType): ?string
+    {
+        $typeNamespacePart = str_replace('/', '\\', $nodeType);
+        $className = sprintf(
+            '%s\\%sNode',
+            '\\StefanFroemken\\ExtKickstarter\\Model\\Node',
+            $typeNamespacePart,
+
+        );
+
+        return class_exists($className) ? $className : null;
     }
 }

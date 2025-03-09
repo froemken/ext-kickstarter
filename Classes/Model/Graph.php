@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Model;
 
-use StefanFroemken\ExtKickstarter\Model\Node\Typo3\ExtensionNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Main\ExtensionNode;
 
 class Graph
 {
@@ -67,18 +67,21 @@ class Graph
         return null;
     }
 
-    public function getLinkedOutputNodesByName(AbstractNode $node, string $name, string $targetType = ''): \SplObjectStorage
-    {
+    public function getLinkedOutputNodesByName(
+        AbstractNode $node,
+        string $outputName,
+        string $outputTargetType = ''
+    ): \SplObjectStorage {
         $nodes = new \SplObjectStorage();
         foreach ($node->getOutputs() as $outputNode) {
-            if ($outputNode->getName() !== $name) {
+            if ($outputNode->getName() !== $outputName) {
                 continue;
             }
 
             foreach ($outputNode->getLinks() as $linkId) {
                 $targetNode = $this->getTargetNodeByLinkId($linkId);
                 if ($targetNode instanceof AbstractNode) {
-                    if ($targetType === '' || $targetType === $targetNode->getType()) {
+                    if ($outputTargetType === '' || $outputTargetType === $targetNode->getType()) {
                         $nodes->attach($targetNode);
                     }
                 }

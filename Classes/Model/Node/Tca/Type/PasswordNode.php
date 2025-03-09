@@ -9,10 +9,10 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Model\Node\Typo3;
+namespace StefanFroemken\ExtKickstarter\Model\Node\Tca\Type;
 
-use StefanFroemken\ExtKickstarter\Model\AbstractNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Tca\AbstractColumnNode;
 
-class AuthorNode extends AbstractNode
+class PasswordNode extends AbstractColumnNode
 {
 }
