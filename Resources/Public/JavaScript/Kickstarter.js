@@ -20,6 +20,8 @@ class Extension extends LiteGraph.LGraphNode {
             version: "0.0.1",
             homepage: "https://example.com"
         };
+
+        this.addWidget("text", "Key", this.properties.extensionKey, "extensionKey");
     }
 
     onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
@@ -27,17 +29,22 @@ class Extension extends LiteGraph.LGraphNode {
             const lowerCasedExtensionKey = newPropertyValue.toLowerCase().replace(/([A-Z])/g, function (match) {
                 return '_' + match.toLowerCase();
             });
-            this.properties.extensionKey = lowerCasedExtensionKey.replace(/[^a-z0-9]/g, "_");
+            this.setProperty("extensionKey", lowerCasedExtensionKey.replace(/[^a-z0-9]/g, "_"));
+            this.setProperty("extensionName", lowerCasedExtensionKey.replace(/[^a-z0-9]/g, "_"));
             return true;
         }
         if (propertyName === "vendorName") {
             const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            this.properties.vendorName = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            this.setProperty("vendorName", upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, ""));
             return true;
         }
         if (propertyName === "extensionName") {
             const upperCasedFirstLetterExtensionName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            this.properties.extensionName = upperCasedFirstLetterExtensionName.replace(/[^a-zA-Z0-9]/g, "");
+            const upperCasedLettersExtensionName = upperCasedFirstLetterExtensionName.replace(/_([a-z])/g, function (underscoreAndLetter) {
+                return underscoreAndLetter[1].toUpperCase();
+            });
+            this.setProperty("extensionName", upperCasedLettersExtensionName.replace(/[^a-zA-Z0-9]/g, ""));
+            this.setProperty("title", upperCasedLettersExtensionName.replace(/([A-Z])/g, ' $1').trim());
             return true;
         }
     }
@@ -77,6 +84,8 @@ class TcaTable extends LiteGraph.LGraphNode {
             tableName: "tx_myext_domain_model_default",
             title: "My Table",
         };
+
+        this.addWidget("text", "Table", this.properties.tableName, "tableName");
 
         // We set tableName property of TcaTable automatically, if it was connected via an extbase repository
         this.onConnectionsChange = function (connectionType, targetSlot, isConnected, linkInfo, input) {
@@ -619,6 +628,8 @@ class ExtbaseRepository extends LiteGraph.LGraphNode {
             repositoryName: "DefaultRepository",
             tableName: ""
         };
+
+        this.addWidget("text", "Repo", this.properties.repositoryName, "repositoryName");
     }
 
     getTableName = function () {
