@@ -9,43 +9,6 @@ services:
     exclude:
     - '../Classes/Domain/Model/*'
 
-  StefanFroemken\ExtKickstarter\Builder\ExtEmConfBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-  StefanFroemken\ExtKickstarter\Builder\ComposerJsonBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-  StefanFroemken\ExtKickstarter\Builder\ExtensionIconBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-  StefanFroemken\ExtKickstarter\Builder\LicenseBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-  StefanFroemken\ExtKickstarter\Builder\ReadmeBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-  StefanFroemken\ExtKickstarter\Builder\ExtLocalConfBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-  StefanFroemken\ExtKickstarter\Builder\ControllerBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-  StefanFroemken\ExtKickstarter\Builder\RepositoryBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-  StefanFroemken\ExtKickstarter\Builder\ServicesYamlBuilder:
-    tags:
-      - name: 'ext-kickstarter.builder'
-        priority: 10
-
   StefanFroemken\ExtKickstarter\Service\BuildExtensionService:
     arguments:
       $builders: !tagged_iterator { tag: 'ext-kickstarter.builder' }
