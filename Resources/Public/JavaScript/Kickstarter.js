@@ -64,6 +64,429 @@ class Author extends LiteGraph.LGraphNode {
 
 LiteGraph.registerNodeType("Main/Author", Author);
 
+class TcaTable extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "Table";
+
+        this.addInput("extbaseRepository", "ExtbaseRepositoryTable");
+        this.addOutput("tcaColumns", "TcaTableColumns");
+
+        this.properties = {
+            tableName: "tx_myext_domain_model_default",
+            title: "My Table",
+        };
+
+        // We set tableName property of TcaTable automatically, if it was connected via an extbase repository
+        this.onConnectionsChange = function (connectionType, targetSlot, isConnected, linkInfo, input) {
+            if (connectionType === LiteGraph.INPUT) {
+                let linkedRepositoryNode = this.graph.getNodeById(linkInfo.origin_id);
+                let linkedTcaTableNode = this.graph.getNodeById(linkInfo.target_id);
+
+                if (linkedRepositoryNode && linkedTcaTableNode) {
+                    let tableName = linkedRepositoryNode.getTableName()
+                    if (tableName) {
+                        linkedTcaTableNode.setProperty('tableName', linkedRepositoryNode.getTableName());
+                    }
+                }
+            }
+        }
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Table", TcaTable);
+
+class TcaTypeCheck extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Checkbox";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "check",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Check", TcaTypeCheck);
+
+class TcaTypeColor extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Color";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "color",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Color", TcaTypeColor);
+
+class TcaTypeDatetime extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Datetime";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "datetime",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Datetime", TcaTypeDatetime);
+
+class TcaTypeEmail extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Email";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "email",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Email", TcaTypeEmail);
+
+class TcaTypeFile extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA File";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "file",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/File", TcaTypeFile);
+
+class TcaTypeFolder extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Folder";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "folder",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Folder", TcaTypeFolder);
+
+class TcaTypeGroup extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Group";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "group",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Group", TcaTypeGroup);
+
+class TcaTypeInline extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Inline";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "inline",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Inline", TcaTypeInline);
+
+class TcaTypeInput extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Input";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "input",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Input", TcaTypeInput);
+
+class TcaTypeLink extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Link";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "link",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Link", TcaTypeLink);
+
+class TcaTypeNone extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA None";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "none",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/None", TcaTypeNone);
+
+class TcaTypeNumber extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Number";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "number",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Number", TcaTypeNumber);
+
+class TcaTypePassthrough extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Passthrough";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "passthrough",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Passthrough", TcaTypePassthrough);
+
+class TcaTypePassword extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Password";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "password",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Password", TcaTypePassword);
+
+class TcaTypeRadio extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Radio";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "radio",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Radio", TcaTypeRadio);
+
+class TcaTypeSelect extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Select";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "select",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Select", TcaTypeSelect);
+
+class TcaTypeSlug extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Slug";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "slug",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Slug", TcaTypeSlug);
+
+class TcaTypeText extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Text";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "text",
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Text", TcaTypeText);
+
+class TcaTypeUser extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA User";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "user",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/User", TcaTypeUser);
+
+class TcaTypeUuid extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Uuid";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            tcaType: "uuid",
+            columnName: "default",
+            label: "Default",
+            description: "",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Uuid", TcaTypeUuid);
+
 class ExtbasePlugin extends LiteGraph.LGraphNode {
     pluginTypes = {
         "Plugin": "plugin",
@@ -183,6 +606,45 @@ class ExtbaseControllerAction extends LiteGraph.LGraphNode {
 
 LiteGraph.registerNodeType("Extbase/ControllerAction", ExtbaseControllerAction);
 
+class ExtbaseRepository extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "Default Repository";
+
+        this.addInput("extbaseController", "ExtbaseControllerRepositories");
+        this.addOutput("tcaTable", "ExtbaseRepositoryTable");
+
+        this.properties = {
+            repositoryName: "DefaultRepository",
+            tableName: ""
+        };
+    }
+
+    getTableName = function () {
+        let tableName = this.properties.tableName;
+        let extensionNodes = this.graph.findNodesByType('Main/Extension');
+        if (tableName === '' && extensionNodes && extensionNodes.length > 0) {
+            let extensionNode = extensionNodes[0];
+            let extensionKey = extensionNode.properties.extensionKey.replace(/_/g, '');
+            let repositoryName = this.properties.repositoryName.slice(0, -10);
+            tableName = 'tx_' + extensionKey + '_domain_model_' + repositoryName;
+        }
+        return tableName;
+    }
+
+    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
+        if (propertyName === "repositoryName") {
+            const capitalizedRepositoryName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
+            const shouldAppendRepository = !capitalizedRepositoryName.endsWith("Repository");
+            this.properties.repositoryName = capitalizedRepositoryName + (shouldAppendRepository ? "Repository" : "");
+            return true;
+        }
+    }
+}
+
+LiteGraph.registerNodeType("Extbase/Repository", ExtbaseRepository);
+
 /**
  * Only needed, if you don't want to register all actions of a controller in plugin configuration.
  * If used, it overwrites the "Controller::class -> index,update,show,list" string
@@ -216,430 +678,6 @@ class OverwritePluginControllerActionMapping extends LiteGraph.LGraphNode {
 
 LiteGraph.registerNodeType("Extbase/OverwritePluginControllerActionMapping", OverwritePluginControllerActionMapping);
 
-class ExtbaseRepository extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "Default Repository";
-
-        this.addInput("extbaseController", "ExtbaseControllerRepositories");
-        this.addOutput("tcaTable", "ExtbaseRepositoryTable");
-
-        this.properties = {
-            repositoryName: "DefaultRepository"
-        };
-    }
-
-    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
-        if (propertyName === "repositoryName") {
-            const capitalizedRepositoryName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            const shouldAppendRepository = !capitalizedRepositoryName.endsWith("Repository");
-            this.properties.repositoryName = capitalizedRepositoryName + (shouldAppendRepository ? "Repository" : "");
-            return true;
-        }
-    }
-}
-
-LiteGraph.registerNodeType("Extbase/Repository", ExtbaseRepository);
-
-class TcaTable extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "Table";
-
-        this.addInput("extbaseRepository", "ExtbaseRepositoryTable");
-        this.addOutput("tcaColumns", "TcaTableColumns");
-
-        this.properties = {
-            tableName: "tx_myext_domain_model_default",
-            title: "My Table",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Table", TcaTable);
-
-class TcaTypeCheck extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Checkbox";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "check",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Check", TcaTypeCheck);
-
-class TcaTypeColor extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Color";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "color",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Color", TcaTypeColor);
-
-class TcaTypeDatetime extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Datetime";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "datetime",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Datetime", TcaTypeDatetime);
-
-class TcaTypeEmail extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Email";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "email",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Datetime", TcaTypeDatetime);
-
-class TcaTypeFile extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA File";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "file",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/File", TcaTypeFile);
-
-class TcaTypeFolder extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Folder";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "folder",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Folder", TcaTypeFolder);
-
-class TcaTypeGroup extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Group";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "group",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Group", TcaTypeGroup);
-
-class TcaTypeInline extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Inline";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "inline",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Inline", TcaTypeInline);
-
-class TcaTypeInput extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Input";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "input",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Input", TcaTypeInput);
-
-class TcaTypeLink extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Link";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "link",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Link", TcaTypeLink);
-
-class TcaTypeNone extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA None";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "none",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/None", TcaTypeNone);
-
-class TcaTypeNumber extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Number";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "number",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Number", TcaTypeNumber);
-
-class TcaTypePassthrough extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Passthrough";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "passthrough",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Passthrough", TcaTypePassthrough);
-
-class TcaTypePassword extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Password";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "password",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Password", TcaTypePassword);
-
-class TcaTypeRadio extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Radio";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "radio",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Radio", TcaTypeRadio);
-
-class TcaTypeSelect extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Select";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "select",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Select", TcaTypeSelect);
-
-class TcaTypeSlug extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Slug";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "slug",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Slug", TcaTypeSlug);
-
-class TcaTypeText extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Text";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "text",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Text", TcaTypeText);
-
-class TcaTypeUser extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA User";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "user",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/User", TcaTypeUser);
-
-class TcaTypeUuid extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "TCA Uuid";
-
-        this.addInput("tcaTable", "TcaTableColumns");
-
-        this.properties = {
-            tcaType: "uuid",
-            columnName: "default",
-            label: "Default",
-            description: "",
-        };
-    }
-}
-
-LiteGraph.registerNodeType("Tca/Type/Uuid", TcaTypeUuid);
-
 // Container auswählen
 const container = document.getElementById("graph-container");
 
@@ -663,6 +701,7 @@ window.addEventListener("resize", resizeCanvas);
 resizeCanvas(); // Initiale Anpassung
 
 graph.onNodeAdded = function (node) {
+    // Show error if node of type Extension was added twice
     if (node.type === "TYPO3/Extension") {
         for (let i in graph._nodes) {
             let existingNode = graph._nodes[i];
@@ -681,5 +720,9 @@ graph.onNodeAdded = function (node) {
         }
     }
 }
+
+graph.add(LiteGraph.createNode('Main/Extension', 'Extension', {
+    pos: [70, 100]
+}));
 
 graph.start();

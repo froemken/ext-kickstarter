@@ -35,6 +35,22 @@ class RepositoryNode extends AbstractNode
         return substr($this->getRepositoryName(), 0, -10);
     }
 
+    public function getTableName(): string
+    {
+        $tableName = $this->getProperties()['tableName'] ?? '';
+
+        if ($tableName === '') {
+            $tableName = sprintf(
+                '%s_%s_%s',
+                $this->graph->getExtensionNode()->getTablePrefix(),
+                'domain_model',
+                strtolower($this->getModelName())
+            );
+        }
+
+        return $tableName;
+    }
+
     public function getNamespace(): string
     {
         return sprintf(

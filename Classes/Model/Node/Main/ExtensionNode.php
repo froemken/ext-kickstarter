@@ -64,6 +64,11 @@ class ExtensionNode extends AbstractNode
         return $this->getVendorName() . '\\' . $this->getExtensionName();
     }
 
+    public function getTablePrefix(): string
+    {
+        return 'tx_' . str_replace('_', '', $this->getExtensionKey());
+    }
+
     public function hasClasses(): bool
     {
         return $this->getExtbaseControllerNodes()->count()

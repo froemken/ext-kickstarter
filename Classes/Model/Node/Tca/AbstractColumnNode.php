@@ -29,4 +29,9 @@ abstract class AbstractColumnNode extends AbstractNode
     {
         return $this->getProperties()['tcaType'] ?? '';
     }
+
+    public function isModelProperty(): bool
+    {
+        return ($this->getProperties()['modelProperty'] ?? false);
+    }
 }
