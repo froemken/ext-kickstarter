@@ -41,6 +41,10 @@ services:
     tags:
       - name: 'ext-kickstarter.builder'
         priority: 10
+  StefanFroemken\ExtKickstarter\Builder\ServicesYamlBuilder:
+    tags:
+      - name: 'ext-kickstarter.builder'
+        priority: 10
 
   StefanFroemken\ExtKickstarter\Service\BuildExtensionService:
     arguments:

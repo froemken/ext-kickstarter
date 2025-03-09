@@ -63,6 +63,12 @@ class ExtensionNode extends AbstractNode
         return $this->getVendorName() . '\\' . $this->getExtensionName();
     }
 
+    public function hasClasses(): bool
+    {
+        return $this->getExtbaseControllerNodes()->count()
+            || $this->getExtbaseRepositoryNodes()->count();
+    }
+
     /**
      * @return \SplObjectStorage|AuthorNode[]
      */
