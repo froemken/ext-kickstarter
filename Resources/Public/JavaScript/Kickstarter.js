@@ -21,21 +21,37 @@ class Extension extends LiteGraph.LGraphNode {
             homepage: "https://example.com"
         };
 
-        this.addWidget("text", "Key", this.properties.extensionKey, "extensionKey");
+        this.addWidget(
+            "text",
+            "Key",
+            this.properties.extensionKey,
+            function (newValue, graphCanvas, extensionNode, vector, event) {
+                // Do not use value from input. Use the modified and cleaned value from properties
+                this.value = extensionNode.properties.extensionKey;
+            },
+            {
+                property: "extensionKey"
+            }
+        );
     }
 
     onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
         if (propertyName === "extensionKey") {
-            const lowerCasedExtensionKey = newPropertyValue.toLowerCase().replace(/([A-Z])/g, function (match) {
+            const lowerCasedFirstLetterExtensionKey = newPropertyValue.charAt(0).toLowerCase() + newPropertyValue.slice(1);
+            const lowerCasedUnderscoredExtensionKey = lowerCasedFirstLetterExtensionKey.replace(/([A-Z])/g, function (match) {
                 return '_' + match.toLowerCase();
             });
-            this.setProperty("extensionKey", lowerCasedExtensionKey.replace(/[^a-z0-9]/g, "_"));
-            this.setProperty("extensionName", lowerCasedExtensionKey.replace(/[^a-z0-9]/g, "_"));
+            const cleanedExtensionKey = lowerCasedUnderscoredExtensionKey.replace(/[^a-z0-9]/g, "_");
+            this.properties.extensionKey = cleanedExtensionKey;
+            this.setProperty("extensionName", cleanedExtensionKey);
+
+            this.updateTcaTableName();
+
             return true;
         }
         if (propertyName === "vendorName") {
             const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            this.setProperty("vendorName", upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, ""));
+            this.properties.vendorName = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
             return true;
         }
         if (propertyName === "extensionName") {
@@ -43,9 +59,22 @@ class Extension extends LiteGraph.LGraphNode {
             const upperCasedLettersExtensionName = upperCasedFirstLetterExtensionName.replace(/_([a-z])/g, function (underscoreAndLetter) {
                 return underscoreAndLetter[1].toUpperCase();
             });
-            this.setProperty("extensionName", upperCasedLettersExtensionName.replace(/[^a-zA-Z0-9]/g, ""));
-            this.setProperty("title", upperCasedLettersExtensionName.replace(/([A-Z])/g, ' $1').trim());
+            this.properties.extensionName = upperCasedLettersExtensionName.replace(/[^a-zA-Z0-9]/g, "");
+            this.properties.title = upperCasedLettersExtensionName.replace(/([A-Z])/g, ' $1').trim();
             return true;
+        }
+    }
+
+    // Inform tcaTable nodes to update the tablename
+    updateTcaTableName = function () {
+        const tcaTableNodes = this.graph.findNodesByType('Tca/Table');
+        if (tcaTableNodes && tcaTableNodes.length > 0) {
+            tcaTableNodes.forEach(function (tcaTableNode) {
+                const slotId = tcaTableNode.findInputSlot("extbaseRepository");
+                const linkId = tcaTableNode.inputs[slotId].link;
+                const link = tcaTableNode.graph.links[linkId];
+                tcaTableNode.updateTableName(link.origin_id, link.target_id);
+            })
         }
     }
 }
@@ -85,20 +114,42 @@ class TcaTable extends LiteGraph.LGraphNode {
             title: "My Table",
         };
 
-        this.addWidget("text", "Table", this.properties.tableName, "tableName");
+        this.addWidget(
+            "text",
+            "Table",
+            this.properties.tableName,
+            function (newValue, graphCanvas, extensionNode, vector, event) {
+                // Do not use value from input. Use the modified and cleaned value from properties
+                this.value = extensionNode.properties.tableName;
+            },
+            {
+                property: "tableName"
+            }
+        );
+    }
 
-        // We set tableName property of TcaTable automatically, if it was connected via an extbase repository
-        this.onConnectionsChange = function (connectionType, targetSlot, isConnected, linkInfo, input) {
-            if (connectionType === LiteGraph.INPUT) {
-                let linkedRepositoryNode = this.graph.getNodeById(linkInfo.origin_id);
-                let linkedTcaTableNode = this.graph.getNodeById(linkInfo.target_id);
+    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
+        if (propertyName === "tableName") {
+            this.properties.repositoryName = newPropertyValue.toLowerCase();
+            return true;
+        }
+    }
 
-                if (linkedRepositoryNode && linkedTcaTableNode) {
-                    let tableName = linkedRepositoryNode.getTableName()
-                    if (tableName) {
-                        linkedTcaTableNode.setProperty('tableName', linkedRepositoryNode.getTableName());
-                    }
-                }
+    // We set tableName property of TcaTable automatically, if it was connected via an extbase repository
+    onConnectionsChange = function (connectionType, targetSlot, isConnected, linkInfo, input) {
+        if (connectionType === LiteGraph.INPUT) {
+            this.updateTableName(linkInfo.origin_id, linkInfo.target_id);
+        }
+    }
+
+    updateTableName = function (originId, targetId) {
+        let linkedRepositoryNode = this.graph.getNodeById(originId);
+        let linkedTcaTableNode = this.graph.getNodeById(targetId);
+
+        if (linkedRepositoryNode && linkedTcaTableNode) {
+            let tableName = linkedRepositoryNode.getTableName()
+            if (tableName) {
+                linkedTcaTableNode.setProperty('tableName', linkedRepositoryNode.getTableName());
             }
         }
     }
@@ -528,7 +579,7 @@ class ExtbasePlugin extends LiteGraph.LGraphNode {
     onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
         if (propertyName === "pluginName") {
             const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            this.properties.pluginName = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            this.setProperty("pluginName", upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, ""));
             return true;
         }
     }
@@ -553,7 +604,7 @@ class ExtbaseModule extends LiteGraph.LGraphNode {
     onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
         if (propertyName === "moduleName") {
             const upperCasedFirstLetterVendorName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            this.properties.moduleName = upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, "");
+            this.setProperty("moduleName", upperCasedFirstLetterVendorName.replace(/[^a-zA-Z0-9]/g, ""));
             return true;
         }
     }
@@ -581,7 +632,7 @@ class ExtbaseController extends LiteGraph.LGraphNode {
         if (propertyName === "controllerName") {
             const capitalizedControllerName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
             const shouldAppendController = !capitalizedControllerName.endsWith("Controller");
-            this.properties.controllerName = capitalizedControllerName + (shouldAppendController ? "Controller" : "");
+            this.setProperty("controllerName", capitalizedControllerName + (shouldAppendController ? "Controller" : ""));
             return true;
         }
     }
@@ -607,7 +658,7 @@ class ExtbaseControllerAction extends LiteGraph.LGraphNode {
         if (propertyName === "actionName") {
             const lowerCasedActionName = newPropertyValue.charAt(0).toLowerCase() + newPropertyValue.slice(1);
             const shouldAppendAction = !lowerCasedActionName.endsWith("Action");
-            this.properties.actionName = lowerCasedActionName + (shouldAppendAction ? "Action" : "");
+            this.setProperty("actionName", lowerCasedActionName + (shouldAppendAction ? "Action" : ""));
             return true;
         }
     }
@@ -629,7 +680,18 @@ class ExtbaseRepository extends LiteGraph.LGraphNode {
             tableName: ""
         };
 
-        this.addWidget("text", "Repo", this.properties.repositoryName, "repositoryName");
+        this.addWidget(
+            "text",
+            "Repo",
+            this.properties.repositoryName,
+            function (newValue, graphCanvas, extensionNode, vector, event) {
+                // Do not use value from input. Use the modified and cleaned value from properties
+                this.value = extensionNode.properties.repositoryName;
+            },
+            {
+                property: "repositoryName"
+            }
+        );
     }
 
     getTableName = function () {
@@ -638,7 +700,7 @@ class ExtbaseRepository extends LiteGraph.LGraphNode {
         if (tableName === '' && extensionNodes && extensionNodes.length > 0) {
             let extensionNode = extensionNodes[0];
             let extensionKey = extensionNode.properties.extensionKey.replace(/_/g, '');
-            let repositoryName = this.properties.repositoryName.slice(0, -10);
+            let repositoryName = this.properties.repositoryName.toLowerCase().slice(0, -10);
             tableName = 'tx_' + extensionKey + '_domain_model_' + repositoryName;
         }
         return tableName;
@@ -649,7 +711,26 @@ class ExtbaseRepository extends LiteGraph.LGraphNode {
             const capitalizedRepositoryName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
             const shouldAppendRepository = !capitalizedRepositoryName.endsWith("Repository");
             this.properties.repositoryName = capitalizedRepositoryName + (shouldAppendRepository ? "Repository" : "");
+
+            this.updateTcaTableName();
+
             return true;
+        }
+        if (propertyName === "tableName") {
+            this.updateTcaTableName();
+        }
+    }
+
+    // Inform tcaTable nodes to update the tablename
+    updateTcaTableName = function () {
+        const tcaTableNodes = this.graph.findNodesByType('Tca/Table');
+        if (tcaTableNodes && tcaTableNodes.length > 0) {
+            tcaTableNodes.forEach(function (tcaTableNode) {
+                const slotId = tcaTableNode.findInputSlot("extbaseRepository");
+                const linkId = tcaTableNode.inputs[slotId].link;
+                const link = tcaTableNode.graph.links[linkId];
+                tcaTableNode.updateTableName(link.origin_id, link.target_id);
+            })
         }
     }
 }
@@ -681,7 +762,7 @@ class OverwritePluginControllerActionMapping extends LiteGraph.LGraphNode {
         if (propertyName === "controllerName") {
             const capitalizedControllerName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
             const shouldAppendController = !capitalizedControllerName.endsWith("Controller");
-            this.properties.controllerName = capitalizedControllerName + (shouldAppendController ? "Controller" : "");
+            this.setProperty("controllerName", capitalizedControllerName + (shouldAppendController ? "Controller" : ""));
             return true;
         }
     }
