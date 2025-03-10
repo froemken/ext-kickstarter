@@ -14,6 +14,8 @@ services:
       $builders: !tagged_iterator { tag: 'ext-kickstarter.builder' }
 
   StefanFroemken\ExtKickstarter\Command\ExtensionCommand:
+    arguments:
+      $creators: !tagged_iterator { tag: 'ext-kickstarter.creator.extension' }
     tags:
       - name: console.command
         command: 'kickstart:extension'

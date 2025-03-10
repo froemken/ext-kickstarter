@@ -46,9 +46,9 @@ class ReadmeBuilder implements BuilderInterface
     private function getTemplate(): string
     {
         return <<<'EOT'
-# {{TITLE}}
+# %s
 
-{{DESCRIPTION}}
+%s
 EOT;
     }
 }
