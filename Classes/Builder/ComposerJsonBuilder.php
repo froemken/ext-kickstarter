@@ -70,7 +70,7 @@ class ComposerJsonBuilder implements BuilderInterface
 	"keywords": [
 		"typo3"
 	],
-	"homepage": "{{HOMEPAGE}}}}",
+	"homepage": "{{HOMEPAGE}}",
 	"require": {
 		"typo3/cms-core": "^12.4.0"
 	},
