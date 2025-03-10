@@ -12,7 +12,17 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Model\Node\Tca\Type;
 
 use StefanFroemken\ExtKickstarter\Model\Node\Tca\AbstractColumnNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Tca\SelectItemNode;
 
 class CheckNode extends AbstractColumnNode
 {
+    public const TYPE = 'check';
+
+    /**
+     * @return \SplObjectStorage|SelectItemNode[]
+     */
+    public function getSelectItems(): \SplObjectStorage
+    {
+        return $this->graph->getLinkedOutputNodesByName($this, 'tcaSelectItems');
+    }
 }

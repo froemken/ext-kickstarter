@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Builder;
 
+use StefanFroemken\ExtKickstarter\Builder\TcaType\CheckTcaTypeBuilder;
+use StefanFroemken\ExtKickstarter\Builder\TcaType\DefaultTcaTypeBuilder;
 use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\Node\Tca\TableNode;
 use StefanFroemken\ExtKickstarter\Traits\WrapTrait;
@@ -40,12 +42,12 @@ class TcaTableBuilder implements BuilderInterface
 
             file_put_contents(
                 $tablePath . $tableNode->getTableFilename(),
-                $this->getFileContent($tableNode, $graph)
+                $this->getFileContent($tableNode)
             );
         }
     }
 
-    private function getFileContent(TableNode $tableNode, Graph $graph): string
+    private function getFileContent(TableNode $tableNode): string
     {
         return str_replace(
             [
@@ -76,25 +78,20 @@ class TcaTableBuilder implements BuilderInterface
 
     private function getColumnLines(TableNode $tableNode): array
     {
-        $columnLines = [];
+        $configLines = [];
         foreach ($tableNode->getColumnNodes() as $columnNode) {
-            $definition = str_replace(
-                [
-                    '{{COLUMN_NAME}}',
-                    '{{COLUMN_LABEL}}',
-                    '{{COLUMN_TYPE}}',
-                ],
-                [
-                    $columnNode->getColumnName(),
-                    $columnNode->getLabel(),
-                    $columnNode->getColumnType(),
-                ],
-                $this->getTemplateForColumn()
+            if ($columnNode->getColumnType() === 'check') {
+                $tcaTypeBuilder = new CheckTcaTypeBuilder();
+            } else {
+                $tcaTypeBuilder = new DefaultTcaTypeBuilder();
+            }
+            array_push(
+                $configLines,
+                ...explode(chr(10), $tcaTypeBuilder->getFileContent($columnNode))
             );
-            array_push($columnLines, ...explode(chr(10), $definition));
         }
 
-        return $columnLines;
+        return $configLines;
     }
 
     private function getTemplate(): string
@@ -207,19 +204,6 @@ return [
 {{COLUMNS}}
     ],
 ];
-EOT;
-    }
-
-    private function getTemplateForColumn(): string
-    {
-        return <<<'EOT'
-'{{COLUMN_NAME}}' => [
-    'exclude' => true,
-    'label' => '{{COLUMN_LABEL}}',
-    'config' => [
-        'type' => '{{COLUMN_TYPE}}',
-    ],
-],
 EOT;
     }
 }

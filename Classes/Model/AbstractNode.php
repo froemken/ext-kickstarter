@@ -16,7 +16,6 @@ abstract class AbstractNode
     public function __construct(
         private readonly int $id,
         private readonly string $type,
-        private readonly ?string $title,
         private readonly \SplObjectStorage $inputs,
         private readonly \SplObjectStorage $outputs,
         private readonly array $properties,

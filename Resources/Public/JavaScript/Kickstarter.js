@@ -66,16 +66,16 @@ class Extension extends LiteGraph.LGraphNode {
     }
 
     // Inform tcaTable nodes to update the tablename
-    updateTcaTableName = function () {
-        const tcaTableNodes = this.graph.findNodesByType('Tca/Table');
-        if (tcaTableNodes && tcaTableNodes.length > 0) {
-            tcaTableNodes.forEach(function (tcaTableNode) {
-                const slotId = tcaTableNode.findInputSlot("extbaseRepository");
-                const linkId = tcaTableNode.inputs[slotId].link;
-                const link = tcaTableNode.graph.links[linkId];
-                tcaTableNode.updateTableName(link.origin_id, link.target_id);
-            })
-        }
+    updateTcaTableName = () => {
+        const tcaTableNodes = this.graph.findNodesByType?.('Tca/Table');
+        tcaTableNodes?.forEach(tcaTableNode => {
+            const slotId = tcaTableNode.findInputSlot?.("extbaseRepository");
+            const linkId = tcaTableNode.inputs?.[slotId]?.link;
+            if (linkId !== null && linkId !== undefined && linkId >= 0) {
+                const {origin_id, target_id} = tcaTableNode.graph.links?.[linkId] || {};
+                tcaTableNode.updateTableName(origin_id, target_id);
+            }
+        });
     }
 }
 
@@ -130,7 +130,7 @@ class TcaTable extends LiteGraph.LGraphNode {
 
     onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
         if (propertyName === "tableName") {
-            this.properties.repositoryName = newPropertyValue.toLowerCase();
+            this.properties.tableName = newPropertyValue.toLowerCase();
             return true;
         }
     }
@@ -139,6 +139,18 @@ class TcaTable extends LiteGraph.LGraphNode {
     onConnectionsChange = function (connectionType, targetSlot, isConnected, linkInfo, input) {
         if (connectionType === LiteGraph.INPUT) {
             this.updateTableName(linkInfo.origin_id, linkInfo.target_id);
+        }
+    }
+
+    onConnectInput = function (inputIndex, outputType, outputSlot, outputNode, outputIndex) {
+        if (outputNode.outputs
+            && outputNode.outputs.length >= 1
+            && outputNode.outputs[0]
+            && outputNode.outputs[0].links
+            && outputNode.outputs[0].links.length >= 1
+        ) {
+            alert('It is not possible to connect multiple table nodes with an extbase repository');
+            return false;
         }
     }
 
@@ -157,6 +169,25 @@ class TcaTable extends LiteGraph.LGraphNode {
 
 LiteGraph.registerNodeType("Tca/Table", TcaTable);
 
+class TcaTypeCategory extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Category";
+
+        this.addInput("tcaTable", "TcaTableColumns");
+
+        this.properties = {
+            columnName: "default",
+            label: "Default",
+            description: "",
+            modelProperty: false,
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/Type/Category", TcaTypeCategory);
+
 class TcaTypeCheck extends LiteGraph.LGraphNode {
     constructor() {
         super();
@@ -164,9 +195,9 @@ class TcaTypeCheck extends LiteGraph.LGraphNode {
         this.title = "TCA Checkbox";
 
         this.addInput("tcaTable", "TcaTableColumns");
+        this.addOutput("tcaSelectItems", "TcaSelectItems");
 
         this.properties = {
-            tcaType: "check",
             columnName: "default",
             label: "Default",
             description: "",
@@ -186,7 +217,6 @@ class TcaTypeColor extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "color",
             columnName: "default",
             label: "Default",
             description: "",
@@ -205,7 +235,6 @@ class TcaTypeDatetime extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "datetime",
             columnName: "default",
             label: "Default",
             description: "",
@@ -225,7 +254,6 @@ class TcaTypeEmail extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "email",
             columnName: "default",
             label: "Default",
             description: "",
@@ -245,7 +273,6 @@ class TcaTypeFile extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "file",
             columnName: "default",
             label: "Default",
             description: "",
@@ -264,7 +291,6 @@ class TcaTypeFolder extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "folder",
             columnName: "default",
             label: "Default",
             description: "",
@@ -283,7 +309,6 @@ class TcaTypeGroup extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "group",
             columnName: "default",
             label: "Default",
             description: "",
@@ -303,7 +328,6 @@ class TcaTypeInline extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "inline",
             columnName: "default",
             label: "Default",
             description: "",
@@ -323,7 +347,6 @@ class TcaTypeInput extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "input",
             columnName: "default",
             label: "Default",
             description: "",
@@ -343,7 +366,6 @@ class TcaTypeLink extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "link",
             columnName: "default",
             label: "Default",
             description: "",
@@ -362,7 +384,6 @@ class TcaTypeNone extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "none",
             columnName: "default",
             label: "Default",
             description: "",
@@ -381,7 +402,6 @@ class TcaTypeNumber extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "number",
             columnName: "default",
             label: "Default",
             description: "",
@@ -401,7 +421,6 @@ class TcaTypePassthrough extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "passthrough",
             columnName: "default",
             label: "Default",
             description: "",
@@ -420,7 +439,6 @@ class TcaTypePassword extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "password",
             columnName: "default",
             label: "Default",
             description: "",
@@ -439,7 +457,6 @@ class TcaTypeRadio extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "radio",
             columnName: "default",
             label: "Default",
             description: "",
@@ -459,7 +476,6 @@ class TcaTypeSelect extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "select",
             columnName: "default",
             label: "Default",
             description: "",
@@ -479,7 +495,6 @@ class TcaTypeSlug extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "slug",
             columnName: "default",
             label: "Default",
             description: "",
@@ -498,7 +513,6 @@ class TcaTypeText extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "text",
             columnName: "default",
             label: "Default",
             description: "",
@@ -518,7 +532,6 @@ class TcaTypeUser extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "user",
             columnName: "default",
             label: "Default",
             description: "",
@@ -537,7 +550,6 @@ class TcaTypeUuid extends LiteGraph.LGraphNode {
         this.addInput("tcaTable", "TcaTableColumns");
 
         this.properties = {
-            tcaType: "uuid",
             columnName: "default",
             label: "Default",
             description: "",
@@ -546,6 +558,23 @@ class TcaTypeUuid extends LiteGraph.LGraphNode {
 }
 
 LiteGraph.registerNodeType("Tca/Type/Uuid", TcaTypeUuid);
+
+class TcaSelectItem extends LiteGraph.LGraphNode {
+    constructor() {
+        super();
+
+        this.title = "TCA Select Item";
+
+        this.addInput("tcaCheckSelect", "TcaSelectItems");
+
+        this.properties = {
+            label: "label",
+            value: "valuedefault",
+        };
+    }
+}
+
+LiteGraph.registerNodeType("Tca/SelectItem", TcaSelectItem);
 
 class ExtbasePlugin extends LiteGraph.LGraphNode {
     pluginTypes = {
@@ -722,16 +751,16 @@ class ExtbaseRepository extends LiteGraph.LGraphNode {
     }
 
     // Inform tcaTable nodes to update the tablename
-    updateTcaTableName = function () {
-        const tcaTableNodes = this.graph.findNodesByType('Tca/Table');
-        if (tcaTableNodes && tcaTableNodes.length > 0) {
-            tcaTableNodes.forEach(function (tcaTableNode) {
-                const slotId = tcaTableNode.findInputSlot("extbaseRepository");
-                const linkId = tcaTableNode.inputs[slotId].link;
-                const link = tcaTableNode.graph.links[linkId];
-                tcaTableNode.updateTableName(link.origin_id, link.target_id);
-            })
-        }
+    updateTcaTableName = () => {
+        const tcaTableNodes = this.graph.findNodesByType?.('Tca/Table');
+        tcaTableNodes?.forEach(tcaTableNode => {
+            const slotId = tcaTableNode.findInputSlot?.("extbaseRepository");
+            const linkId = tcaTableNode.inputs?.[slotId]?.link;
+            if (linkId !== null && linkId !== undefined && linkId >= 0) {
+                const {origin_id, target_id} = tcaTableNode.graph.links?.[linkId] || {};
+                tcaTableNode.updateTableName(origin_id, target_id);
+            }
+        });
     }
 }
 

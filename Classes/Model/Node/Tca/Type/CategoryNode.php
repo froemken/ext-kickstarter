@@ -13,7 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Model\Node\Tca\Type;
 
 use StefanFroemken\ExtKickstarter\Model\Node\Tca\AbstractColumnNode;
 
-class InputNode extends AbstractColumnNode
+class CategoryNode extends AbstractColumnNode
 {
-    public const TYPE = 'input';
+    public const TYPE = 'category';
 }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Model\Node\Tca;
 
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractColumnNode extends AbstractNode
 {
@@ -27,11 +28,18 @@ abstract class AbstractColumnNode extends AbstractNode
 
     public function getColumnType(): string
     {
-        return $this->getProperties()['tcaType'] ?? '';
+        return static::TYPE;
     }
 
     public function isModelProperty(): bool
     {
         return ($this->getProperties()['modelProperty'] ?? false);
+    }
+
+    public function getPropertyName(): string
+    {
+        return $this->isModelProperty()
+            ? GeneralUtility::underscoredToLowerCamelCase($this->getColumnName())
+            : '';
     }
 }

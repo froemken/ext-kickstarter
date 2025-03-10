@@ -15,4 +15,5 @@ use StefanFroemken\ExtKickstarter\Model\Node\Tca\AbstractColumnNode;
 
 class UserNode extends AbstractColumnNode
 {
+    public const TYPE = 'user';
 }

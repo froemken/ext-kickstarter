@@ -92,6 +92,20 @@ class ExtensionNode extends AbstractNode
     }
 
     /**
+     * Needed to decide, if ext_tables.sql has to be created or not
+     */
+    public function hasColumnNodes(): bool
+    {
+        foreach ($this->getTableNodes() as $tableNode) {
+            if ($tableNode->getColumnNodes()->count()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return \SplObjectStorage|PluginNode[]
      */
     public function getExtbasePluginNodes(): \SplObjectStorage

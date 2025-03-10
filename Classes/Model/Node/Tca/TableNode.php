@@ -37,4 +37,20 @@ class TableNode extends AbstractNode
     {
         return $this->graph->getLinkedOutputNodesByName($this, 'tcaColumns');
     }
+
+    /**
+     * @return \SplObjectStorage|AbstractColumnNode[]
+     */
+    public function getModelProperties(): \SplObjectStorage
+    {
+        $modelProperties = new \SplObjectStorage();
+
+        foreach ($this->getColumnNodes() as $columnNode) {
+            if ($columnNode->isModelProperty()) {
+                $modelProperties->attach($columnNode);
+            }
+        }
+
+        return $modelProperties;
+    }
 }

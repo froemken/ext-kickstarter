@@ -87,7 +87,6 @@ class KickstartController implements ControllerInterface
             $node = new $className(
                 (int)$nodeGraph['id'],
                 $nodeGraph['type'],
-                $nodeGraph['title'],
                 $inputs,
                 $outputs,
                 $properties,
