@@ -16,4 +16,9 @@ use StefanFroemken\ExtKickstarter\Model\Node\Tca\AbstractColumnNode;
 class InputNode extends AbstractColumnNode
 {
     public const TYPE = 'input';
+
+    public function useAsTableLabel(): bool
+    {
+        return (bool)($this->getProperties()['useAsTableLabel'] ?? false);
+    }
 }

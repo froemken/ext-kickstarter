@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Model\Node\Tca;
 
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
+use StefanFroemken\ExtKickstarter\Model\Node\Tca\Type\InputNode;
 
 class TableNode extends AbstractNode
 {
@@ -25,9 +26,33 @@ class TableNode extends AbstractNode
         return $this->getTableName() . '.php';
     }
 
-    public function getTableTitle(): string
+    public function getTitle(): string
     {
         return $this->getProperties()['title'] ?? '';
+    }
+
+    public function getLabel(): string
+    {
+        $tableLabel = $this->getProperties()['label'] ?? '';
+
+        // Check columns, if one is defined as useAsTableTitle
+        if ($tableLabel === '') {
+            /** @var \SplObjectStorage|InputNode[] $inputNodes */
+            $inputNodes = $this->graph->getLinkedOutputNodesByName(
+                $this,
+                'tcaColumns',
+                'Tca/Type/Input'
+            );
+
+            foreach ($inputNodes as $inputNode) {
+                if ($inputNode->useAsTableLabel()) {
+                    $tableLabel = $inputNode->getColumnName();
+                    break;
+                }
+            }
+        }
+
+        return $tableLabel;
     }
 
     /**

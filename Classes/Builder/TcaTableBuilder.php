@@ -37,6 +37,11 @@ class TcaTableBuilder implements BuilderInterface
                 continue;
             }
 
+            // Must be set, else SQL error
+            if ($tableNode->getLabel() === '') {
+                continue;
+            }
+
             $tablePath = $extPath . '/Configuration/TCA/';
             GeneralUtility::mkdir_deep($tablePath);
 
@@ -52,12 +57,14 @@ class TcaTableBuilder implements BuilderInterface
         return str_replace(
             [
                 '{{TABLE_TITLE}}',
+                '{{TABLE_LABEL}}',
                 '{{TABLE_NAME}}',
                 '{{SHOW_COLUMNS}}',
                 '{{COLUMNS}}',
             ],
             [
-                $tableNode->getTableTitle(),
+                $tableNode->getTitle(),
+                $tableNode->getLabel(),
                 $tableNode->getTableName(),
                 $this->getShowColumns($tableNode),
                 implode(chr(10), $this->wrap($this->getColumnLines($tableNode), [], [], 2)),
@@ -102,7 +109,7 @@ class TcaTableBuilder implements BuilderInterface
 return [
     'ctrl' => [
         'title' => '{{TABLE_TITLE}}',
-        'label' => 'title',
+        'label' => '{{TABLE_LABEL}}',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'versioningWS' => true,

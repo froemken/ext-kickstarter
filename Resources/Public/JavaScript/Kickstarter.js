@@ -112,6 +112,7 @@ class TcaTable extends LiteGraph.LGraphNode {
         this.properties = {
             tableName: "tx_myext_domain_model_default",
             title: "My Table",
+            label: "",
         };
 
         this.addWidget(
@@ -349,6 +350,7 @@ class TcaTypeInput extends LiteGraph.LGraphNode {
         this.properties = {
             columnName: "default",
             label: "Default",
+            useAsTableLabel: false,
             description: "",
             modelProperty: false,
         };
