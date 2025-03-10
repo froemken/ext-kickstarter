@@ -19,6 +19,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * @param iterable<ExtensionCreatorInterface> $creators
@@ -63,7 +64,7 @@ class ExtensionCommand extends Command
             ucwords(preg_replace('/_/', ' ', $extensionKey))
         );
         $description = (string)$io->ask('Please provide a short description for your extension');
-        $version = (string)$io->ask('Please provide the version for your extension', '0.0.0');
+        $version = $this->askForVersion($io);
         $category = (string)$io->choice(
             'Please provide the category for your extension',
             ['be', 'module', 'fe', 'plugin', 'misc', 'services', 'templates', 'example', 'doc', 'distribution'],
@@ -75,10 +76,10 @@ class ExtensionCommand extends Command
             'alpha'
         );
         $author = (string)$io->ask('Please enter the author name');
-        $authorEmail = (string)$io->ask('Provide the author\'s email');
+        $authorEmail = $this->askForEmail($io);
         $authorCompany = (string)$io->ask('Provide the author\'s company');
         $namespacePrefix = (string)$io->ask(
-            'Please provide a short description for your extension',
+            'Please provide the namespace prefix to use for "autoload" in composer.json',
             $this->convertComposerPackageNameToNamespacePrefix($composerPackageName),
         );
 
@@ -138,6 +139,38 @@ class ExtensionCommand extends Command
         } while (!$validComposerPackageName);
 
         return $composerPackageName;
+    }
+
+    private function askForVersion(SymfonyStyle $io): string
+    {
+        do {
+            $version = $io->ask('Please provide the version for your extension', '0.0.1');
+
+            if (!preg_match('#^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$#', $version)) {
+                $io->error('Invalid version string. The version must match a specific pattern (see: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)');
+                $validVersion = false;
+            } else {
+                $validVersion = true;
+            }
+        } while (!$validVersion);
+
+        return $version;
+    }
+
+    private function askForEmail(SymfonyStyle $io): string
+    {
+        do {
+            $email = $io->ask('Provide the author\'s email');
+
+            if (GeneralUtility::validEmail($email)) {
+                $io->error('You have entered an invalid email address.');
+                $validEmail = false;
+            } else {
+                $validEmail = true;
+            }
+        } while (!$validEmail);
+
+        return $email;
     }
 
     private function convertComposerPackageNameToNamespacePrefix(string $composerPackageName): string
