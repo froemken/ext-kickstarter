@@ -12,3 +12,10 @@ services:
   StefanFroemken\ExtKickstarter\Service\BuildExtensionService:
     arguments:
       $builders: !tagged_iterator { tag: 'ext-kickstarter.builder' }
+
+  StefanFroemken\ExtKickstarter\Command\ExtensionCommand:
+    tags:
+      - name: console.command
+        command: 'kickstart:extension'
+        description: 'Create basic file for a new TYPO3 extension.'
+        shedulable: false
