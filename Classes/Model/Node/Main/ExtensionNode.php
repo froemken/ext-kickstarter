@@ -64,6 +64,14 @@ class ExtensionNode extends AbstractNode
         return $this->getVendorName() . '\\' . $this->getExtensionName();
     }
 
+    public function getNamespaceForAutoload(): string
+    {
+        return sprintf(
+            '"%s": "Classes"',
+            $this->getVendorName() . '\\\\' . $this->getExtensionName() . '\\\\'
+        );
+    }
+
     public function getTablePrefix(): string
     {
         return 'tx_' . str_replace('_', '', $this->getExtensionKey());

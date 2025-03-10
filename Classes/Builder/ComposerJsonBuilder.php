@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Builder;
 
 use StefanFroemken\ExtKickstarter\Model\Graph;
+use StefanFroemken\ExtKickstarter\Model\Node\Main\ExtensionNode;
 
 /**
  * Get file content for composer.json
@@ -35,16 +36,27 @@ class ComposerJsonBuilder implements BuilderInterface
                 '{{NAME}}',
                 '{{DESCRIPTION}}',
                 '{{HOMEPAGE}}',
+                '{{AUTOLOAD}}',
                 '{{EXTENSION_KEY}}',
             ],
             [
                 $extensionNode->getComposerName(),
                 $extensionNode->getDescription(),
                 $extensionNode->getProperties()['homepage'] ?? '',
+                $this->getAutoload($extensionNode),
                 $extensionNode->getExtensionKey(),
             ],
             $this->getTemplate()
         );
+    }
+
+    private function getAutoload(ExtensionNode $extensionNode): string
+    {
+        if (!$extensionNode->hasClasses()) {
+            return '';
+        }
+
+        return $extensionNode->getNamespaceForAutoload();
     }
 
     private function getTemplate(): string
@@ -61,6 +73,11 @@ class ComposerJsonBuilder implements BuilderInterface
 	"homepage": "{{HOMEPAGE}}}}",
 	"require": {
 		"typo3/cms-core": "^12.4.0"
+	},
+	"autoload": {
+		"psr-4": {
+			{{AUTOLOAD}}
+		}
 	},
 	"replace": {
 		"typo3-ter/{{EXTENSION_KEY}}": "self.version"
