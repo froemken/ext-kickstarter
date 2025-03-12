@@ -20,4 +20,10 @@ services:
       - name: console.command
         command: 'kickstart:extension'
         description: 'Create basic file for a new TYPO3 extension.'
-        shedulable: false
+        schedulable: false
+  StefanFroemken\ExtKickstarter\Command\PluginCommand:
+    tags:
+      - name: console.command
+        command: 'kickstart:plugin'
+        description: 'Add a plugin to your TYPO3 extension.'
+        schedulable: false

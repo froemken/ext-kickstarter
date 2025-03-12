@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Extension;
 
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Traits\GetExtensionPathTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ExtIconCreator implements ExtensionCreatorInterface
 {
-    use GetExtensionPathTrait;
+    use ExtensionPathTrait;
 
     public function create(ExtensionInformation $extensionInformation): void
     {

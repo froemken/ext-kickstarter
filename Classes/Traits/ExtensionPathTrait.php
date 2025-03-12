@@ -14,26 +14,34 @@ namespace StefanFroemken\ExtKickstarter\Traits;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-trait GetExtensionPathTrait
+trait ExtensionPathTrait
 {
-    private function getExtensionPath(string $extensionKey, bool $removePreviousExportDirectoryIfExists = false): string
+    private function getExtensionPath(string $extensionKey): string
     {
         if ($extensionKey === '') {
             throw new \InvalidArgumentException('Extension key must not be empty', 1741623620);
         }
-        $extPath = sprintf(
-            '%s/%s/%s',
+
+        return sprintf(
+            '%s/%s/%s/',
             Environment::getPublicPath(),
             'typo3temp/ext-kickstarter',
             $extensionKey
         );
+    }
 
-        if ($removePreviousExportDirectoryIfExists && is_dir($extPath)) {
-            GeneralUtility::rmdir($extPath, true);
+    private function createExtensionPath(
+        string $extensionKey,
+        bool $removePreviousExportDirectoryIfExists = false
+    ): string {
+        $extensionPath = $this->getExtensionPath($extensionKey);
+
+        if ($removePreviousExportDirectoryIfExists && is_dir($extensionPath)) {
+            GeneralUtility::rmdir($extensionPath, true);
         }
 
-        GeneralUtility::mkdir_deep($extPath);
+        GeneralUtility::mkdir_deep($extensionPath);
 
-        return $extPath . '/';
+        return $extensionPath . '/';
     }
 }
