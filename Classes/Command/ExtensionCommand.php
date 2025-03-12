@@ -74,7 +74,7 @@ class ExtensionCommand extends Command
         );
         $state = (string)$io->choice(
             'Please choose the state of your extension',
-            ['alpha', 'beta', 'stable', 'experimental', 'test', 'obsolete', 'excludeFromUpdates'],
+            ['alpha', 'beta', 'stable', 'experimental', 'test', 'excludeFromUpdates'],
             'alpha'
         );
         $author = (string)$io->ask('Please enter the author name');
