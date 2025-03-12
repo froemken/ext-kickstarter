@@ -26,7 +26,8 @@
 	"require": {
 		"ext-pdo": "*",
 		"typo3/cms-core": "^12.4.8",
-		"nette/php-generator": "^4.1"
+		"nette/php-generator": "^4.1",
+		"nikic/php-parser": "^4.19"
 	},
 	"autoload": {
 		"psr-4": {
