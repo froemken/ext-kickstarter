@@ -152,7 +152,7 @@ class ExtensionCommand extends Command
     private function convertComposerPackageNameToNamespacePrefix(string $composerPackageName): string
     {
         return implode(
-                '\\',
+                '\\\\',
                 array_map(
                     fn($part) => str_replace(
                         ['-', '_', '.'],
@@ -161,6 +161,6 @@ class ExtensionCommand extends Command
                     ),
                     explode('/', $composerPackageName)
                 )
-            ) . '\\';
+            ) . '\\\\';
     }
 }

@@ -46,11 +46,18 @@ class ComposerJsonCreator implements ExtensionCreatorInterface
             ],
             'autoload' => [
                 'psr-4' => [
-                    $extensionInformation->getNamespacePrefix() => 'Classes/'
+                    $this->getNamespaceForAutoload($extensionInformation) => 'Classes/'
                 ]
             ]
         ];
 
         return json_encode($composerConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+
+    private function getNamespaceForAutoload(ExtensionInformation $extensionInformation): string
+    {
+        // Because of JSON_UNESCAPED_SLASHES we have to remove the escaping first.
+        // We can not remove JSON_UNESCAPED_SLASHES, else / of Classes/ will be escaped.
+        return str_replace('\\\\', '\\', $extensionInformation->getNamespacePrefix());
     }
 }
