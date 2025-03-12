@@ -14,7 +14,8 @@ namespace StefanFroemken\ExtKickstarter\Command;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Model\Node;
-use StefanFroemken\ExtKickstarter\Traits\GetExtensionPathTrait;
+use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,7 +27,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ExtensionCommand extends Command
 {
-    use GetExtensionPathTrait;
+    use AskForExtensionKeyTrait;
+    use ExtensionPathTrait;
 
     public function __construct(
         private readonly iterable $creators,
@@ -57,7 +59,7 @@ class ExtensionCommand extends Command
     private function askForExtensionInformation(SymfonyStyle $io, string $extensionKey): ExtensionInformation
     {
         // We are creating a new extension, so remove previous exports
-        $extensionPath = $this->getExtensionPath($extensionKey, true);
+        $extensionPath = $this->createExtensionPath($extensionKey, true);
         $composerPackageName = $this->askForComposerPackageName($io);
         $title = (string)$io->ask(
             'Please provide the title of your extension',
@@ -99,32 +101,6 @@ class ExtensionCommand extends Command
         );
     }
 
-    private function askForExtensionKey(SymfonyStyle $io): string
-    {
-        do {
-            $extensionKey = (string)$io->ask('Please provide the key for your extension');
-            $length = mb_strlen($extensionKey);
-
-            if ($length < 3 || $length > 30) {
-                $io->error('Extension key length must be between 3 and 30 characters');
-                $validExtensionKey = false;
-            } elseif (!preg_match('/^[a-z][a-z0-9_]*$/', $extensionKey)) {
-                $io->error('Extension key can only start with a lowercase letter and contain lowercase letters, numbers, or underscores');
-                $validExtensionKey = false;
-            } elseif (preg_match('/^[_]|[_]$/', $extensionKey)) {
-                $io->error('Extension key cannot start or end with an underscore');
-                $validExtensionKey = false;
-            } elseif (preg_match('/^(tx|user_|pages|tt_|sys_|ts_language|csh_)/', $extensionKey)) {
-                $io->error('Extension key cannot start with reserved prefixes such as tx, user_, pages, tt_, sys_, ts_language, or csh_');
-                $validExtensionKey = false;
-            } else {
-                $validExtensionKey = true;
-            }
-        } while (!$validExtensionKey);
-
-        return $extensionKey;
-    }
-
     private function askForComposerPackageName(SymfonyStyle $io): string
     {
         do {
@@ -162,7 +138,7 @@ class ExtensionCommand extends Command
         do {
             $email = $io->ask('Provide the author\'s email');
 
-            if (GeneralUtility::validEmail($email)) {
+            if (!GeneralUtility::validEmail($email)) {
                 $io->error('You have entered an invalid email address.');
                 $validEmail = false;
             } else {
