@@ -11,12 +11,14 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use PhpParser\Node;
+use PhpParser\NodeFinder;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbasePluginCreator;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
-use StefanFroemken\ExtKickstarter\Model\Node;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
+use StefanFroemken\ExtKickstarter\Traits\PhpParserStatementTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,6 +32,7 @@ class PluginCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionPathTrait;
+    use PhpParserStatementTrait;
 
     public function __construct(
         private readonly ExtbasePluginCreator $extbasePluginCreator,
@@ -77,10 +80,7 @@ class PluginCommand extends Command
             $pluginLabel = (string)$io->ask(
                 'Please provide a label for your plugin. You will see the label in the backend.',
             );
-            $pluginName = (string)$io->ask(
-                'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
-                GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
-            );
+            $pluginName = $this->askForPluginName($io, $extensionKey, $extensionName, $pluginLabel);
             $pluginType = (string)$io->choice(
                 'Which type of plugin you want to create. Plugins of type "plugin" you will find in tt_content column "list_type" while "content" based plugins you will find in column "CType"',
                 ['plugin', 'content'],
@@ -99,5 +99,63 @@ class PluginCommand extends Command
             $pluginName,
             $pluginType,
         );
+    }
+
+    private function askForPluginName(
+        SymfonyStyle $io,
+        string $extensionKey,
+        string $extensionName,
+        string $pluginLabel
+    ): string {
+        do {
+            $pluginName = (string)$io->ask(
+                'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
+                GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
+            );
+            if ($this->isPluginNameRegistered($extensionKey, $extensionName, $pluginName)) {
+                $io->error('Your given plugin name is already registered in "ext_localconf.php" of your given extension with key: ' . $extensionKey);
+                $validComposerPackageName = false;
+            } else {
+                $validComposerPackageName = true;
+            }
+        } while (!$validComposerPackageName);
+
+        return $pluginName;
+    }
+
+    private function isPluginNameRegistered(string $extensionKey, string $extensionName, string $pluginName): bool
+    {
+        $nodeFinder = new NodeFinder();
+        $file = $this->getExtensionPath($extensionKey) . 'ext_localconf.php';
+
+        // Early return, if ext_localconf.php does not exists
+        if (is_file($file) === false) {
+            return false;
+        }
+
+        $statements = $this->getParserStatementsForFile($file);
+
+        // Find all classes that extend another class
+        $matchingStatements = $nodeFinder->find($statements, function(Node $node) use ($extensionName, $pluginName) {
+            if ($node instanceof Node\Expr\StaticCall
+                && $node->class->toString() === 'ExtensionUtility'
+                && $node->name->toString() === 'configurePlugin'
+            ) {
+                $extensionNameArg = $node->args[0] instanceof Node\Arg && $node->args[0]->value instanceof Node\Scalar\String_
+                    ? $node->args[0]->value->value
+                    : '';
+
+                $pluginNameArg = $node->args[1] instanceof Node\Arg && $node->args[1]->value instanceof Node\Scalar\String_
+                    ? $node->args[1]->value->value
+                    : '';
+
+                return strtolower($extensionNameArg) === strtolower($extensionName)
+                    && strtolower($pluginNameArg) === strtolower($pluginName);
+            }
+
+            return false;
+        });
+
+        return $matchingStatements !== [];
     }
 }

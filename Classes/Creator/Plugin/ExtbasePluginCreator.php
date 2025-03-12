@@ -11,67 +11,84 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin;
 
-use Nette\PhpGenerator\Dumper;
 use PhpParser\BuilderFactory;
-use PhpParser\Error;
 use PhpParser\Node;
-use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter\Standard;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
+use StefanFroemken\ExtKickstarter\Printer\PrettyTypo3Printer;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
-use StefanFroemken\ExtKickstarter\Visitor\ExtLocalconfVisitor;
-use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+use StefanFroemken\ExtKickstarter\Traits\PhpParserStatementTrait;
 
 class ExtbasePluginCreator
 {
     use ExtensionPathTrait;
+    use PhpParserStatementTrait;
+
+    private PrettyTypo3Printer $prettyTypo3Printer;
+
+    public function __construct(
+        PrettyTypo3Printer $prettyTypo3Printer,
+    ) {
+        $this->prettyTypo3Printer = $prettyTypo3Printer;
+    }
 
     public function create(PluginInformation $pluginInformation): void
     {
+        $builderFactory = new BuilderFactory();
         $extensionPath = $this->getExtensionPath($pluginInformation->getExtensionKey());
         $targetFile = $extensionPath . 'ext_localconf.php';
-        if (is_file($targetFile)) {
-            try {
-                $parser = (new ParserFactory())->createForHostVersion();
-                $ast = $parser->parse(file_get_contents($targetFile));
-                $traverser = new NodeTraverser();
-                $traverser->addVisitor(new ExtLocalconfVisitor());
 
-                $ast = $traverser->traverse($ast);
-                // $stmts is an array of statement nodes
-            } catch (Error $e) {
-                return;
-            }
-        } else {
-            $dumper = new Dumper();
-            $dumper->indentation = '    ';
+        if (is_file($targetFile)) {
             file_put_contents(
                 $targetFile,
-                $dumper->format($this->getFileContent($pluginInformation)),
+                $this->prettyTypo3Printer->prettyPrint(
+                    $this->getAstForConfigurePlugin($pluginInformation, $builderFactory),
+                ),
+                FILE_APPEND,
+            );
+        } else {
+            $ast = [
+                $builderFactory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode(),
+            ];
+            array_push($ast, ...$this->getAstForConfigurePlugin($pluginInformation, $builderFactory));
+            file_put_contents(
+                $targetFile,
+                $this->prettyTypo3Printer->prettyPrintFile($ast),
             );
         }
     }
 
-    private function getFileContent(PluginInformation $pluginInformation): string
-    {
-        $factory = new BuilderFactory();
-        $methodConfigurePlugin = $factory->staticCall(
+    private function getAstForConfigurePlugin(
+        PluginInformation $pluginInformation,
+        BuilderFactory $builderFactory
+    ): array {
+        if ($pluginInformation->getPluginType() === 'plugin') {
+            $pluginTypeNode = new Node\Expr\ClassConstFetch(
+                new Node\Name('TYPO3\CMS\Extbase\Utility\ExtensionUtility'),
+                'PLUGIN_TYPE_PLUGIN'
+            );
+        } else {
+            $pluginTypeNode = new Node\Expr\ClassConstFetch(
+                new Node\Name('TYPO3\CMS\Extbase\Utility\ExtensionUtility'),
+                'PLUGIN_TYPE_CONTENT_ELEMENT'
+            );
+        }
+
+        $configurePluginNode = $builderFactory->staticCall(
             'ExtensionUtility',
             'configurePlugin',
             [
-                $factory->val($pluginInformation->getExtensionName()),
-                $factory->val($pluginInformation->getPluginName()),
+                $pluginInformation->getExtensionName(),
+                $pluginInformation->getPluginName(),
                 new Node\Expr\Array_([]),
+                new Node\Expr\Array_([]),
+                $pluginTypeNode,
             ]
         );
 
-        $ast = [
-            $factory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode(),
+        return [
             new Node\Stmt\Nop(),
-            new Node\Stmt\Expression($methodConfigurePlugin),
+            new Node\Stmt\Expression($configurePluginNode),
+            new Node\Stmt\Nop(),
         ];
-
-        return (new Standard())->prettyPrintFile($ast);
     }
 }
