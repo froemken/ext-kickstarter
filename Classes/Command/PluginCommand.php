@@ -13,7 +13,6 @@ namespace StefanFroemken\ExtKickstarter\Command;
 
 use PhpParser\Node;
 use PhpParser\NodeFinder;
-use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbasePluginCreator;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
@@ -25,9 +24,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * @param iterable<ExtensionCreatorInterface> $creators
- */
 class PluginCommand extends Command
 {
     use AskForExtensionKeyTrait;

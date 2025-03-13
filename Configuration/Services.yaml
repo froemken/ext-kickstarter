@@ -13,6 +13,12 @@ services:
     arguments:
       $builders: !tagged_iterator { tag: 'ext-kickstarter.builder' }
 
+  StefanFroemken\ExtKickstarter\Command\ControllerCommand:
+    tags:
+      - name: console.command
+        command: 'kickstart:controller'
+        description: 'Add a controller to your TYPO3 extension.'
+        schedulable: false
   StefanFroemken\ExtKickstarter\Command\ExtensionCommand:
     arguments:
       $creators: !tagged_iterator { tag: 'ext-kickstarter.creator.extension' }
