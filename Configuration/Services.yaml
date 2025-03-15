@@ -19,7 +19,7 @@ services:
   StefanFroemken\ExtKickstarter\Command\ControllerCommand:
     tags:
       - name: console.command
-        command: 'kickstart:controller'
+        command: 'make:controller'
         description: 'Add a controller to your TYPO3 extension.'
         schedulable: false
   StefanFroemken\ExtKickstarter\Command\ExtensionCommand:
@@ -27,12 +27,12 @@ services:
       $creators: !tagged_iterator { tag: 'ext-kickstarter.creator.extension' }
     tags:
       - name: console.command
-        command: 'kickstart:extension'
+        command: 'make:extension'
         description: 'Create basic file for a new TYPO3 extension.'
         schedulable: false
   StefanFroemken\ExtKickstarter\Command\PluginCommand:
     tags:
       - name: console.command
-        command: 'kickstart:plugin'
+        command: 'make:plugin'
         description: 'Add a plugin to your TYPO3 extension.'
         schedulable: false

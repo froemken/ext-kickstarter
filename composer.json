@@ -29,6 +29,9 @@
 		"nette/php-generator": "^4.1",
 		"nikic/php-parser": "^4.19"
 	},
+	"conflict": {
+		"b13/make": "*"
+	},
 	"autoload": {
 		"psr-4": {
 			"StefanFroemken\\ExtKickstarter\\": "Classes"
@@ -43,4 +46,4 @@
 			"extension-key": "ext_kickstarter"
 		}
 	}
-}
+},
