@@ -1,0 +1,2 @@
+# cat=basic; type=string; label=Export Directory: If not set "typo3temp/ext-kickstarter/" will be used. For composer environment we prefer "packages/"
+exportDirectory =

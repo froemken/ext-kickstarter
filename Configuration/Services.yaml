@@ -9,6 +9,9 @@ services:
     exclude:
     - '../Classes/Domain/Model/*'
 
+  StefanFroemken\ExtKickstarter\Configuration\ExtConf:
+    public: true
+
   StefanFroemken\ExtKickstarter\Service\BuildExtensionService:
     arguments:
       $builders: !tagged_iterator { tag: 'ext-kickstarter.builder' }

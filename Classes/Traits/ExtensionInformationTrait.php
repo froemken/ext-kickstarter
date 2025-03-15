@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Traits;
 
+use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -73,10 +74,13 @@ trait ExtensionInformationTrait
             throw new \InvalidArgumentException('Extension key must not be empty', 1741623620);
         }
 
+        // We are in a trait. I would try to prevent moving it into inject or constructor
+        // You will never know, from where this trait will be called ;-)
+        $extConf = GeneralUtility::makeInstance(ExtConf::class);
+
         return sprintf(
-            '%s/%s/%s/',
-            Environment::getPublicPath(),
-            'typo3temp/ext-kickstarter',
+            '%s/%s/',
+            $extConf->getExportDirectory(),
             $extensionKey
         );
     }

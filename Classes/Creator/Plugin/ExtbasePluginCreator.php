@@ -43,9 +43,9 @@ class ExtbasePluginCreator
             $fileStructure->addDeclareStructure(new DeclareStructure($this->nodeFactory->createDeclareStrictTypes()));
         }
 
-        /*$fileStructure->addUseStructure(new UseStructure(
+        $fileStructure->addUseStructure(new UseStructure(
             $this->builderFactory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode()
-        ));*/
+        ));
         $fileStructure->addExpressionStructure(new ExpressionStructure(
             $this->getExpressionForConfigurePlugin($pluginInformation)
         ));
