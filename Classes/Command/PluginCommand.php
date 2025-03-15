@@ -15,6 +15,8 @@ use PhpParser\Node;
 use PhpParser\NodeFinder;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbaseConfigurePluginCreator;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbaseRegisterPluginCreator;
+use StefanFroemken\ExtKickstarter\Creator\Plugin\NativeAddPluginCreator;
+use StefanFroemken\ExtKickstarter\Creator\Plugin\NativeAddTypoScriptCreator;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
@@ -35,6 +37,8 @@ class PluginCommand extends Command
     public function __construct(
         private readonly ExtbaseConfigurePluginCreator $extbaseConfigurePluginCreator,
         private readonly ExtbaseRegisterPluginCreator $extbaseRegisterPluginCreator,
+        private readonly NativeAddPluginCreator $nativeAddPluginCreator,
+        private readonly NativeAddTypoScriptCreator $nativeAddTypoScriptCreator,
     ) {
         parent::__construct();
     }
@@ -52,8 +56,13 @@ class PluginCommand extends Command
 
         $pluginInformation = $this->askForPluginInformation($io);
 
-        $this->extbaseConfigurePluginCreator->create($pluginInformation);
-        $this->extbaseRegisterPluginCreator->create($pluginInformation);
+        if ($pluginInformation->isExtbasePlugin()) {
+            $this->extbaseConfigurePluginCreator->create($pluginInformation);
+            $this->extbaseRegisterPluginCreator->create($pluginInformation);
+        } else {
+            $this->nativeAddPluginCreator->create($pluginInformation);
+            $this->nativeAddTypoScriptCreator->create($pluginInformation);
+        }
 
         return Command::SUCCESS;
     }
@@ -63,6 +72,7 @@ class PluginCommand extends Command
         do {
             $extensionKey = $this->askForExtensionKey($io);
             $extensionInformation = $this->getExtensionInformation($extensionKey);
+
             if (!is_dir($extensionInformation->getExtensionPath())) {
                 $io->error('Can not access extension directory. Please check extension key. Extension path: ' . $extensionInformation->getExtensionPath());
                 $validExtensionPath = false;
@@ -72,29 +82,20 @@ class PluginCommand extends Command
         } while (!$validExtensionPath);
 
         $isExtbasePlugin = $io->confirm('Do you prefer to create an extbase based plugin?');
-        if ($isExtbasePlugin) {
-            $extensionName = (string)$io->ask(
-                'Please provide the name of your extension',
-                GeneralUtility::underscoredToUpperCamelCase($extensionInformation->getExtensionKey()),
-            );
-            $pluginLabel = (string)$io->ask(
-                'Please provide a label for your plugin. You will see the label in the backend.',
-            );
-            $pluginName = $this->askForPluginName($io, $extensionInformation, $extensionName, $pluginLabel);
-            $pluginType = (string)$io->choice(
-                'Which type of plugin you want to create. Plugins of type "plugin" you will find in tt_content column "list_type" while "content" based plugins you will find in column "CType"',
-                ['plugin', 'content'],
-                'plugin'
-            );
-        } else {
-            $io->error('Implementation of plugin creation for non-extbase plugins is not yet implemented.');
-            exit(1);
-        }
+
+        $pluginLabel = (string)$io->ask(
+            'Please provide a label for your plugin. You will see the label in the backend.',
+        );
+        $pluginName = $this->askForPluginName($io, $extensionInformation, $pluginLabel);
+        $pluginType = (string)$io->choice(
+            'Which type of plugin you want to create. Plugins of type "plugin" you will find in tt_content column "list_type" while "content" based plugins you will find in column "CType"',
+            ['plugin', 'content'],
+            'plugin'
+        );
 
         return new PluginInformation(
             $extensionInformation,
             $isExtbasePlugin,
-            $extensionName,
             $pluginLabel,
             $pluginName,
             $pluginType,
@@ -104,15 +105,14 @@ class PluginCommand extends Command
     private function askForPluginName(
         SymfonyStyle $io,
         ExtensionInformation $extensionInformation,
-        string $extensionName,
-        string $pluginLabel
+        string $pluginLabel,
     ): string {
         do {
             $pluginName = (string)$io->ask(
                 'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
                 GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
             );
-            if ($this->isPluginNameRegistered($extensionInformation, $extensionName, $pluginName)) {
+            if ($this->isPluginNameRegistered($extensionInformation, $pluginName)) {
                 $io->error(sprintf(
                     '%s: %s',
                     'Your given plugin name is already registered in "ext_localconf.php" of your given extension with key',
@@ -127,13 +127,11 @@ class PluginCommand extends Command
         return $pluginName;
     }
 
-    private function isPluginNameRegistered(
-        ExtensionInformation $extensionInformation,
-        string $extensionName,
-        string $pluginName
-    ): bool {
+    private function isPluginNameRegistered(ExtensionInformation $extensionInformation, string $pluginName): bool
+    {
         $nodeFinder = new NodeFinder();
         $file = $extensionInformation->getExtensionPath() . 'ext_localconf.php';
+        $extensionName = $extensionInformation->getExtensionName();
 
         // Early return, if ext_localconf.php does not exist
         if (is_file($file) === false) {

@@ -71,7 +71,7 @@ class ExtbaseConfigurePluginCreator
             'ExtensionUtility',
             'configurePlugin',
             [
-                $pluginInformation->getExtensionName(),
+                $pluginInformation->getExtensionInformation()->getExtensionName(),
                 $pluginInformation->getPluginName(),
                 new Node\Expr\Array_([]),
                 new Node\Expr\Array_([]),

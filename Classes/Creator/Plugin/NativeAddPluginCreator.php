@@ -19,9 +19,8 @@ use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ExtbaseRegisterPluginCreator
+class NativeAddPluginCreator
 {
     use FileStructureBuilderTrait;
 
@@ -37,14 +36,7 @@ class ExtbaseRegisterPluginCreator
 
     public function create(PluginInformation $pluginInformation): void
     {
-        $overridesPath = sprintf(
-            '%s/%s/',
-            $pluginInformation->getExtensionInformation()->getExtensionPath(),
-            'Configuration/TCA/Overrides',
-        );
-        GeneralUtility::mkdir_deep($overridesPath);
-
-        $targetFile = $overridesPath . 'tt_content.php';
+        $targetFile = $pluginInformation->getExtensionInformation()->getExtensionPath() . 'ext_localconf.php';
         $fileStructure = $this->buildFileStructure($targetFile);
 
         if (!is_file($targetFile)) {
@@ -52,24 +44,48 @@ class ExtbaseRegisterPluginCreator
         }
 
         $fileStructure->addUseStructure(new UseStructure(
-            $this->builderFactory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode()
+            $this->builderFactory->use('TYPO3\CMS\Core\Utility\ExtensionManagementUtility')->getNode()
         ));
         $fileStructure->addExpressionStructure(new ExpressionStructure(
-            $this->getExpressionForRegisterPlugin($pluginInformation)
+            $this->getExpressionForAddPlugin($pluginInformation)
         ));
 
         file_put_contents($targetFile, $fileStructure->getFileContents());
     }
 
-    private function getExpressionForRegisterPlugin(PluginInformation $pluginInformation): Node\Stmt\Expression
+    private function getExpressionForAddPlugin(PluginInformation $pluginInformation): Node\Stmt\Expression
     {
+        $pluginType = 'list_type';
+        if ($pluginInformation->getPluginType() === 'content') {
+            $pluginType = 'CType';
+        }
+
+        $pluginIconPath = sprintf(
+            'EXT:%s/Resources/Public/Icons/Extension.svg',
+            $pluginInformation->getExtensionInformation()->getExtensionKey(),
+        );
+
+        // Seems to be the group within the CType selector in TYPO3 backend
+        // As that grouping is only valid for CType based plugins
+        // I change group only for that specific type
+        $group = 'default';
+        if ($pluginInformation->getPluginType() === 'content') {
+            $group = 'plugins';
+        }
+
         return new Node\Stmt\Expression($this->builderFactory->staticCall(
-            'ExtensionUtility',
-            'registerPlugin',
+            'ExtensionManagementUtility',
+            'addPlugin',
             [
-                $pluginInformation->getExtensionInformation()->getExtensionName(),
-                $pluginInformation->getPluginName(),
-                $pluginInformation->getPluginLabel(),
+                [
+                    'label' => $pluginInformation->getPluginLabel(),
+                    'value' => $pluginInformation->getPluginNamespace(),
+                    'group' => $group,
+                    'icon' => $pluginIconPath,
+                    'description' => 'Please update the description',
+                ],
+                $pluginType,
+                $pluginInformation->getExtensionInformation()->getExtensionKey(),
             ]
         ));
     }

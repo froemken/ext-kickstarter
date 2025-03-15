@@ -16,7 +16,6 @@ class PluginInformation
     public function __construct(
         private readonly ExtensionInformation $extensionInformation,
         private readonly bool $extbasePlugin,
-        private readonly string $extensionName,
         private readonly string $pluginLabel,
         private readonly string $pluginName,
         private readonly string $pluginType,
@@ -32,11 +31,6 @@ class PluginInformation
         return $this->extbasePlugin;
     }
 
-    public function getExtensionName(): string
-    {
-        return $this->extensionName;
-    }
-
     public function getPluginLabel(): string
     {
         return $this->pluginLabel;
@@ -50,5 +44,17 @@ class PluginInformation
     public function getPluginType(): string
     {
         return $this->pluginType;
+    }
+
+    /**
+     * Needed for core native plugins
+     */
+    public function getPluginNamespace(): string
+    {
+        return sprintf(
+            '%s_%s',
+            str_replace('_', '', $this->extensionInformation->getExtensionKey()),
+            strtolower($this->pluginName),
+        );
     }
 }

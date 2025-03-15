@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 class ExtensionInformation
 {
     public function __construct(
@@ -31,6 +33,11 @@ class ExtensionInformation
     public function getExtensionKey(): string
     {
         return $this->extensionKey;
+    }
+
+    public function getExtensionName(): string
+    {
+        return GeneralUtility::underscoredToUpperCamelCase($this->extensionKey);
     }
 
     public function getComposerPackageName(): string

@@ -19,9 +19,8 @@ use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ExtbaseRegisterPluginCreator
+class NativeAddTypoScriptCreator
 {
     use FileStructureBuilderTrait;
 
@@ -37,14 +36,7 @@ class ExtbaseRegisterPluginCreator
 
     public function create(PluginInformation $pluginInformation): void
     {
-        $overridesPath = sprintf(
-            '%s/%s/',
-            $pluginInformation->getExtensionInformation()->getExtensionPath(),
-            'Configuration/TCA/Overrides',
-        );
-        GeneralUtility::mkdir_deep($overridesPath);
-
-        $targetFile = $overridesPath . 'tt_content.php';
+        $targetFile = $pluginInformation->getExtensionInformation()->getExtensionPath() . 'ext_localconf.php';
         $fileStructure = $this->buildFileStructure($targetFile);
 
         if (!is_file($targetFile)) {
@@ -52,25 +44,50 @@ class ExtbaseRegisterPluginCreator
         }
 
         $fileStructure->addUseStructure(new UseStructure(
-            $this->builderFactory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode()
+            $this->builderFactory->use('TYPO3\CMS\Core\Utility\ExtensionManagementUtility')->getNode()
         ));
         $fileStructure->addExpressionStructure(new ExpressionStructure(
-            $this->getExpressionForRegisterPlugin($pluginInformation)
+            $this->getExpressionForAddTypoScript($pluginInformation)
         ));
 
         file_put_contents($targetFile, $fileStructure->getFileContents());
     }
 
-    private function getExpressionForRegisterPlugin(PluginInformation $pluginInformation): Node\Stmt\Expression
+    private function getExpressionForAddTypoScript(PluginInformation $pluginInformation): Node\Stmt\Expression
     {
-        return new Node\Stmt\Expression($this->builderFactory->staticCall(
-            'ExtensionUtility',
-            'registerPlugin',
+        $typoScriptSetup = str_replace(
             [
-                $pluginInformation->getExtensionInformation()->getExtensionName(),
-                $pluginInformation->getPluginName(),
-                $pluginInformation->getPluginLabel(),
+                '{PLUGIN_NAMESPACE}',
+                '{EXTENSION_NAMESPACE}',
+            ],
+            [
+                $pluginInformation->getPluginNamespace(),
+                $pluginInformation->getExtensionInformation()->getNamespacePrefix(),
+            ],
+            $this->getTypoScriptSetup(),
+        );
+
+        return new Node\Stmt\Expression($this->builderFactory->staticCall(
+            'ExtensionManagementUtility',
+            'addTypoScript',
+            [
+                $pluginInformation->getExtensionInformation()->getExtensionKey(),
+                'setup',
+                $typoScriptSetup,
+                'defaultContentRendering'
             ]
         ));
+    }
+
+    private function getTypoScriptSetup(): string
+    {
+        return <<<'EOT'
+plugin.tx_{PLUGIN_NAMESPACE} = USER
+plugin.tx_{PLUGIN_NAMESPACE} {
+  userFunc = {EXTENSION_NAMESPACE}Controller\MyController->doSomething
+}
+
+tt_content.{PLUGIN_NAMESPACE} < plugin.tx_{PLUGIN_NAMESPACE}
+EOT;
     }
 }
