@@ -43,6 +43,11 @@ class ComposerJsonCreator implements ExtensionCreatorInterface
                 'psr-4' => [
                     $this->getNamespaceForAutoload($extensionInformation) => 'Classes/'
                 ]
+            ],
+            'extra' => [
+                'typo3/cms' => [
+                    'extension-key' => $extensionInformation->getExtensionKey(),
+                ]
             ]
         ];
 
