@@ -13,18 +13,13 @@ namespace StefanFroemken\ExtKickstarter\Creator\Extension;
 
 use Nette\PhpGenerator\Dumper;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
 
 class ExtEmconfCreator implements ExtensionCreatorInterface
 {
-    use ExtensionPathTrait;
-
     public function create(ExtensionInformation $extensionInformation): void
     {
-        $extensionPath = $this->getExtensionPath($extensionInformation->getExtensionKey());
-
         file_put_contents(
-            $extensionPath . 'ext_emconf.php',
+            $extensionInformation->getExtensionPath() . 'ext_emconf.php',
             $this->getFileContent($extensionInformation),
         );
     }

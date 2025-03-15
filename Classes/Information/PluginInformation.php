@@ -14,7 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Information;
 class PluginInformation
 {
     public function __construct(
-        private readonly string $extensionKey,
+        private readonly ExtensionInformation $extensionInformation,
         private readonly bool $extbasePlugin,
         private readonly string $extensionName,
         private readonly string $pluginLabel,
@@ -22,9 +22,9 @@ class PluginInformation
         private readonly string $pluginType,
     ) {}
 
-    public function getExtensionKey(): string
+    public function getExtensionInformation(): ExtensionInformation
     {
-        return $this->extensionKey;
+        return $this->extensionInformation;
     }
 
     public function isExtbasePlugin(): bool

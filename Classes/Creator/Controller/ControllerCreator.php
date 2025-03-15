@@ -11,114 +11,65 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Controller;
 
-use PhpParser\Node;
-use PhpParser\Node\Name;
-use PhpParser\NodeFinder;
-use PhpParser\NodeTraverser;
-use PhpParser\PrettyPrinter\Standard;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
-use StefanFroemken\ExtKickstarter\Printer\PrettyTypo3Printer;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
-use StefanFroemken\ExtKickstarter\Traits\PhpParserStatementTrait;
-use StefanFroemken\ExtKickstarter\Visitor\ControllerVisitor;
+use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
+use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ControllerCreator
 {
-    use ExtensionPathTrait;
-    use PhpParserStatementTrait;
+    use FileStructureBuilderTrait;
+
+    private NodeFactory $nodeFactory;
+
+    public function __construct(NodeFactory $nodeFactory)
+    {
+        $this->nodeFactory = $nodeFactory;
+    }
 
     public function create(ControllerInformation $controllerInformation): void
     {
-        $extensionPath = $this->getExtensionPath($controllerInformation->getExtensionKey());
-        $controllerPath = $extensionPath . 'Classes/Controller/';
-        GeneralUtility::mkdir_deep($controllerPath);
+        GeneralUtility::mkdir_deep($controllerInformation->getControllerPath());
 
-        $targetFile = $controllerPath . $controllerInformation->getControllerFilename();
-        $standardPrinter = new Standard(['shortArraySyntax' => true]);
+        $controllerFile = $controllerInformation->getControllerFilePath();
+        $fileStructure = $this->buildFileStructure($controllerFile);
 
-        $actionMethodNameStmts = [];
-        if (is_file($targetFile)) {
-            $stmts = $this->getParserStatementsForFile($targetFile);
-            foreach ($controllerInformation->getActionMethodNames() as $actionMethodName) {
-                if (!$this->hasActionMethodName($actionMethodName, $stmts)) {
-                    $actionMethodNameStmts[] = $this->getStmtForActionMethodName($actionMethodName);
-                }
-            }
-
-            $traverser = new NodeTraverser();
-            $traverser->addVisitor(new ControllerVisitor($actionMethodNameStmts));
-            $stmts = $traverser->traverse($stmts);
-
-            file_put_contents(
-                $targetFile,
-                $standardPrinter->prettyPrintFile($stmts),
-            );
-        } else {
-            foreach ($controllerInformation->getActionMethodNames() as $actionMethodName) {
-                $actionMethodNameStmts[] = $this->getStmtForActionMethodName($actionMethodName);
-            }
-            file_put_contents(
-                $targetFile,
-                $standardPrinter->prettyPrintFile($this->getStmtsForController($actionMethodNameStmts)),
+        // Add all methods. "->add*" will NOT overwrite existing action methods
+        foreach ($controllerInformation->getActionMethodNames() as $actionMethodName) {
+            $fileStructure->addMethodStructure(
+                new MethodStructure($this->nodeFactory->createControllerActionMethod($actionMethodName))
             );
         }
+
+        if (!is_file($controllerFile)) {
+            $this->addClassNodes($fileStructure, $controllerInformation);
+        }
+
+        file_put_contents($controllerFile, $fileStructure->getFileContents());
     }
 
-    private function getStmtsForController(array $actionMethodNameStmts): array
+    private function addClassNodes(FileStructure $fileStructure, ControllerInformation $controllerInformation): void
     {
-        $declareStrictNode = new Node\Stmt\Declare_([
-            new Node\Stmt\DeclareDeclare('strict_types', new Node\Scalar\LNumber(1))
-        ]);
-
-        $namespaceNode = new Node\Stmt\Namespace_(
-            new Node\Name('StefanFroemken\BlogExample\Controller'),
-            [
-                new Node\Stmt\Use_([
-                    new Node\Stmt\UseUse(new Node\Name('Psr\Http\Message\ResponseInterface')),
-                ]),
-                new Node\Stmt\Use_([
-                    new Node\Stmt\UseUse(new Node\Name('TYPO3\CMS\Core\Http\HtmlResponse')),
-                ]),
-                new Node\Stmt\Class_(new Name('BlogExampleController'), [
-                    'stmts' => $actionMethodNameStmts,
-                ]),
-            ]
+        $fileStructure->addDeclareStructure(
+            new DeclareStructure($this->nodeFactory->createDeclareStrictTypes())
         );
-
-        return [
-            $declareStrictNode,
-            $namespaceNode,
-            new Node\Stmt\Nop(),
-        ];
-    }
-
-    private function getStmtForActionMethodName(string $actionMethodName): Node
-    {
-        return new Node\Stmt\ClassMethod(new Node\Identifier($actionMethodName), [
-            'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC,
-            'returnType' => new Node\Name('ResponseInterface'),
-            'stmts' => [
-                new Node\Stmt\Return_(
-                    new Node\Expr\New_(
-                        new Node\Name('HtmlResponse'),
-                        [
-                            new Node\Arg(new Node\Scalar\String_('Hello World!'))
-                        ]
-                    )
-                ),
-            ],
-        ]);
-    }
-
-    private function hasActionMethodName(string $actionMethodName, array $stmts): bool
-    {
-        $nodeFinder = new NodeFinder();
-
-        $matchingStatements = $nodeFinder->find($stmts, function(Node $node) use ($actionMethodName) {
-            return $node instanceof Node\Stmt\ClassMethod && $node->name->toString() === $actionMethodName;
-        });
-
-        return $matchingStatements !== [];
+        $fileStructure->addNamespaceStructure(
+            new NamespaceStructure($this->nodeFactory->createNamespace($controllerInformation->getNamespace()))
+        );
+        $fileStructure->addClassStructure(
+            new ClassStructure($this->nodeFactory->createClass($controllerInformation->getControllerName()))
+        );
+        $fileStructure->addUseStructure(
+            new UseStructure($this->nodeFactory->createUseImport('Psr\Http\Message\ResponseInterface'))
+        );
+        $fileStructure->addUseStructure(
+            new UseStructure($this->nodeFactory->createUseImport('TYPO3\CMS\Core\Http\HtmlResponse'))
+        );
     }
 }

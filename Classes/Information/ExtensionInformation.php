@@ -24,7 +24,7 @@ class ExtensionInformation
         private readonly string $author,
         private readonly string $authorEmail,
         private readonly string $authorCompany,
-        private readonly string $namespacePrefix,
+        private readonly string $namespaceForAutoload,
         private readonly string $extensionPath,
     ) {}
 
@@ -78,9 +78,20 @@ class ExtensionInformation
         return $this->authorCompany;
     }
 
+    public function getNamespaceForAutoload(): string
+    {
+        // In general "\\\\" is correct as this would result in MyVendor\\MyExt\\ normally.
+        // BUT: As we are using JSON_UNESCAPED_SLASHES while building the composer.json file
+        // the "\\\\" will be applied as it is. So, we have to remove the escaping here.
+        return str_replace('\\\\', '\\', $this->namespaceForAutoload);
+    }
+
+    /**
+     * Return a namespace prefix which you can use within your extension classes for "namespace XY"
+     */
     public function getNamespacePrefix(): string
     {
-        return $this->namespacePrefix;
+        return $this->getNamespaceForAutoload();
     }
 
     public function getExtensionPath(): string

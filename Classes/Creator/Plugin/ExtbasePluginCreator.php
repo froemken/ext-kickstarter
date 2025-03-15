@@ -14,53 +14,47 @@ namespace StefanFroemken\ExtKickstarter\Creator\Plugin;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
-use StefanFroemken\ExtKickstarter\Printer\PrettyTypo3Printer;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
-use StefanFroemken\ExtKickstarter\Traits\PhpParserStatementTrait;
+use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
+use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 
 class ExtbasePluginCreator
 {
-    use ExtensionPathTrait;
-    use PhpParserStatementTrait;
+    use FileStructureBuilderTrait;
 
-    private PrettyTypo3Printer $prettyTypo3Printer;
+    private BuilderFactory $builderFactory;
 
-    public function __construct(
-        PrettyTypo3Printer $prettyTypo3Printer,
-    ) {
-        $this->prettyTypo3Printer = $prettyTypo3Printer;
+    private NodeFactory $nodeFactory;
+
+    public function __construct(NodeFactory $nodeFactory)
+    {
+        $this->builderFactory = new BuilderFactory();
+        $this->nodeFactory = $nodeFactory;
     }
 
     public function create(PluginInformation $pluginInformation): void
     {
-        $builderFactory = new BuilderFactory();
-        $extensionPath = $this->getExtensionPath($pluginInformation->getExtensionKey());
-        $targetFile = $extensionPath . 'ext_localconf.php';
+        $targetFile = $pluginInformation->getExtensionInformation()->getExtensionPath() . 'ext_localconf.php';
+        $fileStructure = $this->buildFileStructure($targetFile);
 
-        if (is_file($targetFile)) {
-            file_put_contents(
-                $targetFile,
-                $this->prettyTypo3Printer->prettyPrint(
-                    $this->getAstForConfigurePlugin($pluginInformation, $builderFactory),
-                ),
-                FILE_APPEND,
-            );
-        } else {
-            $ast = [
-                $builderFactory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode(),
-            ];
-            array_push($ast, ...$this->getAstForConfigurePlugin($pluginInformation, $builderFactory));
-            file_put_contents(
-                $targetFile,
-                $this->prettyTypo3Printer->prettyPrintFile($ast),
-            );
+        if (!is_file($targetFile)) {
+            $fileStructure->addDeclareStructure(new DeclareStructure($this->nodeFactory->createDeclareStrictTypes()));
         }
+
+        /*$fileStructure->addUseStructure(new UseStructure(
+            $this->builderFactory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode()
+        ));*/
+        $fileStructure->addExpressionStructure(new ExpressionStructure(
+            $this->getExpressionForConfigurePlugin($pluginInformation)
+        ));
+
+        file_put_contents($targetFile, $fileStructure->getFileContents());
     }
 
-    private function getAstForConfigurePlugin(
-        PluginInformation $pluginInformation,
-        BuilderFactory $builderFactory
-    ): array {
+    private function getExpressionForConfigurePlugin(PluginInformation $pluginInformation): Node\Stmt\Expression
+    {
         if ($pluginInformation->getPluginType() === 'plugin') {
             $pluginTypeNode = new Node\Expr\ClassConstFetch(
                 new Node\Name('TYPO3\CMS\Extbase\Utility\ExtensionUtility'),
@@ -73,7 +67,7 @@ class ExtbasePluginCreator
             );
         }
 
-        $configurePluginNode = $builderFactory->staticCall(
+        return new Node\Stmt\Expression($this->builderFactory->staticCall(
             'ExtensionUtility',
             'configurePlugin',
             [
@@ -83,12 +77,6 @@ class ExtbasePluginCreator
                 new Node\Expr\Array_([]),
                 $pluginTypeNode,
             ]
-        );
-
-        return [
-            new Node\Stmt\Nop(),
-            new Node\Stmt\Expression($configurePluginNode),
-            new Node\Stmt\Nop(),
-        ];
+        ));
     }
 }

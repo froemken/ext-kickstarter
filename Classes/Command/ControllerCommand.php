@@ -15,7 +15,7 @@ use StefanFroemken\ExtKickstarter\Creator\Controller\ControllerCreator;
 use StefanFroemken\ExtKickstarter\Creator\Controller\ExtbaseControllerCreator;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,7 +24,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ControllerCommand extends Command
 {
     use AskForExtensionKeyTrait;
-    use ExtensionPathTrait;
+    use ExtensionInformationTrait;
 
     public function __construct(
         private readonly ExtbaseControllerCreator $extbaseControllerCreator,
@@ -58,11 +58,15 @@ class ControllerCommand extends Command
     private function askForControllerInformation(SymfonyStyle $io): ControllerInformation
     {
         do {
-            $extensionKey = $this->askForExtensionKey($io);
-            $extensionPath = $this->getExtensionPath($extensionKey);
+            $extensionInformation = $this->getExtensionInformation($this->askForExtensionKey($io));
 
-            if (!is_dir($extensionPath)) {
-                $io->error('Can not access extension directory. Please check extension key. Extension path: ' . $extensionPath);
+            if (!is_dir($extensionInformation->getExtensionPath())) {
+                $io->error(sprintf(
+                    '%s: %s',
+                        'Can not access extension directory. Please check extension key. Extension path',
+                        $extensionInformation->getExtensionPath(),
+                    )
+                );
                 $validExtensionPath = false;
             } else {
                 $validExtensionPath = true;
@@ -70,7 +74,7 @@ class ControllerCommand extends Command
         } while (!$validExtensionPath);
 
         return new ControllerInformation(
-            $extensionKey,
+            $extensionInformation,
             $io->confirm('Do you prefer to create an extbase based controller?'),
             $this->askForControllerName($io),
             $this->askForActionMethodNames($io),

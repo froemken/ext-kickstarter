@@ -12,18 +12,13 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Extension;
 
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
 
 class ComposerJsonCreator implements ExtensionCreatorInterface
 {
-    use ExtensionPathTrait;
-
     public function create(ExtensionInformation $extensionInformation): void
     {
-        $extensionPath = $this->getExtensionPath($extensionInformation->getExtensionKey());
-
         file_put_contents(
-            $extensionPath . 'composer.json',
+            $extensionInformation->getExtensionPath() . 'composer.json',
             $this->getFileContent($extensionInformation),
         );
     }

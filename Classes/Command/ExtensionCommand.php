@@ -15,7 +15,7 @@ use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Model\Node;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,7 +28,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ExtensionCommand extends Command
 {
     use AskForExtensionKeyTrait;
-    use ExtensionPathTrait;
+    use ExtensionInformationTrait;
 
     public function __construct(
         private readonly iterable $creators,
@@ -58,7 +58,7 @@ class ExtensionCommand extends Command
 
     private function askForExtensionInformation(SymfonyStyle $io, string $extensionKey): ExtensionInformation
     {
-        // We are creating a new extension, so remove previous exports
+        // We are creating a new extension, so remove previous exported extension
         $extensionPath = $this->createExtensionPath($extensionKey, true);
         $composerPackageName = $this->askForComposerPackageName($io);
         $title = (string)$io->ask(

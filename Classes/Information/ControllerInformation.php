@@ -13,16 +13,18 @@ namespace StefanFroemken\ExtKickstarter\Information;
 
 class ControllerInformation
 {
+    private const CONTROLLER_PATH = 'Classes/Controller/';
+
     public function __construct(
-        private readonly string $extensionKey,
+        private readonly ExtensionInformation $extensionInformation,
         private readonly bool $isExtbaseController,
         private readonly string $controllerName,
         private readonly array $actionMethodNames,
     ) {}
 
-    public function getExtensionKey(): string
+    public function getExtensionInformation(): ExtensionInformation
     {
-        return $this->extensionKey;
+        return $this->extensionInformation;
     }
 
     public function isExtbaseController(): bool
@@ -38,6 +40,21 @@ class ControllerInformation
     public function getControllerFilename(): string
     {
         return $this->controllerName . '.php';
+    }
+
+    public function getControllerFilePath(): string
+    {
+        return $this->getControllerPath() . $this->getControllerFilename();
+    }
+
+    public function getControllerPath(): string
+    {
+        return $this->extensionInformation->getExtensionPath() . self::CONTROLLER_PATH;
+    }
+
+    public function getNamespace(): string
+    {
+        return $this->extensionInformation->getNamespacePrefix() . 'Controller';
     }
 
     public function getActionMethodNames(): array

@@ -14,10 +14,11 @@ namespace StefanFroemken\ExtKickstarter\Command;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbasePluginCreator;
+use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionPathTrait;
-use StefanFroemken\ExtKickstarter\Traits\PhpParserStatementTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,8 +28,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class PluginCommand extends Command
 {
     use AskForExtensionKeyTrait;
-    use ExtensionPathTrait;
-    use PhpParserStatementTrait;
+    use ExtensionInformationTrait;
+    use FileStructureBuilderTrait;
 
     public function __construct(
         private readonly ExtbasePluginCreator $extbasePluginCreator,
@@ -58,9 +59,9 @@ class PluginCommand extends Command
     {
         do {
             $extensionKey = $this->askForExtensionKey($io);
-            $extensionPath = $this->getExtensionPath($extensionKey);
-            if (!is_dir($extensionPath)) {
-                $io->error('Can not access extension directory. Please check extension key. Extension path: ' . $extensionPath);
+            $extensionInformation = $this->getExtensionInformation($extensionKey);
+            if (!is_dir($extensionInformation->getExtensionPath())) {
+                $io->error('Can not access extension directory. Please check extension key. Extension path: ' . $extensionInformation->getExtensionPath());
                 $validExtensionPath = false;
             } else {
                 $validExtensionPath = true;
@@ -71,12 +72,12 @@ class PluginCommand extends Command
         if ($isExtbasePlugin) {
             $extensionName = (string)$io->ask(
                 'Please provide the name of your extension',
-                GeneralUtility::underscoredToUpperCamelCase($extensionKey),
+                GeneralUtility::underscoredToUpperCamelCase($extensionInformation->getExtensionKey()),
             );
             $pluginLabel = (string)$io->ask(
                 'Please provide a label for your plugin. You will see the label in the backend.',
             );
-            $pluginName = $this->askForPluginName($io, $extensionKey, $extensionName, $pluginLabel);
+            $pluginName = $this->askForPluginName($io, $extensionInformation, $extensionName, $pluginLabel);
             $pluginType = (string)$io->choice(
                 'Which type of plugin you want to create. Plugins of type "plugin" you will find in tt_content column "list_type" while "content" based plugins you will find in column "CType"',
                 ['plugin', 'content'],
@@ -88,7 +89,7 @@ class PluginCommand extends Command
         }
 
         return new PluginInformation(
-            $extensionKey,
+            $extensionInformation,
             $isExtbasePlugin,
             $extensionName,
             $pluginLabel,
@@ -99,7 +100,7 @@ class PluginCommand extends Command
 
     private function askForPluginName(
         SymfonyStyle $io,
-        string $extensionKey,
+        ExtensionInformation $extensionInformation,
         string $extensionName,
         string $pluginLabel
     ): string {
@@ -108,8 +109,12 @@ class PluginCommand extends Command
                 'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
                 GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
             );
-            if ($this->isPluginNameRegistered($extensionKey, $extensionName, $pluginName)) {
-                $io->error('Your given plugin name is already registered in "ext_localconf.php" of your given extension with key: ' . $extensionKey);
+            if ($this->isPluginNameRegistered($extensionInformation, $extensionName, $pluginName)) {
+                $io->error(sprintf(
+                    '%s: %s',
+                    'Your given plugin name is already registered in "ext_localconf.php" of your given extension with key',
+                    $extensionInformation->getExtensionKey()
+                ));
                 $validComposerPackageName = false;
             } else {
                 $validComposerPackageName = true;
@@ -119,20 +124,23 @@ class PluginCommand extends Command
         return $pluginName;
     }
 
-    private function isPluginNameRegistered(string $extensionKey, string $extensionName, string $pluginName): bool
-    {
+    private function isPluginNameRegistered(
+        ExtensionInformation $extensionInformation,
+        string $extensionName,
+        string $pluginName
+    ): bool {
         $nodeFinder = new NodeFinder();
-        $file = $this->getExtensionPath($extensionKey) . 'ext_localconf.php';
+        $file = $extensionInformation->getExtensionPath() . 'ext_localconf.php';
 
-        // Early return, if ext_localconf.php does not exists
+        // Early return, if ext_localconf.php does not exist
         if (is_file($file) === false) {
             return false;
         }
 
-        $statements = $this->getParserStatementsForFile($file);
+        $fileStructure = $this->buildFileStructure($file);
 
         // Find all classes that extend another class
-        $matchingStatements = $nodeFinder->find($statements, function(Node $node) use ($extensionName, $pluginName) {
+        $matchingStatements = $nodeFinder->find($fileStructure->getExpressionStructures()->getStmts(), function(Node $node) use ($extensionName, $pluginName) {
             if ($node instanceof Node\Expr\StaticCall
                 && $node->class->toString() === 'ExtensionUtility'
                 && $node->name->toString() === 'configurePlugin'
