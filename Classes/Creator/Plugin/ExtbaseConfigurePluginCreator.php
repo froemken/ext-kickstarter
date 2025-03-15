@@ -20,7 +20,7 @@ use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 
-class ExtbasePluginCreator
+class ExtbaseConfigurePluginCreator
 {
     use FileStructureBuilderTrait;
 

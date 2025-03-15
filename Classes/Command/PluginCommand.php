@@ -13,7 +13,8 @@ namespace StefanFroemken\ExtKickstarter\Command;
 
 use PhpParser\Node;
 use PhpParser\NodeFinder;
-use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbasePluginCreator;
+use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbaseConfigurePluginCreator;
+use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbaseRegisterPluginCreator;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
@@ -32,7 +33,8 @@ class PluginCommand extends Command
     use FileStructureBuilderTrait;
 
     public function __construct(
-        private readonly ExtbasePluginCreator $extbasePluginCreator,
+        private readonly ExtbaseConfigurePluginCreator $extbaseConfigurePluginCreator,
+        private readonly ExtbaseRegisterPluginCreator $extbaseRegisterPluginCreator,
     ) {
         parent::__construct();
     }
@@ -50,7 +52,8 @@ class PluginCommand extends Command
 
         $pluginInformation = $this->askForPluginInformation($io);
 
-        $this->extbasePluginCreator->create($pluginInformation);
+        $this->extbaseConfigurePluginCreator->create($pluginInformation);
+        $this->extbaseRegisterPluginCreator->create($pluginInformation);
 
         return Command::SUCCESS;
     }
