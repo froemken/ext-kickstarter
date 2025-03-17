@@ -14,6 +14,7 @@
     - Generate controllers
     - Register plugins
     - Extend existing controllers with additional actions.
+    - Create basic TCA for tables
 
 ---
 
@@ -79,6 +80,17 @@ DDEV:
 
 ```bash
 ddev typo3 make:plugin
+```
+
+### Create a TCA table
+
+```bash
+vendor/bin/typo3 make:table
+```
+DDEV:
+
+```bash
+ddev typo3 make:table
 ```
 
 ---
