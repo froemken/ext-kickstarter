@@ -23,6 +23,7 @@ use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -43,6 +44,15 @@ class PluginCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addArgument(
+            'extension_key',
+            InputArgument::OPTIONAL,
+            'Provide the extension key you want to extend.',
+        );
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -54,7 +64,7 @@ class PluginCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $pluginInformation = $this->askForPluginInformation($io);
+        $pluginInformation = $this->askForPluginInformation($io, $input);
 
         if ($pluginInformation->isExtbasePlugin()) {
             $this->extbaseConfigurePluginCreator->create($pluginInformation);
@@ -67,10 +77,10 @@ class PluginCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function askForPluginInformation(SymfonyStyle $io): PluginInformation
+    private function askForPluginInformation(SymfonyStyle $io, InputInterface $input): PluginInformation
     {
         do {
-            $extensionKey = $this->askForExtensionKey($io);
+            $extensionKey = $this->askForExtensionKey($io, $input->getArgument('extension_key'));
             $extensionInformation = $this->getExtensionInformation($extensionKey);
 
             if (!is_dir($extensionInformation->getExtensionPath())) {

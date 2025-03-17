@@ -17,6 +17,7 @@ use StefanFroemken\ExtKickstarter\Information\TableInformation;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -32,6 +33,15 @@ class TableCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addArgument(
+            'extension_key',
+            InputArgument::OPTIONAL,
+            'Provide the extension key you want to extend.',
+        );
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -43,17 +53,19 @@ class TableCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $tableInformation = $this->askForTableInformation($io);
+        $tableInformation = $this->askForTableInformation($io, $input);
 
         $this->tcaTableCreator->create($tableInformation);
 
         return Command::SUCCESS;
     }
 
-    private function askForTableInformation(SymfonyStyle $io): TableInformation
+    private function askForTableInformation(SymfonyStyle $io, InputInterface $input): TableInformation
     {
         do {
-            $extensionInformation = $this->getExtensionInformation($this->askForExtensionKey($io));
+            $extensionInformation = $this->getExtensionInformation(
+                $this->askForExtensionKey($io, $input->getArgument('extension_key'))
+            );
 
             if (!is_dir($extensionInformation->getExtensionPath())) {
                 $io->error(sprintf(

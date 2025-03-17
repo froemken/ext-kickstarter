@@ -15,10 +15,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 trait AskForExtensionKeyTrait
 {
-    private function askForExtensionKey(SymfonyStyle $io): string
+    private function askForExtensionKey(SymfonyStyle $io, string $defaultExtensionKey = null): string
     {
         do {
-            $extensionKey = (string)$io->ask('Please provide the key for your extension');
+            $extensionKey = (string)$io->ask('Please provide the key for your extension', $defaultExtensionKey);
             $length = mb_strlen($extensionKey);
 
             if ($length < 3 || $length > 30) {

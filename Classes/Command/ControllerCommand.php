@@ -17,6 +17,7 @@ use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -33,6 +34,15 @@ class ControllerCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addArgument(
+            'extension_key',
+            InputArgument::OPTIONAL,
+            'Provide the extension key you want to extend.',
+        );
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -44,7 +54,7 @@ class ControllerCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $controllerInformation = $this->askForControllerInformation($io);
+        $controllerInformation = $this->askForControllerInformation($io, $input);
 
         if ($controllerInformation->isExtbaseController() === true) {
             $this->extbaseControllerCreator->create($controllerInformation);
@@ -55,10 +65,12 @@ class ControllerCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function askForControllerInformation(SymfonyStyle $io): ControllerInformation
+    private function askForControllerInformation(SymfonyStyle $io, InputInterface $input): ControllerInformation
     {
         do {
-            $extensionInformation = $this->getExtensionInformation($this->askForExtensionKey($io));
+            $extensionInformation = $this->getExtensionInformation(
+                $this->askForExtensionKey($io, $input->getArgument('extension_key'))
+            );
 
             if (!is_dir($extensionInformation->getExtensionPath())) {
                 $io->error(sprintf(

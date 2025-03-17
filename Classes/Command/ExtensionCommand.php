@@ -17,6 +17,7 @@ use StefanFroemken\ExtKickstarter\Model\Node;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -36,6 +37,15 @@ class ExtensionCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addArgument(
+            'extension_key',
+            InputArgument::OPTIONAL,
+            'Provide the extension key you want to extend.',
+        );
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -47,7 +57,10 @@ class ExtensionCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $extensionInformation = $this->askForExtensionInformation($io, $this->askForExtensionKey($io));
+        $extensionInformation = $this->askForExtensionInformation(
+            $io,
+            $this->askForExtensionKey($io, $input->getArgument('extension_key'))
+        );
 
         foreach ($this->creators as $creator) {
             $creator->create($extensionInformation);
