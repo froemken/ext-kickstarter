@@ -55,6 +55,8 @@ final class FileVisitor extends NodeVisitorAbstract
             $this->fileStructure->addFunctionStructure(new Structure\FunctionStructure($node));
         } elseif ($node instanceof Node\Stmt\Expression) {
             $this->fileStructure->addExpressionStructure(new Structure\ExpressionStructure($node));
+        } elseif ($node instanceof Node\Stmt\Return_) {
+            $this->fileStructure->addReturnStructure(new Structure\ReturnStructure($node));
         }
     }
 

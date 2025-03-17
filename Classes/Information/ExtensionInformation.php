@@ -101,6 +101,14 @@ class ExtensionInformation
         return $this->getNamespaceForAutoload();
     }
 
+    public function getTableNamePrefix(): string
+    {
+        return sprintf(
+            'tx_%s_domain_model_',
+            str_replace('_', '', $this->getExtensionKey()),
+        );
+    }
+
     public function getExtensionPath(): string
     {
         return $this->extensionPath;

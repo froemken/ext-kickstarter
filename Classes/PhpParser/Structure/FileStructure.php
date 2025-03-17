@@ -43,6 +43,8 @@ class FileStructure
 
     private StructureObjectStorage $expressionStructures;
 
+    private StructureObjectStorage $returnStructures;
+
     public function __construct()
     {
         $this->printer = new PrettyTypo3Printer([
@@ -59,6 +61,7 @@ class FileStructure
         $this->propertyStructures = new StructureObjectStorage();
         $this->functionStructures = new StructureObjectStorage();
         $this->expressionStructures = new StructureObjectStorage();
+        $this->returnStructures = new StructureObjectStorage();
     }
 
     /**
@@ -212,6 +215,19 @@ class FileStructure
     }
 
     /**
+     * @return StructureObjectStorage<ReturnStructure>
+     */
+    public function getReturnStructures(): StructureObjectStorage
+    {
+        return $this->returnStructures;
+    }
+
+    public function addReturnStructure(ReturnStructure $returnStructure): void
+    {
+        $this->returnStructures->attach($returnStructure);
+    }
+
+    /**
      * Collect all registered nodes in specific order and render/print new file content
      */
     public function getFileContents(): string
@@ -258,6 +274,7 @@ class FileStructure
             array_push($stmts, ...$this->getUseStructures()->getStmts());
             array_push($stmts, ...$this->getExpressionStructures()->getStmts());
             array_push($stmts, ...$this->getFunctionStructures()->getStmts());
+            array_push($stmts, ...$this->getReturnStructures()->getStmts());
         }
 
         return $stmts;

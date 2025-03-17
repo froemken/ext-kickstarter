@@ -34,28 +34,46 @@ class PrettyTypo3Printer extends Standard
      */
     protected function pCommaSeparated(array $nodes): string
     {
-        $multiline = false;
-        $maxLineLength = 100;
-
-        if ($nodes !== []) {
-            if ($this->getLineLengthOfNodes($nodes) > $maxLineLength) {
-                $multiline = true;
-            }
-
-            // For existing code, we should check, if arguments are already in multiline. Keep it.
-            $startLine = reset($nodes)->getAttribute('startLine');
-            $endLine = end($nodes)->getAttribute('endLine');
-            if ($startLine !== $endLine) {
-                $multiline = true;
-            }
-        }
-
-        if ($multiline) {
+        if ($this->shouldRenderNodesInMultiline($nodes)) {
             // We have to manually add trailing NL. Only leading NL will be done within this method. Don't know why.
             return $this->pCommaSeparatedMultiline($nodes, true) . $this->nl;
         }
 
         return $this->pImplode($nodes, ', ');
+    }
+
+    private function shouldRenderNodesInMultiline(array $nodes): bool
+    {
+
+        // Early return on empty nodes
+        if ($nodes === []) {
+            return false;
+        }
+
+        // If arguments of method/function arguments is too long activate multiline
+        $maxLineLength = 100;
+        if ($this->getLineLengthOfNodes($nodes) > $maxLineLength) {
+            return true;
+        }
+
+        // If all nodes are of type Array_ we try to render TCA, which is a long array. Yes: multiline
+        $allNodesOfTypeArray = true;
+        foreach ($nodes as $node) {
+            if (!$node instanceof Node\Expr\ArrayItem) {
+                $allNodesOfTypeArray = false;
+                break;
+            }
+        }
+
+        if ($allNodesOfTypeArray) {
+            return true;
+        }
+
+        // For existing code, we should check, if arguments are already in multiline. If yes, keep it.
+        $startLine = reset($nodes)->getAttribute('startLine');
+        $endLine = end($nodes)->getAttribute('endLine');
+
+        return $startLine !== $endLine;
     }
 
     /**
