@@ -83,7 +83,7 @@ class ExtTablesSqlBuilder implements BuilderInterface
     {
         $columnLines = [];
         foreach ($columnNodes as $columnNode) {
-            $columnInformation = $this->tcaSchemaService->getColumnInformationBasedOnTca(
+            $columnInformation = $this->tcaSchemaService->getExtTablesSqlInformationBasedOnTca(
                 $columnNode->getColumnType(),
                 $columnNode->getProperties()
             );

@@ -93,7 +93,7 @@ class DomainModelBuilder implements BuilderInterface
     {
         $propertyLines = [];
         foreach ($columnNodes as $columnNode) {
-            $columnInformation = $this->tcaSchemaService->getColumnInformationBasedOnTca(
+            $columnInformation = $this->tcaSchemaService->getExtTablesSqlInformationBasedOnTca(
                 $columnNode->getColumnType(),
                 $columnNode->getProperties(),
             );
@@ -129,7 +129,7 @@ class DomainModelBuilder implements BuilderInterface
     {
         $methodLines = [];
         foreach ($columnNodes as $columnNode) {
-            $columnInformation = $this->tcaSchemaService->getColumnInformationBasedOnTca(
+            $columnInformation = $this->tcaSchemaService->getExtTablesSqlInformationBasedOnTca(
                 $columnNode->getColumnType(),
                 $columnNode->getProperties(),
             );

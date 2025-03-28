@@ -21,7 +21,6 @@ use StefanFroemken\ExtKickstarter\Information\TableInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ReturnStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
-use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaTableCreator
@@ -75,11 +74,20 @@ class TcaTableCreator
 
     private function addNewTcaColumns(array $existingTcaColumns, TableInformation $tableInformation): array
     {
+        $existingColumnNames = [];
+        foreach ($existingTcaColumns as $existingTcaColumn) {
+            $existingColumnNames[] = $existingTcaColumn->key->value;
+        }
+
         foreach ($tableInformation->getColumns() as $columnName => $columnConfiguration) {
+            if (in_array($columnName, $existingColumnNames, true)) {
+                continue;
+            }
+
             $existingTcaColumns[] = new ArrayItem($this->factory->val([
                 'exclude' => true,
-                'label' => $columnName,
-                'config' => $columnConfiguration,
+                'label' => $columnConfiguration['label'],
+                'config' => $columnConfiguration['config'],
             ]), new String_($columnName));
         }
 

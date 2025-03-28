@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Creator\Tca\ExtTablesSqlCreator;
 use StefanFroemken\ExtKickstarter\Creator\Tca\TcaTableCreator;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\TableInformation;
@@ -134,6 +135,7 @@ class TableCommand extends Command
 
     public function __construct(
         private readonly TcaTableCreator $tcaTableCreator,
+        private readonly ExtTablesSqlCreator $extTablesSqlCreator,
     ) {
         parent::__construct();
     }
@@ -161,6 +163,7 @@ class TableCommand extends Command
         $tableInformation = $this->askForTableInformation($io, $input);
 
         $this->tcaTableCreator->create($tableInformation);
+        $this->extTablesSqlCreator->create($tableInformation);
 
         return Command::SUCCESS;
     }
@@ -237,7 +240,11 @@ class TableCommand extends Command
                 $defaultColumnName = $this->tryToCorrectColumnName($tableColumnName);
                 $validTableColumnName = false;
             } else {
-                $tableColumns[$tableColumnName] = $this->askForTableColumnConfiguration($io);
+                $tableColumns[$tableColumnName]['label'] = $io->ask(
+                    'Please provide a label for the column',
+                    ucwords(str_replace('_', ' ', $tableColumnName))
+                );
+                $tableColumns[$tableColumnName]['config'] = $this->askForTableColumnConfiguration($tableColumnName, $io);
                 if ($io->confirm('Do you want to add another table column?')) {
                     continue;
                 }
@@ -260,7 +267,7 @@ class TableCommand extends Command
         return preg_replace('/[^a-zA-Z0-9_]/', '', $cleanedColumnName);
     }
 
-    private function askForTableColumnConfiguration(SymfonyStyle $io): array
+    private function askForTableColumnConfiguration(string $tableColumnName, SymfonyStyle $io): array
     {
         $tableColumnType = $io->choice('Choose TCA column type', array_keys(self::TABLE_COLUMN_TYPES), 'input');
 
