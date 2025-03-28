@@ -21,11 +21,116 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TableCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+
+    private const TABLE_COLUMN_TYPES = [
+        'category' => [
+            'type' => 'category',
+        ],
+        'check' => [
+            'type' => 'check',
+            'renderType' => 'checkboxToggle',
+            'items' => [
+                [
+                    'label' => 'Change me',
+                ],
+            ],
+        ],
+        'color' => [
+            'type' => 'color',
+        ],
+        'datetime' => [
+            'type' => 'datetime',
+            'format' => 'date',
+            'default' => 0,
+        ],
+        'email' => [
+            'type' => 'email',
+        ],
+        'file' => [
+            'type' => 'file',
+            'maxitems' => 1,
+            'allowed' => 'common-image-types',
+        ],
+        'flex' => [
+            'type' => 'flex',
+        ],
+        'folder' => [
+            'type' => 'folder',
+        ],
+        'group' => [
+            'type' => 'group',
+            'allowed' => '',
+        ],
+        'imageManipulation' => [
+            'type' => 'imageManipulation',
+        ],
+        'inline' => [
+            'type' => 'inline',
+        ],
+        'input' => [
+            'type' => 'input',
+        ],
+        'json' => [
+            'type' => 'json',
+        ],
+        'language' => [
+            'type' => 'language',
+        ],
+        'link' => [
+            'type' => 'link',
+        ],
+        'none' => [
+            'type' => 'none',
+        ],
+        'number' => [
+            'type' => 'number',
+        ],
+        'passthrough' => [
+            'type' => 'passthrough',
+        ],
+        'password' => [
+            'type' => 'password',
+        ],
+        'radio' => [
+            'type' => 'radio',
+            'items' => [
+                [
+                    'label' => 'Change me',
+                    'value' => 1,
+                ],
+            ],
+        ],
+        'select' => [
+            'type' => 'select',
+            'renderType' => 'selectSingle',
+            'items' => [
+                [
+                    'label' => 'Change me',
+                    'value' => 1,
+                ],
+            ],
+        ],
+        'slug' => [
+            'type' => 'slug',
+        ],
+        'text' => [
+            'type' => 'text',
+            'cols' => 40,
+            'rows' => 7,
+        ],
+        'user' => [
+            'type' => 'user',
+        ],
+        'uuid' => [
+            'type' => 'uuid',
+        ],
+    ];
 
     public function __construct(
         private readonly TcaTableCreator $tcaTableCreator,
@@ -68,8 +173,9 @@ class TableCommand extends Command
             );
 
             if (!is_dir($extensionInformation->getExtensionPath())) {
-                $io->error(sprintf(
-                    '%s: %s',
+                $io->error(
+                    sprintf(
+                        '%s: %s',
                         'Can not access extension directory. Please check extension key. Extension path',
                         $extensionInformation->getExtensionPath(),
                     )
@@ -85,6 +191,7 @@ class TableCommand extends Command
             $this->askForTableName($io, $extensionInformation),
             (string)$io->ask('Please provide a table title'),
             'uid', // Until now, we do not have any defined columns. We set label to "uid" first as it is mandatory
+            $this->askForTableColumns($io),
         );
     }
 
@@ -110,5 +217,53 @@ class TableCommand extends Command
         }
 
         return $tableName;
+    }
+
+    private function askForTableColumns(SymfonyStyle $io): array
+    {
+        $tableColumns = [];
+        $validTableColumnName = false;
+        $defaultColumnName = null;
+
+        do {
+            $tableColumnName = (string)$io->ask('Enter column name we should create for you', $defaultColumnName);
+
+            if (preg_match('/^[0-9]/', $tableColumnName)) {
+                $io->error('Table column should not start with a number.');
+                $defaultColumnName = $this->tryToCorrectColumnName($tableColumnName);
+                $validTableColumnName = false;
+            } elseif (preg_match('/[^a-z0-9_]/', $tableColumnName)) {
+                $io->error('Table column name contains invalid chars. Please provide just letters, numbers and underscores.');
+                $defaultColumnName = $this->tryToCorrectColumnName($tableColumnName);
+                $validTableColumnName = false;
+            } else {
+                $tableColumns[$tableColumnName] = $this->askForTableColumnConfiguration($io);
+                if ($io->confirm('Do you want to add another table column?')) {
+                    continue;
+                }
+                $validTableColumnName = true;
+            }
+        } while (!$validTableColumnName);
+
+        return $tableColumns;
+    }
+
+    private function tryToCorrectColumnName(string $givenColumnName): string
+    {
+        // Change dash to underscore
+        $cleanedColumnName = str_replace('-', '_', $givenColumnName);
+
+        // Change column name to lower camel case. Add underscores before upper case letters. BlogExample => blog_example
+        $cleanedColumnName = GeneralUtility::camelCaseToLowerCaseUnderscored($cleanedColumnName);
+
+        // Remove invalid chars
+        return preg_replace('/[^a-zA-Z0-9_]/', '', $cleanedColumnName);
+    }
+
+    private function askForTableColumnConfiguration(SymfonyStyle $io): array
+    {
+        $tableColumnType = $io->choice('Choose TCA column type', array_keys(self::TABLE_COLUMN_TYPES), 'input');
+
+        return self::TABLE_COLUMN_TYPES[$tableColumnType] ?? [];
     }
 }

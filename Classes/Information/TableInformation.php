@@ -20,6 +20,7 @@ class TableInformation
         private readonly string $tableName,
         private readonly string $title,
         private readonly string $label,
+        private readonly array $columns,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -40,6 +41,11 @@ class TableInformation
     public function getLabel(): string
     {
         return $this->label;
+    }
+
+    public function getColumns(): array
+    {
+        return $this->columns;
     }
 
     public function getTableConfigurationPath(): string
