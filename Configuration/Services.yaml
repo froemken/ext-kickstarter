@@ -22,6 +22,14 @@ services:
         command: 'make:controller'
         description: 'Add a controller to your TYPO3 extension.'
         schedulable: false
+
+  StefanFroemken\ExtKickstarter\Command\EventListenerCommand:
+    tags:
+      - name: console.command
+        command: 'make:eventlistener'
+        description: 'Create a new Event Listener to your TYPO3 extension.'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\ExtensionCommand:
     arguments:
       $creators: !tagged_iterator { tag: 'ext-kickstarter.creator.extension' }
@@ -30,18 +38,21 @@ services:
         command: 'make:extension'
         description: 'Create basic files for a new TYPO3 extension.'
         schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\PluginCommand:
     tags:
       - name: console.command
         command: 'make:plugin'
         description: 'Add a plugin to your TYPO3 extension.'
         schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\TableCommand:
     tags:
       - name: console.command
         command: 'make:table'
         description: 'Add a TCA table to your TYPO3 extension.'
         schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\UpgradeWizardCommand:
     tags:
       - name: console.command

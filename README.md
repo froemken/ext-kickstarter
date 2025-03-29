@@ -93,6 +93,17 @@ DDEV:
 ddev typo3 make:table
 ```
 
+### Create an Event Listener
+
+```bash
+vendor/bin/typo3 make:eventlistener
+```
+DDEV:
+
+```bash
+ddev typo3 make:eventlistener
+```
+
 ### Create an Upgrade Wizard
 
 ```bash
