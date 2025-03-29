@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\PhpParser;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
+use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 
 class NodeFactory
 {
@@ -57,10 +58,22 @@ class NodeFactory
      *
      * Don't forget to add the "use" and "class" nodes to this resulting node: $namespaceNode->stmts[]
      */
-    public function createNamespace(string $namespace): Node\Stmt\Namespace_
+    public function createNamespace(string $namespace, ExtensionInformation $extensionInformation): Node\Stmt\Namespace_
     {
+        $docComment = <<<'EOT'
+/*
+ * This file is part of the package stefanfroemken/blog-example.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+EOT;
+
         return $this->factory
             ->namespace($namespace)
+            ->setDocComment(
+                str_replace('{PACKAGE_NAME}', $extensionInformation->getComposerPackageName(), $docComment)
+            )
             ->getNode();
     }
 
@@ -204,7 +217,7 @@ class NodeFactory
             ->makePublic()
             ->setReturnType('ResponseInterface')
             ->addStmts([
-                 new Node\Stmt\Return_(
+                new Node\Stmt\Return_(
                     new Node\Expr\MethodCall(
                         new Node\Expr\Variable('this'),
                         'htmlResponse'

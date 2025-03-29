@@ -60,7 +60,10 @@ class ExtbaseControllerCreator
             new DeclareStructure($this->nodeFactory->createDeclareStrictTypes())
         );
         $fileStructure->addNamespaceStructure(
-            new NamespaceStructure($this->nodeFactory->createNamespace($controllerInformation->getNamespace()))
+            new NamespaceStructure($this->nodeFactory->createNamespace(
+                $controllerInformation->getNamespace(),
+                $controllerInformation->getExtensionInformation(),
+            ))
         );
         $fileStructure->addClassStructure(
             new ClassStructure($this->nodeFactory->createExtbaseControllerClass($controllerInformation->getControllerName()))

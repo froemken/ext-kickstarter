@@ -28,7 +28,7 @@ services:
     tags:
       - name: console.command
         command: 'make:extension'
-        description: 'Create basic file for a new TYPO3 extension.'
+        description: 'Create basic files for a new TYPO3 extension.'
         schedulable: false
   StefanFroemken\ExtKickstarter\Command\PluginCommand:
     tags:
@@ -41,4 +41,10 @@ services:
       - name: console.command
         command: 'make:table'
         description: 'Add a TCA table to your TYPO3 extension.'
+        schedulable: false
+  StefanFroemken\ExtKickstarter\Command\UpgradeWizardCommand:
+    tags:
+      - name: console.command
+        command: 'make:upgrade'
+        description: 'Create a new Upgrade Wizard to your TYPO3 extension.'
         schedulable: false
