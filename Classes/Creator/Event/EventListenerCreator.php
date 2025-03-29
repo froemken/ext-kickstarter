@@ -12,16 +12,13 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Event;
 
 use PhpParser\BuilderFactory;
-use PhpParser\Node\Stmt\Return_;
 use StefanFroemken\ExtKickstarter\Information\EventListenerInformation;
-use StefanFroemken\ExtKickstarter\Information\UpgradeWizardInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

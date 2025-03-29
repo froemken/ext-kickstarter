@@ -104,6 +104,17 @@ DDEV:
 ddev typo3 make:eventlistener
 ```
 
+### Create an Extbase Type Converter
+
+```bash
+vendor/bin/typo3 make:typeconverter
+```
+DDEV:
+
+```bash
+ddev typo3 make:typeconverter
+```
+
 ### Create an Upgrade Wizard
 
 ```bash

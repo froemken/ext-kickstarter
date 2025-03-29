@@ -53,6 +53,13 @@ services:
         description: 'Add a TCA table to your TYPO3 extension.'
         schedulable: false
 
+  StefanFroemken\ExtKickstarter\Command\TypeConverterCommand:
+    tags:
+      - name: console.command
+        command: 'make:typeconverter'
+        description: 'Create a new Extbase Type Converter to your TYPO3 extension.'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\UpgradeWizardCommand:
     tags:
       - name: console.command
