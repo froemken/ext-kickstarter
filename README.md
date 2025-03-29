@@ -93,6 +93,17 @@ DDEV:
 ddev typo3 make:table
 ```
 
+### Create an Upgrade Wizard
+
+```bash
+vendor/bin/typo3 make:upgrade
+```
+DDEV:
+
+```bash
+ddev typo3 make:upgrade
+```
+
 ---
 
 ## Why Use ext_kickstarter
