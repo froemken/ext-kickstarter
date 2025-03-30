@@ -57,6 +57,8 @@ class ExtensionCommand extends Command
             'Please take your time to answer them.',
         ]);
 
+        $io->title('Questions to build a new TYPO3 Extension');
+
         $extensionInformation = $this->askForExtensionInformation(
             $io,
             $this->askForExtensionKey($io, $input->getArgument('extension_key'))
@@ -71,30 +73,86 @@ class ExtensionCommand extends Command
 
     private function askForExtensionInformation(SymfonyStyle $io, string $extensionKey): ExtensionInformation
     {
-        // We are creating a new extension, so remove previous exported extension
-        $extensionPath = $this->createExtensionPath($extensionKey, true);
+        // We are creating a new extension, so remove previous exported extension after user confirmation
+        if (is_dir($this->getExtensionPath($extensionKey))) {
+            $io->warning([
+                'There is already an extension at location: "' . $this->getExtensionPath($extensionKey) . '".',
+                'While creating a new extension, we will remove the previous extension and create a new one.',
+            ]);
+            $confirmRemoval = $io->confirm(
+                'Please confirm, that you want to remove the previous extension and create a new one.',
+                false
+            );
+            if ($confirmRemoval === false) {
+                die();
+            }
+        }
+
         $composerPackageName = $this->askForComposerPackageName($io);
+
+        $io->text([
+            'The title of the extension will be used to identify the extension much easier',
+            'in the TYPO3 ExtensionManager and also in TER (https://extension.typo3.org)',
+        ]);
         $title = (string)$io->ask(
             'Please provide the title of your extension',
             ucwords(preg_replace('/_/', ' ', $extensionKey))
         );
-        $description = (string)$io->ask('Please provide a short description for your extension');
+
+        $io->text([
+            'The description describes your new extension in short. It should not exceed more than two sentences.',
+            'This will help users in TER (https://extension.typo3.org) to get the point of what your extension does/provides',
+        ]);
+        $description = (string)$io->ask('Description');
+
         $version = $this->askForVersion($io);
+
+        $io->text([
+            'The category is used to group your extension in the TYPO3 ExtensionManager.',
+            'See: https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/FileStructure/ExtEmconf.html#confval-ext-emconf-category'
+        ]);
         $category = (string)$io->choice(
-            'Please provide the category for your extension',
+            'Category',
             ['be', 'module', 'fe', 'plugin', 'misc', 'services', 'templates', 'example', 'doc', 'distribution'],
             'plugin'
         );
+
+        $io->text([
+            'The state is used to determine the visibility of your extension in the TYPO3 ExtensionManager.',
+            'Link: https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/FileStructure/ExtEmconf.html#confval-ext-emconf-state'
+        ]);
         $state = (string)$io->choice(
-            'Please choose the state of your extension',
+            'State',
             ['alpha', 'beta', 'stable', 'experimental', 'test', 'excludeFromUpdates'],
             'alpha'
         );
-        $author = (string)$io->ask('Please enter the author name');
+
+        $io->text([
+            'Who is the author of this extension?',
+            'Please enter the name of that person with first- and lastname.',
+            'Do not enter company. It will be asked some questions later.'
+        ]);
+        $author = (string)$io->ask('Author name');
+
+        $io->text([
+            'Please enter the email of the author (see above)',
+            'It must be a valid email address.',
+        ]);
         $authorEmail = $this->askForEmail($io);
-        $authorCompany = (string)$io->ask('Provide the author\'s company');
+
+        $io->text([
+            'Enter the company name of the author (see above)',
+            'As a private/personnel developer you can leave that blank.',
+        ]);
+        $authorCompany = (string)$io->ask('Company name');
+
+        $io->text([
+            'To find PHP classes much faster in your extension TYPO3 uses the auto-loading',
+            'mechanism of composer (https://getcomposer.org/doc/01-basic-usage.md#autoloading)',
+            'Please enter the PSR-4 autoload namespace for your extension',
+        ]);
         $namespacePrefix = (string)$io->ask(
-            'Please provide the namespace prefix to use for "autoload" in composer.json',
+            'PSR-4 AutoLoading Namespace',
             $this->convertComposerPackageNameToNamespacePrefix($composerPackageName),
         );
 
@@ -110,17 +168,31 @@ class ExtensionCommand extends Command
             $authorEmail,
             $authorCompany,
             $namespacePrefix,
-            $extensionPath,
+            $this->createExtensionPath($extensionKey, true),
         );
     }
 
     private function askForComposerPackageName(SymfonyStyle $io): string
     {
+        $io->text([
+            'To build a new TYPO3 extension, we need to use Composer to manage dependencies.',
+            'Composer is like a package manager for PHP projects.',
+            'For more information about Composer, visit https://getcomposer.org/',
+            'Example: my-vendor/my-extension',
+        ]);
+
+        $defaultComposerPackageName = null;
+
         do {
-            $composerPackageName = $io->ask('Please provide the composer name for your extension (my-vendor/my-extension)');
+            $composerPackageName = $io->ask('Composer package name', $defaultComposerPackageName);
 
             if (!preg_match('#^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*$#', $composerPackageName)) {
                 $io->error('Invalid composer package name. Package name must follow a specific pattern (see: https://getcomposer.org/doc/04-schema.md#name)');
+                $defaultComposerPackageName = preg_replace(
+                    '/[^0-9a-z-\/_]/',
+                    '',
+                    strtolower($composerPackageName)
+                );
                 $validComposerPackageName = false;
             } else {
                 $validComposerPackageName = true;
@@ -132,8 +204,16 @@ class ExtensionCommand extends Command
 
     private function askForVersion(SymfonyStyle $io): string
     {
+        $io->text([
+            'The version is needed to differ between the releases of your extension.',
+            'Please use semantic version (https://semver.org/)',
+            'Use 0.0.* versions for bugfix releases.',
+            'Use 0.*.0 versions, if there are any new features.',
+            'Use *.0.0 versions, if something huge has changed like supported TYPO3 version or contained API.',
+        ]);
+
         do {
-            $version = $io->ask('Please provide the version for your extension', '0.0.1');
+            $version = $io->ask('Version', '0.0.1');
 
             if (!preg_match('#^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$#', $version)) {
                 $io->error('Invalid version string. The version must match a specific pattern (see: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)');
@@ -149,7 +229,7 @@ class ExtensionCommand extends Command
     private function askForEmail(SymfonyStyle $io): string
     {
         do {
-            $email = $io->ask('Provide the author\'s email');
+            $email = $io->ask('Email address');
 
             if (!GeneralUtility::validEmail($email)) {
                 $io->error('You have entered an invalid email address.');
