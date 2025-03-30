@@ -104,6 +104,17 @@ DDEV:
 ddev typo3 make:eventlistener
 ```
 
+### Create an Extbase Model
+
+```bash
+vendor/bin/typo3 make:model
+```
+DDEV:
+
+```bash
+ddev typo3 make:model
+```
+
 ### Create an Extbase Repository
 
 ```bash

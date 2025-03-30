@@ -39,6 +39,13 @@ services:
         description: 'Create basic files for a new TYPO3 extension.'
         schedulable: false
 
+  StefanFroemken\ExtKickstarter\Command\ModelCommand:
+    tags:
+      - name: console.command
+        command: 'make:model'
+        description: 'Add an extbase model to your TYPO3 extension.'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\PluginCommand:
     tags:
       - name: console.command
