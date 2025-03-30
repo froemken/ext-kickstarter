@@ -79,17 +79,10 @@ class PluginCommand extends Command
 
     private function askForPluginInformation(SymfonyStyle $io, InputInterface $input): PluginInformation
     {
-        do {
-            $extensionKey = $this->askForExtensionKey($io, $input->getArgument('extension_key'));
-            $extensionInformation = $this->getExtensionInformation($extensionKey);
-
-            if (!is_dir($extensionInformation->getExtensionPath())) {
-                $io->error('Can not access extension directory. Please check extension key. Extension path: ' . $extensionInformation->getExtensionPath());
-                $validExtensionPath = false;
-            } else {
-                $validExtensionPath = true;
-            }
-        } while (!$validExtensionPath);
+        $extensionInformation = $this->getExtensionInformation(
+            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $io
+        );
 
         $isExtbasePlugin = $io->confirm('Do you prefer to create an extbase based plugin?');
 

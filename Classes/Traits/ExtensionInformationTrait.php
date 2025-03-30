@@ -13,7 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Traits;
 
 use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use TYPO3\CMS\Core\Core\Environment;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 trait ExtensionInformationTrait
@@ -22,13 +22,26 @@ trait ExtensionInformationTrait
      * Collects data from composer.json to build ExtensionInformation object.
      * Can only be called for existing extensions with existing composer.json file
      */
-    private function getExtensionInformation(string $extensionKey): ExtensionInformation
+    private function getExtensionInformation(string $extensionKey, SymfonyStyle $io): ExtensionInformation
     {
         $extensionPath = $this->getExtensionPath($extensionKey);
         $composerManifestPath = $extensionPath . 'composer.json';
 
+        if (!is_dir($extensionPath)) {
+            $io->error([
+                'Extension path does not exists: ' . $extensionPath,
+                'Please use command "make:extension" to create a new extension.',
+            ]);
+            die();
+        }
+
         if (!is_file($composerManifestPath)) {
-            throw new \InvalidArgumentException('Extension does not have a composer.json file', 1741623621);
+            $io->error([
+                'Extension "' . $extensionKey . '" does not have a composer.json file.',
+                'Seems that the existing directory is no TYPO3 extension.',
+                'Please use command "make:extension" to create a new extension.',
+            ]);
+            die();
         }
 
         $composerManifest = json_decode((file_get_contents($composerManifestPath) ?: ''), true) ?? [];

@@ -170,24 +170,10 @@ class TableCommand extends Command
 
     private function askForTableInformation(SymfonyStyle $io, InputInterface $input): TableInformation
     {
-        do {
-            $extensionInformation = $this->getExtensionInformation(
-                $this->askForExtensionKey($io, $input->getArgument('extension_key'))
-            );
-
-            if (!is_dir($extensionInformation->getExtensionPath())) {
-                $io->error(
-                    sprintf(
-                        '%s: %s',
-                        'Can not access extension directory. Please check extension key. Extension path',
-                        $extensionInformation->getExtensionPath(),
-                    )
-                );
-                $validExtensionPath = false;
-            } else {
-                $validExtensionPath = true;
-            }
-        } while (!$validExtensionPath);
+        $extensionInformation = $this->getExtensionInformation(
+            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $io
+        );
 
         return new TableInformation(
             $extensionInformation,
