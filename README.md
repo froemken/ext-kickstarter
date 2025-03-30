@@ -104,6 +104,17 @@ DDEV:
 ddev typo3 make:eventlistener
 ```
 
+### Create an Extbase Repository
+
+```bash
+vendor/bin/typo3 make:repository
+```
+DDEV:
+
+```bash
+ddev typo3 make:repository
+```
+
 ### Create an Extbase Type Converter
 
 ```bash
