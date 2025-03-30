@@ -9,6 +9,8 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
+use StefanFroemken\ExtKickstarter\Controller\KickstartController;
+
 /**
  * Definitions for modules provided by EXT:ext_kickstarter
  */
@@ -22,7 +24,7 @@ return [
         'labels' => 'LLL:EXT:ext_kickstarter/Resources/Private/Language/locallang_kickstarter.xlf',
         'routes' => [
             '_default' => [
-                'target' => \StefanFroemken\ExtKickstarter\Controller\KickstartController::class . '::processRequest',
+                'target' => KickstartController::class . '::processRequest',
             ],
         ],
     ],
