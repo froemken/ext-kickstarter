@@ -34,21 +34,21 @@ class ComposerJsonCreator implements ExtensionCreatorInterface
                 [
                     'name' => $extensionInformation->getAuthor(),
                     'email' => $extensionInformation->getAuthorEmail(),
-                ]
+                ],
             ],
             'require' => [
-                'typo3/cms-core' => '^12.4'
+                'typo3/cms-core' => '^12.4',
             ],
             'autoload' => [
                 'psr-4' => [
-                    $extensionInformation->getNamespaceForAutoload() => 'Classes/'
-                ]
+                    $extensionInformation->getNamespaceForAutoload() => 'Classes/',
+                ],
             ],
             'extra' => [
                 'typo3/cms' => [
                     'extension-key' => $extensionInformation->getExtensionKey(),
-                ]
-            ]
+                ],
+            ],
         ];
 
         return json_encode($composerConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

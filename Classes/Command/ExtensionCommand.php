@@ -13,7 +13,6 @@ namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Model\Node;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -114,7 +113,7 @@ class ExtensionCommand extends Command
 
         $io->text([
             'The category is used to group your extension in the TYPO3 ExtensionManager.',
-            'See: https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/FileStructure/ExtEmconf.html#confval-ext-emconf-category'
+            'See: https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/FileStructure/ExtEmconf.html#confval-ext-emconf-category',
         ]);
         $category = (string)$io->choice(
             'Category',
@@ -124,7 +123,7 @@ class ExtensionCommand extends Command
 
         $io->text([
             'The state is used to determine the visibility of your extension in the TYPO3 ExtensionManager.',
-            'Link: https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/FileStructure/ExtEmconf.html#confval-ext-emconf-state'
+            'Link: https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/FileStructure/ExtEmconf.html#confval-ext-emconf-state',
         ]);
         $state = (string)$io->choice(
             'State',
@@ -135,7 +134,7 @@ class ExtensionCommand extends Command
         $io->text([
             'Who is the author of this extension?',
             'Please enter the name of that person with first- and lastname.',
-            'Do not enter company. It will be asked some questions later.'
+            'Do not enter company. It will be asked some questions later.',
         ]);
         $author = (string)$io->ask('Author name');
 
@@ -250,15 +249,15 @@ class ExtensionCommand extends Command
     private function convertComposerPackageNameToNamespacePrefix(string $composerPackageName): string
     {
         return implode(
-                '\\\\',
-                array_map(
-                    fn($part) => str_replace(
-                        ['-', '_', '.'],
-                        '',
-                        ucwords($part, '-_ .')
-                    ),
-                    explode('/', $composerPackageName)
-                )
-            ) . '\\\\';
+            '\\\\',
+            array_map(
+                fn($part) => str_replace(
+                    ['-', '_', '.'],
+                    '',
+                    ucwords($part, '-_ .')
+                ),
+                explode('/', $composerPackageName)
+            )
+        ) . '\\\\';
     }
 }

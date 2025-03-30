@@ -17,7 +17,6 @@ use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\Input;
 use StefanFroemken\ExtKickstarter\Model\Link;
 use StefanFroemken\ExtKickstarter\Model\Output;
-use StefanFroemken\ExtKickstarter\Model\Node;
 use StefanFroemken\ExtKickstarter\Service\BuildExtensionService;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Http\JsonResponse;
@@ -110,7 +109,6 @@ class KickstartController implements ControllerInterface
             '%s\\%sNode',
             '\\StefanFroemken\\ExtKickstarter\\Model\\Node',
             $typeNamespacePart,
-
         );
 
         return class_exists($className) ? $className : null;

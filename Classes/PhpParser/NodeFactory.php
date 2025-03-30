@@ -194,7 +194,7 @@ EOT;
                     new Node\Expr\New_(
                         new Node\Name('HtmlResponse'),
                         [
-                            new Node\Arg(new Node\Scalar\String_('Hello World!'))
+                            new Node\Arg(new Node\Scalar\String_('Hello World!')),
                         ]
                     )
                 ),
@@ -222,7 +222,7 @@ EOT;
                         new Node\Expr\Variable('this'),
                         'htmlResponse'
                     )
-                )
+                ),
             ])
             ->getNode();
     }

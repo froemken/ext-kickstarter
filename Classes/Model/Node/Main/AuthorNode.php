@@ -13,6 +13,4 @@ namespace StefanFroemken\ExtKickstarter\Model\Node\Main;
 
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
 
-class AuthorNode extends AbstractNode
-{
-}
+class AuthorNode extends AbstractNode {}

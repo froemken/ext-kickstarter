@@ -74,7 +74,7 @@ class NativeAddTypoScriptCreator
                 $pluginInformation->getExtensionInformation()->getExtensionKey(),
                 'setup',
                 $typoScriptSetup,
-                'defaultContentRendering'
+                'defaultContentRendering',
             ]
         ));
     }
