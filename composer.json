@@ -27,7 +27,7 @@
 		"ext-pdo": "*",
 		"typo3/cms-core": "^13.4.3",
 		"nette/php-generator": "^4.1",
-		"nikic/php-parser": "^4.19"
+		"nikic/php-parser": "^5.13"
 	},
 	"require-dev": {
 		"ergebnis/composer-normalize": "^2.44",
