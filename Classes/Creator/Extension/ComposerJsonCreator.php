@@ -37,7 +37,7 @@ class ComposerJsonCreator implements ExtensionCreatorInterface
                 ],
             ],
             'require' => [
-                'typo3/cms-core' => '^12.4',
+                'typo3/cms-core' => '^13.4',
             ],
             'autoload' => [
                 'psr-4' => [
