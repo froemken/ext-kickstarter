@@ -29,6 +29,10 @@
 		"nette/php-generator": "^4.1",
 		"nikic/php-parser": "^4.19"
 	},
+	"require-dev": {
+		"typo3/coding-standards": "^0.6",
+		"typo3/testing-framework": "^7.0.2"
+	},
 	"conflict": {
 		"b13/make": "*"
 	},
@@ -41,9 +45,21 @@
 		"typo3-ter/ext_kickstarer": "self.version",
 		"typo3-ter/ext-kickstarer": "self.version"
 	},
+	"config": {
+		"allow-plugins": {
+			"ergebnis/composer-normalize": true,
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		},
+		"bin-dir": ".Build/bin",
+		"sort-packages": true,
+		"vendor-dir": ".Build/vendor"
+	},
 	"extra": {
 		"typo3/cms": {
-			"extension-key": "ext_kickstarter"
+			"app-dir": ".Build",
+			"extension-key": "ext_kickstarter",
+			"web-dir": ".Build/public"
 		}
 	}
 }
