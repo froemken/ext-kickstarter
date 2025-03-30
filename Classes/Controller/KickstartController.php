@@ -72,15 +72,21 @@ class KickstartController implements ControllerInterface
 
             // Skip invalid nodes
             if (($nodeGraph['type'] ?? '') === '') {
-                throw new \InvalidArgumentException('Node must have a type defined');
+                throw new \InvalidArgumentException('Node must have a type defined', 6238600738);
             }
             if ((int)($nodeGraph['id'] ?? 0) === 0) {
-                throw new \InvalidArgumentException('Node must have an ID. NodeType: ' . $nodeGraph['type']);
+                throw new \InvalidArgumentException(
+                    'Node must have an ID. NodeType: ' . $nodeGraph['type'],
+                    1259778032
+                );
             }
 
             $className = $this->getNodeClassName($nodeGraph['type']);
             if ($className === null) {
-                throw new \InvalidArgumentException('No PHP classname for node type found: ' . $nodeGraph['type']);
+                throw new \InvalidArgumentException(
+                    'No PHP classname for node type found: ' . $nodeGraph['type'],
+                    3473484881
+                );
             }
 
             $node = new $className(
