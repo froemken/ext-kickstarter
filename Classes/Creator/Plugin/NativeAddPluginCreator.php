@@ -55,23 +55,10 @@ class NativeAddPluginCreator
 
     private function getExpressionForAddPlugin(PluginInformation $pluginInformation): Node\Stmt\Expression
     {
-        $pluginType = 'list_type';
-        if ($pluginInformation->getPluginType() === 'content') {
-            $pluginType = 'CType';
-        }
-
         $pluginIconPath = sprintf(
             'EXT:%s/Resources/Public/Icons/Extension.svg',
             $pluginInformation->getExtensionInformation()->getExtensionKey(),
         );
-
-        // Seems to be the group within the CType selector in TYPO3 backend
-        // As that grouping is only valid for CType based plugins
-        // I change group only for that specific type
-        $group = 'default';
-        if ($pluginInformation->getPluginType() === 'content') {
-            $group = 'plugins';
-        }
 
         return new Node\Stmt\Expression($this->builderFactory->staticCall(
             'ExtensionManagementUtility',
@@ -80,11 +67,11 @@ class NativeAddPluginCreator
                 [
                     'label' => $pluginInformation->getPluginLabel(),
                     'value' => $pluginInformation->getPluginNamespace(),
-                    'group' => $group,
+                    'group' => 'plugins',
                     'icon' => $pluginIconPath,
                     'description' => 'Please update the description',
                 ],
-                $pluginType,
+                'CType',
                 $pluginInformation->getExtensionInformation()->getExtensionKey(),
             ]
         ));

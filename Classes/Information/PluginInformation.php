@@ -18,7 +18,6 @@ class PluginInformation
         private readonly bool $extbasePlugin,
         private readonly string $pluginLabel,
         private readonly string $pluginName,
-        private readonly string $pluginType,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -39,11 +38,6 @@ class PluginInformation
     public function getPluginName(): string
     {
         return $this->pluginName;
-    }
-
-    public function getPluginType(): string
-    {
-        return $this->pluginType;
     }
 
     /**

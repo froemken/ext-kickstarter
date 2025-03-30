@@ -66,7 +66,7 @@ class ExtLocalConfBuilder implements BuilderInterface
             ];
             array_push($pluginLines, ...$this->getExtbaseControllerActionDefinitionLines($extbasePluginNode, false));
             array_push($pluginLines, ...$this->getExtbaseControllerActionDefinitionLines($extbasePluginNode, true));
-            $pluginLines[] = $this->getPluginType($extbasePluginNode) . ',';
+            $pluginLines[] = '\TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT,';
 
             $plugins[] = implode(
                 chr(10),
@@ -95,16 +95,6 @@ class ExtLocalConfBuilder implements BuilderInterface
             ['],'],
             1
         );
-    }
-
-    private function getPluginType(AbstractNode $extbasePluginNode): string
-    {
-        $pluginType = '\TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_PLUGIN';
-        if ($extbasePluginNode->getProperties()['pluginType'] === 'content') {
-            $pluginType = '\TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT';
-        }
-
-        return $pluginType;
     }
 
     private function getTemplate(): string

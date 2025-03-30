@@ -90,18 +90,12 @@ class PluginCommand extends Command
             'Please provide a label for your plugin. You will see the label in the backend.',
         );
         $pluginName = $this->askForPluginName($io, $extensionInformation, $pluginLabel);
-        $pluginType = (string)$io->choice(
-            'Which type of plugin you want to create. Plugins of type "plugin" you will find in tt_content column "list_type" while "content" based plugins you will find in column "CType"',
-            ['plugin', 'content'],
-            'plugin'
-        );
 
         return new PluginInformation(
             $extensionInformation,
             $isExtbasePlugin,
             $pluginLabel,
             $pluginName,
-            $pluginType,
         );
     }
 

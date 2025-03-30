@@ -55,18 +55,6 @@ class ExtbaseConfigurePluginCreator
 
     private function getExpressionForConfigurePlugin(PluginInformation $pluginInformation): Node\Stmt\Expression
     {
-        if ($pluginInformation->getPluginType() === 'plugin') {
-            $pluginTypeNode = new Node\Expr\ClassConstFetch(
-                new Node\Name('TYPO3\CMS\Extbase\Utility\ExtensionUtility'),
-                'PLUGIN_TYPE_PLUGIN'
-            );
-        } else {
-            $pluginTypeNode = new Node\Expr\ClassConstFetch(
-                new Node\Name('TYPO3\CMS\Extbase\Utility\ExtensionUtility'),
-                'PLUGIN_TYPE_CONTENT_ELEMENT'
-            );
-        }
-
         return new Node\Stmt\Expression($this->builderFactory->staticCall(
             'ExtensionUtility',
             'configurePlugin',
@@ -75,7 +63,10 @@ class ExtbaseConfigurePluginCreator
                 $pluginInformation->getPluginName(),
                 new Node\Expr\Array_([]),
                 new Node\Expr\Array_([]),
-                $pluginTypeNode,
+                new Node\Expr\ClassConstFetch(
+                    new Node\Name('TYPO3\CMS\Extbase\Utility\ExtensionUtility'),
+                    'PLUGIN_TYPE_CONTENT_ELEMENT'
+                ),
             ]
         ));
     }
