@@ -84,7 +84,7 @@ class UpgradeWizardCreator
                     ->addAttribute($this->builderFactory->attribute(
                         'UpgradeWizard',
                         [
-                            $upgradeWizardIdentifier
+                            $upgradeWizardIdentifier,
                         ]
                     ))
                     ->makeFinal()

@@ -144,7 +144,7 @@ class PluginCommand extends Command
         $fileStructure = $this->buildFileStructure($file);
 
         // Find all classes that extend another class
-        $matchingStatements = $nodeFinder->find($fileStructure->getExpressionStructures()->getStmts(), function(Node $node) use ($extensionName, $pluginName) {
+        $matchingStatements = $nodeFinder->find($fileStructure->getExpressionStructures()->getStmts(), function (Node $node) use ($extensionName, $pluginName) {
             if ($node instanceof Node\Expr\StaticCall
                 && $node->class->toString() === 'ExtensionUtility'
                 && $node->name->toString() === 'configurePlugin'

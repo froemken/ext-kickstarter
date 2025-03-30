@@ -33,7 +33,7 @@ abstract class AbstractColumnNode extends AbstractNode
 
     public function isModelProperty(): bool
     {
-        return ($this->getProperties()['modelProperty'] ?? false);
+        return $this->getProperties()['modelProperty'] ?? false;
     }
 
     public function getPropertyName(): string

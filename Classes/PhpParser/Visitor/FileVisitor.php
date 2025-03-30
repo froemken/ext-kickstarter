@@ -29,7 +29,8 @@ final class FileVisitor extends NodeVisitorAbstract
         $this->fileStructure = new Structure\FileStructure();
     }
 
-    public function beforeTraverse(array $nodes): void {
+    public function beforeTraverse(array $nodes): void
+    {
         return;
     }
 

@@ -12,13 +12,11 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Domain;
 
 use PhpParser\BuilderFactory;
-use StefanFroemken\ExtKickstarter\Information\EventListenerInformation;
 use StefanFroemken\ExtKickstarter\Information\RepositoryInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;

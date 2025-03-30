@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node\Stmt\Expression;
 use StefanFroemken\ExtKickstarter\PhpParser\Printer\PrettyTypo3Printer;
 use StefanFroemken\ExtKickstarter\PhpParser\StructureObjectStorage;
 
