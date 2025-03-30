@@ -15,11 +15,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 trait AskForExtensionKeyTrait
 {
-    private function askForExtensionKey(SymfonyStyle $io, string $defaultExtensionKey = null): string
+    private function askForExtensionKey(SymfonyStyle $io, ?string $defaultExtensionKey = null): string
     {
         $io->text([
             'Building a new TYPO3 extension needs a unique identifier, the so called extension key. See:',
-            'https://docs.typo3.org/m/typo3/reference-coreapi/12.4/en-us/ExtensionArchitecture/BestPractises/ExtensionKey.html'
+            'https://docs.typo3.org/m/typo3/reference-coreapi/12.4/en-us/ExtensionArchitecture/BestPractises/ExtensionKey.html',
         ]);
 
         do {

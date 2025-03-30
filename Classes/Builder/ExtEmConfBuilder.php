@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Builder;
 
-use StefanFroemken\ExtKickstarter\Model\Graph;
 use StefanFroemken\ExtKickstarter\Model\AbstractNode;
+use StefanFroemken\ExtKickstarter\Model\Graph;
 
 /**
  * Get file content for ext_emconf.php

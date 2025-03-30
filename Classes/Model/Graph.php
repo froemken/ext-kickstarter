@@ -25,7 +25,8 @@ class Graph
      */
     private \SplObjectStorage $links;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->nodes = new \SplObjectStorage();
         $this->links = new \SplObjectStorage();
     }
