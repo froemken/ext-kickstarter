@@ -73,6 +73,11 @@ class ExtensionCommand extends Command
 
     private function askForExtensionInformation(SymfonyStyle $io, string $extensionKey): ExtensionInformation
     {
+        $io->info([
+            'The extension will be exported to directory: ' . $this->getExtensionPath($extensionKey),
+            'You can configure the export directory in extension settings (available in InstallTool)',
+        ]);
+
         // We are creating a new extension, so remove previous exported extension after user confirmation
         if (is_dir($this->getExtensionPath($extensionKey))) {
             $io->warning([
