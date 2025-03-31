@@ -104,6 +104,16 @@ table column for you.
 ..  code-block:: bash
     vendor/bin/typo3 make:model
 
+make:event
+==========
+
+This command will create a new Event PHP class.
+
+You will find the new file in directory ``Classes/Event/*``.
+
+..  code-block:: bash
+    vendor/bin/typo3 make:event
+
 make:eventlistener
 ==================
 

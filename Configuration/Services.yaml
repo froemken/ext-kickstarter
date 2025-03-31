@@ -23,6 +23,13 @@ services:
         description: 'Add a controller to your TYPO3 extension.'
         schedulable: false
 
+  StefanFroemken\ExtKickstarter\Command\EventCommand:
+    tags:
+      - name: console.command
+        command: 'make:event'
+        description: 'Create a new Event for your TYPO3 extension.'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\EventListenerCommand:
     tags:
       - name: console.command
