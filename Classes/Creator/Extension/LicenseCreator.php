@@ -18,7 +18,7 @@ class LicenseCreator implements ExtensionCreatorInterface
     public function create(ExtensionInformation $extensionInformation): void
     {
         file_put_contents(
-            $extensionInformation->getExtensionPath() . 'LICENSE',
+            $extensionInformation->getExtensionPath() . 'LICENSE.txt',
             $this->getTemplate(),
         );
     }
