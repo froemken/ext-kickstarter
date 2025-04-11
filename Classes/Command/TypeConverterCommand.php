@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Creator\Property\TypeConverterCreator;
 use StefanFroemken\ExtKickstarter\Information\TypeConverterInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\TypeConverterCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -27,7 +27,7 @@ class TypeConverterCommand extends Command
     use ExtensionInformationTrait;
 
     public function __construct(
-        private readonly TypeConverterCreator $typeConverterCreator,
+        private readonly TypeConverterCreatorService $typeConverterCreatorService,
     ) {
         parent::__construct();
     }
@@ -52,9 +52,7 @@ class TypeConverterCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $typeConverterInformation = $this->askForTypeConverterInformation($io, $input);
-
-        $this->typeConverterCreator->create($typeConverterInformation);
+        $this->typeConverterCreatorService->create($this->askForTypeConverterInformation($io, $input));
 
         return Command::SUCCESS;
     }

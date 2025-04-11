@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Creator\Controller\ControllerCreator;
-use StefanFroemken\ExtKickstarter\Creator\Controller\ExtbaseControllerCreator;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -28,8 +27,7 @@ class ControllerCommand extends Command
     use ExtensionInformationTrait;
 
     public function __construct(
-        private readonly ExtbaseControllerCreator $extbaseControllerCreator,
-        private readonly ControllerCreator $controllerCreator,
+        private readonly ControllerCreatorService $controllerCreatorService,
     ) {
         parent::__construct();
     }
@@ -54,13 +52,7 @@ class ControllerCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $controllerInformation = $this->askForControllerInformation($io, $input);
-
-        if ($controllerInformation->isExtbaseController() === true) {
-            $this->extbaseControllerCreator->create($controllerInformation);
-        } else {
-            $this->controllerCreator->create($controllerInformation);
-        }
+        $this->controllerCreatorService->create($this->askForControllerInformation($io, $input));
 
         return Command::SUCCESS;
     }

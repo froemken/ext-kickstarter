@@ -9,19 +9,20 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Creator\Event;
+namespace StefanFroemken\ExtKickstarter\Creator\Domain\Repository;
 
 use PhpParser\BuilderFactory;
-use StefanFroemken\ExtKickstarter\Information\EventInformation;
+use StefanFroemken\ExtKickstarter\Information\RepositoryInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class EventCreator implements EventCreatorInterface
+class RepositoryCreator implements RepositoryCreatorInterface
 {
     use FileStructureBuilderTrait;
 
@@ -35,34 +36,38 @@ class EventCreator implements EventCreatorInterface
         $this->builderFactory = new BuilderFactory();
     }
 
-    public function create(EventInformation $eventInformation): void
+    public function create(RepositoryInformation $repositoryInformation): void
     {
-        GeneralUtility::mkdir_deep($eventInformation->getEventPath());
+        GeneralUtility::mkdir_deep($repositoryInformation->getRepositoryPath());
 
-        $eventFilePath = $eventInformation->getEventFilePath();
-        $fileStructure = $this->buildFileStructure($eventFilePath);
+        $repositoryFilePath = $repositoryInformation->getRepositoryFilePath();
+        $fileStructure = $this->buildFileStructure($repositoryFilePath);
 
-        if (!is_file($eventFilePath)) {
-            $this->addClassNodes($fileStructure, $eventInformation);
-            file_put_contents($eventFilePath, $fileStructure->getFileContents());
+        if (!is_file($repositoryFilePath)) {
+            $this->addClassNodes($fileStructure, $repositoryInformation);
+            file_put_contents($repositoryFilePath, $fileStructure->getFileContents());
         }
     }
 
-    private function addClassNodes(FileStructure $fileStructure, EventInformation $eventInformation): void
+    private function addClassNodes(FileStructure $fileStructure, RepositoryInformation $repositoryInformation): void
     {
         $fileStructure->addDeclareStructure(
             new DeclareStructure($this->nodeFactory->createDeclareStrictTypes())
         );
+        $fileStructure->addUseStructure(
+            new UseStructure($this->nodeFactory->createUseImport('TYPO3\CMS\Extbase\Persistence\Repository'))
+        );
         $fileStructure->addNamespaceStructure(
             new NamespaceStructure($this->nodeFactory->createNamespace(
-                $eventInformation->getNamespace(),
-                $eventInformation->getExtensionInformation(),
+                $repositoryInformation->getNamespace(),
+                $repositoryInformation->getExtensionInformation(),
             ))
         );
         $fileStructure->addClassStructure(
             new ClassStructure(
                 $this->builderFactory
-                    ->class($eventInformation->getEventClassName())
+                    ->class($repositoryInformation->getRepositoryClassName())
+                    ->extend('Repository')
                     ->makeFinal()
                     ->getNode(),
             )

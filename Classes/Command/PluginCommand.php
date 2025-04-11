@@ -13,12 +13,9 @@ namespace StefanFroemken\ExtKickstarter\Command;
 
 use PhpParser\Node;
 use PhpParser\NodeFinder;
-use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbaseConfigurePluginCreator;
-use StefanFroemken\ExtKickstarter\Creator\Plugin\ExtbaseRegisterPluginCreator;
-use StefanFroemken\ExtKickstarter\Creator\Plugin\NativeAddPluginCreator;
-use StefanFroemken\ExtKickstarter\Creator\Plugin\NativeAddTypoScriptCreator;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
@@ -36,10 +33,7 @@ class PluginCommand extends Command
     use FileStructureBuilderTrait;
 
     public function __construct(
-        private readonly ExtbaseConfigurePluginCreator $extbaseConfigurePluginCreator,
-        private readonly ExtbaseRegisterPluginCreator $extbaseRegisterPluginCreator,
-        private readonly NativeAddPluginCreator $nativeAddPluginCreator,
-        private readonly NativeAddTypoScriptCreator $nativeAddTypoScriptCreator,
+        private readonly PluginCreatorService $pluginCreatorService,
     ) {
         parent::__construct();
     }
@@ -64,15 +58,7 @@ class PluginCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $pluginInformation = $this->askForPluginInformation($io, $input);
-
-        if ($pluginInformation->isExtbasePlugin()) {
-            $this->extbaseConfigurePluginCreator->create($pluginInformation);
-            $this->extbaseRegisterPluginCreator->create($pluginInformation);
-        } else {
-            $this->nativeAddPluginCreator->create($pluginInformation);
-            $this->nativeAddTypoScriptCreator->create($pluginInformation);
-        }
+        $this->pluginCreatorService->create($this->askForPluginInformation($io, $input));
 
         return Command::SUCCESS;
     }

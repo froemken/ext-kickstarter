@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Creator\Tca\ExtTablesSqlCreator;
-use StefanFroemken\ExtKickstarter\Creator\Tca\TcaTableCreator;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\TableInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -29,113 +28,8 @@ class TableCommand extends Command
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
 
-    private const TABLE_COLUMN_TYPES = [
-        'category' => [
-            'type' => 'category',
-        ],
-        'check' => [
-            'type' => 'check',
-            'renderType' => 'checkboxToggle',
-            'items' => [
-                [
-                    'label' => 'Change me',
-                ],
-            ],
-        ],
-        'color' => [
-            'type' => 'color',
-        ],
-        'datetime' => [
-            'type' => 'datetime',
-            'format' => 'date',
-            'default' => 0,
-        ],
-        'email' => [
-            'type' => 'email',
-        ],
-        'file' => [
-            'type' => 'file',
-            'maxitems' => 1,
-            'allowed' => 'common-image-types',
-        ],
-        'flex' => [
-            'type' => 'flex',
-        ],
-        'folder' => [
-            'type' => 'folder',
-        ],
-        'group' => [
-            'type' => 'group',
-            'allowed' => '',
-        ],
-        'imageManipulation' => [
-            'type' => 'imageManipulation',
-        ],
-        'inline' => [
-            'type' => 'inline',
-        ],
-        'input' => [
-            'type' => 'input',
-        ],
-        'json' => [
-            'type' => 'json',
-        ],
-        'language' => [
-            'type' => 'language',
-        ],
-        'link' => [
-            'type' => 'link',
-        ],
-        'none' => [
-            'type' => 'none',
-        ],
-        'number' => [
-            'type' => 'number',
-        ],
-        'passthrough' => [
-            'type' => 'passthrough',
-        ],
-        'password' => [
-            'type' => 'password',
-        ],
-        'radio' => [
-            'type' => 'radio',
-            'items' => [
-                [
-                    'label' => 'Change me',
-                    'value' => 1,
-                ],
-            ],
-        ],
-        'select' => [
-            'type' => 'select',
-            'renderType' => 'selectSingle',
-            'items' => [
-                [
-                    'label' => 'Change me',
-                    'value' => 1,
-                ],
-            ],
-        ],
-        'slug' => [
-            'type' => 'slug',
-        ],
-        'text' => [
-            'type' => 'text',
-            'cols' => 40,
-            'rows' => 7,
-        ],
-        'user' => [
-            'type' => 'user',
-        ],
-        'uuid' => [
-            'type' => 'uuid',
-        ],
-    ];
-
     public function __construct(
-        private readonly TcaTableCreator $tcaTableCreator,
-        private readonly ExtTablesSqlCreator $extTablesSqlCreator,
+        private readonly TableCreatorService $tableCreatorService,
     ) {
         parent::__construct();
     }
@@ -160,10 +54,7 @@ class TableCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $tableInformation = $this->askForTableInformation($io, $input);
-
-        $this->tcaTableCreator->create($tableInformation);
-        $this->extTablesSqlCreator->create($tableInformation);
+        $this->tableCreatorService->create($this->askForTableInformation($io, $input));
 
         return Command::SUCCESS;
     }
@@ -257,6 +148,6 @@ class TableCommand extends Command
     {
         $tableColumnType = $io->choice('Choose TCA column type', array_keys(self::TABLE_COLUMN_TYPES), 'input');
 
-        return self::TABLE_COLUMN_TYPES[$tableColumnType] ?? [];
+        return TableCreatorService::TABLE_COLUMN_TYPES[$tableColumnType] ?? [];
     }
 }

@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Creator\Event\EventListenerCreator;
 use StefanFroemken\ExtKickstarter\Information\EventListenerInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\EventListenerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -27,7 +27,7 @@ class EventListenerCommand extends Command
     use ExtensionInformationTrait;
 
     public function __construct(
-        private readonly EventListenerCreator $eventListenerCreator,
+        private readonly EventListenerCreatorService $eventListenerCreatorService,
     ) {
         parent::__construct();
     }
@@ -52,9 +52,7 @@ class EventListenerCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $eventListenerInformation = $this->askForEventListenerInformation($io, $input);
-
-        $this->eventListenerCreator->create($eventListenerInformation);
+        $this->eventListenerCreatorService->create($this->askForEventListenerInformation($io, $input));
 
         return Command::SUCCESS;
     }
