@@ -45,16 +45,20 @@ class TcaTableCreator
             $this->addTableNode($fileStructure, $tableInformation);
         }
 
-        $columnsItem = $this->getExistingTcaColumns($fileStructure);
-
+        $columnsItem = $this->getExistingTcaSection($fileStructure, 'columns');
         if ($columnsItem instanceof ArrayItem && $columnsItem->value instanceof Array_) {
             $columnsItem->value->items = $this->addNewTcaColumns($columnsItem->value->items, $tableInformation);
+        }
+
+        $typesItem = $this->getExistingTcaSection($fileStructure, 'types');
+        if ($typesItem instanceof ArrayItem && $typesItem->value instanceof Array_) {
+            $this->addNewTcaTypeItems($typesItem->value->items, $tableInformation);
         }
 
         file_put_contents($tableFile, $fileStructure->getFileContents());
     }
 
-    private function getExistingTcaColumns(FileStructure $fileStructure): ?ArrayItem
+    private function getExistingTcaSection(FileStructure $fileStructure, string $section): ?ArrayItem
     {
         if ($fileStructure->getReturnStructures()->count() === 0) {
             return null;
@@ -64,7 +68,7 @@ class TcaTableCreator
         $returnStructure = $fileStructure->getReturnStructures()->current();
 
         foreach ($returnStructure->getNode()->expr->items as $item) {
-            if ($item->key->value === 'columns') {
+            if ($item->key->value === $section) {
                 return $item;
             }
         }
@@ -92,6 +96,27 @@ class TcaTableCreator
         }
 
         return $existingTcaColumns;
+    }
+
+    private function addNewTcaTypeItems(array $existingTcaTypes, TableInformation $tableInformation): void
+    {
+        if (!isset($existingTcaTypes[0]->value->items[0]->value)) {
+            return;
+        }
+
+        /** @var String_ $showItems */
+        $showItems = $existingTcaTypes[0]->value->items[0]->value;
+        $existingColumnNames = GeneralUtility::trimExplode(',', $showItems->value, true);
+
+        foreach ($tableInformation->getColumns() as $columnName => $columnConfiguration) {
+            if (in_array($columnName, $existingColumnNames, true)) {
+                continue;
+            }
+
+            $existingColumnNames[] = $columnName;
+        }
+
+        $showItems->value = implode(', ', $existingColumnNames);
     }
 
     private function addTableNode(FileStructure $fileStructure, TableInformation $tableInformation): void
