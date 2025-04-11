@@ -63,7 +63,7 @@ final class ExtConf
 
         if (!$exportDirectory) {
             // Fall back to typo3temp/ext-kickstarter
-            $exportDirectory = sprintf(
+            return sprintf(
                 '%s/%s/',
                 Environment::getPublicPath(),
                 'typo3temp/ext-kickstarter',
@@ -71,7 +71,7 @@ final class ExtConf
         }
 
         // sprintf() in ExtensionInformation will add trailing slash
-        return rtrim($exportDirectory, '/');
+        return Environment::getProjectPath() . '/' . rtrim($exportDirectory, '/');
     }
 
     public function isActivateModule(): bool

@@ -24,7 +24,7 @@ use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class UpgradeWizardCreator
+class UpgradeWizardCreator implements UpgradeWizardCreatorInterface
 {
     use FileStructureBuilderTrait;
 

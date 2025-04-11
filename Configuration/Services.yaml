@@ -12,10 +12,6 @@ services:
   StefanFroemken\ExtKickstarter\Configuration\ExtConf:
     public: true
 
-  StefanFroemken\ExtKickstarter\Service\BuildExtensionService:
-    arguments:
-      $builders: !tagged_iterator { tag: 'ext-kickstarter.builder' }
-
   StefanFroemken\ExtKickstarter\Command\ControllerCommand:
     tags:
       - name: console.command
@@ -38,8 +34,6 @@ services:
         schedulable: false
 
   StefanFroemken\ExtKickstarter\Command\ExtensionCommand:
-    arguments:
-      $creators: !tagged_iterator { tag: 'ext-kickstarter.creator.extension' }
     tags:
       - name: console.command
         command: 'make:extension'
@@ -87,3 +81,36 @@ services:
         command: 'make:upgrade'
         description: 'Create a new Upgrade Wizard to your TYPO3 extension.'
         schedulable: false
+
+  StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService:
+    arguments:
+      $extbaseControllerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.controller.extbase' }
+      $nativeControllerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.controller.native' }
+  StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService:
+    arguments:
+      $modelCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.model' }
+  StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService:
+    arguments:
+      $repositoryCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.repository' }
+  StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService:
+    arguments:
+      $eventCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.event' }
+  StefanFroemken\ExtKickstarter\Service\Creator\EventListenerCreatorService:
+    arguments:
+      $eventListenerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.event-listener' }
+  StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService:
+    arguments:
+      $extensionCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.extension' }
+  StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService:
+    arguments:
+      $extbasePluginCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.plugin.extbase' }
+      $nativePluginCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.plugin.native' }
+  StefanFroemken\ExtKickstarter\Service\Creator\TypeConverterCreatorService:
+    arguments:
+      $typeConverterCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.property.type-converter' }
+  StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService:
+    arguments:
+      $tableCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.tca.table' }
+  StefanFroemken\ExtKickstarter\Service\Creator\UpgradeWizardCreatorService:
+    arguments:
+      $upgradeCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.upgrade-wizard' }

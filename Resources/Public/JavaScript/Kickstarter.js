@@ -183,6 +183,7 @@ class TcaTypeCategory extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -203,6 +204,7 @@ class TcaTypeCheck extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -240,6 +242,7 @@ class TcaTypeDatetime extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -259,6 +262,7 @@ class TcaTypeEmail extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -314,6 +318,7 @@ class TcaTypeGroup extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -333,6 +338,7 @@ class TcaTypeInline extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -353,6 +359,7 @@ class TcaTypeInput extends LiteGraph.LGraphNode {
             useAsTableLabel: false,
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -408,6 +415,7 @@ class TcaTypeNumber extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -463,6 +471,7 @@ class TcaTypeRadio extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -482,6 +491,7 @@ class TcaTypeSelect extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
@@ -519,6 +529,7 @@ class TcaTypeText extends LiteGraph.LGraphNode {
             label: "Default",
             description: "",
             modelProperty: false,
+            propertyDataType: 'string',
         };
     }
 }
