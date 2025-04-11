@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Creator\Domain\ClassMapCreator;
-use StefanFroemken\ExtKickstarter\Creator\Domain\ModelCreator;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -42,8 +41,7 @@ class ModelCommand extends Command
     ];
 
     public function __construct(
-        private readonly ModelCreator $modelCreator,
-        private readonly ClassMapCreator $classMapCreator,
+        private readonly ModelCreatorService $modelCreatorService,
     ) {
         parent::__construct();
     }
@@ -68,13 +66,7 @@ class ModelCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $modelInformation = $this->askForModelInformation($io, $input);
-
-        $this->modelCreator->create($modelInformation);
-
-        if (!$modelInformation->isExpectedTableName()) {
-            $this->classMapCreator->create($modelInformation);
-        }
+        $this->modelCreatorService->create($this->askForModelInformation($io, $input));
 
         return Command::SUCCESS;
     }

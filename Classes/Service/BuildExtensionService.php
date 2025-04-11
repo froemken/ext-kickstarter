@@ -12,16 +12,36 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Service;
 
 use Psr\Http\Message\ResponseInterface;
-use StefanFroemken\ExtKickstarter\Builder\BuilderInterface;
+use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use StefanFroemken\ExtKickstarter\Information\ModelInformation;
+use StefanFroemken\ExtKickstarter\Information\PluginInformation;
+use StefanFroemken\ExtKickstarter\Information\RepositoryInformation;
+use StefanFroemken\ExtKickstarter\Information\TableInformation;
 use StefanFroemken\ExtKickstarter\Model\Graph;
+use StefanFroemken\ExtKickstarter\Model\Node\Main\AuthorNode;
 use StefanFroemken\ExtKickstarter\Model\Node\Main\ExtensionNode;
-use TYPO3\CMS\Core\Core\Environment;
+use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
+use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
+use StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService;
+use StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService;
+use StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService;
+use StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use TYPO3\CMS\Core\Http\JsonResponse;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class BuildExtensionService
+readonly class BuildExtensionService
 {
-    public function __construct(private readonly iterable $builders) {}
+    use ExtensionInformationTrait;
+
+    public function __construct(
+        private ExtensionCreatorService $extensionCreatorService,
+        private PluginCreatorService $pluginCreatorService,
+        private ControllerCreatorService $controllerCreatorService,
+        private RepositoryCreatorService $repositoryCreatorService,
+        private TableCreatorService $tableCreatorService,
+        private ModelCreatorService $modelCreatorService,
+    ) {}
 
     public function build(Graph $graph): ResponseInterface
     {
@@ -46,32 +66,122 @@ class BuildExtensionService
         return $graph->getExtensionNode() instanceof ExtensionNode;
     }
 
-    private function getExtPath(Graph $graph): string
-    {
-        $extensionNode = $graph->getExtensionNode();
-        $extPath = sprintf(
-            '%s/%s/%s',
-            Environment::getPublicPath(),
-            'typo3temp/ext-kickstarter',
-            ($extensionNode->getProperties()['extensionKey'] ?? 'my_extension')
-        );
-
-        if (is_dir($extPath)) {
-            GeneralUtility::rmdir($extPath, true);
-        }
-
-        GeneralUtility::mkdir_deep($extPath);
-
-        return $extPath . '/';
-    }
-
     private function generateExtensionFiles(Graph $graph): void
     {
-        $extPath = $this->getExtPath($graph);
+        $this->extensionCreatorService->create($this->getExtensionInformation($graph));
+        $this->createPlugins($graph);
+        $this->createControllers($graph);
+        $this->createRepositories($graph);
+        $this->createTcaTables($graph);
+        $this->createModels($graph);
+    }
 
-        /** @var BuilderInterface $builder */
-        foreach ($this->builders as $builder) {
-            $builder->build($graph, $extPath);
+    private function getExtensionInformation(Graph $graph): ExtensionInformation
+    {
+        $extensionNode = $graph->getExtensionNode();
+        $authorNode = $extensionNode->getAuthorNodes()->current();
+
+        return new ExtensionInformation(
+            $extensionNode->getExtensionKey(),
+            $extensionNode->getComposerName(),
+            $extensionNode->getTitle(),
+            $extensionNode->getDescription(),
+            '0.0.1',
+            'plugin',
+            'stable',
+            $authorNode instanceof AuthorNode ? $authorNode->getAuthorName() : '',
+            $authorNode instanceof AuthorNode ? $authorNode->getAuthorEmail() : '',
+            $authorNode instanceof AuthorNode ? $authorNode->getAuthorCompany() : '',
+            $extensionNode->getNamespaceForAutoload(),
+            $this->getExtensionPath($extensionNode->getExtensionKey())
+        );
+    }
+
+    private function createPlugins(Graph $graph): void
+    {
+        $extensionNode = $graph->getExtensionNode();
+        foreach ($extensionNode->getExtbasePluginNodes() as $extbasePluginNode) {
+            $this->pluginCreatorService->create(new PluginInformation(
+                $this->getExtensionInformation($graph),
+                true,
+                $extbasePluginNode->getPluginName(),
+                $extbasePluginNode->getPluginName(),
+            ));
+        }
+    }
+
+    private function createControllers(Graph $graph): void
+    {
+        $extensionNode = $graph->getExtensionNode();
+        foreach ($extensionNode->getExtbaseControllerNodes() as $extbaseControllerNode) {
+            $actionNames = [];
+            foreach ($extbaseControllerNode->getControllerActionNodes() as $actionNode) {
+                $actionNames[] = $actionNode->getActionName();
+            }
+
+            $this->controllerCreatorService->create(new ControllerInformation(
+                $this->getExtensionInformation($graph),
+                true,
+                $extbaseControllerNode->getControllerName(),
+                $actionNames,
+            ));
+        }
+    }
+
+    private function createRepositories(Graph $graph): void
+    {
+        $extensionNode = $graph->getExtensionNode();
+        foreach ($extensionNode->getExtbaseRepositoryNodes() as $extbaseRepositoryNode) {
+            $this->repositoryCreatorService->create(new RepositoryInformation(
+                $this->getExtensionInformation($graph),
+                $extbaseRepositoryNode->getRepositoryName(),
+            ));
+        }
+    }
+
+    private function createTcaTables(Graph $graph): void
+    {
+        $extensionNode = $graph->getExtensionNode();
+        foreach ($extensionNode->getTableNodes() as $tableNode) {
+            $columns = [];
+            foreach ($tableNode->getColumnNodes() as $columnNode) {
+                $columns[$columnNode->getColumnName()] = [
+                    'exclude' => true,
+                    'label' => $columnNode->getLabel(),
+                    'config' => TableCreatorService::TABLE_COLUMN_TYPES[$columnNode->getColumnType()],
+                ];
+            }
+
+            $this->tableCreatorService->create(new TableInformation(
+                $this->getExtensionInformation($graph),
+                $tableNode->getTableName(),
+                $tableNode->getTitle(),
+                $tableNode->getLabel(),
+                $columns,
+            ));
+        }
+    }
+
+    private function createModels(Graph $graph): void
+    {
+        $extensionNode = $graph->getExtensionNode();
+        foreach ($extensionNode->getExtbaseRepositoryNodes() as $repositoryNode) {
+            $properties = [];
+            foreach ($repositoryNode->getTableNode()->getModelProperties() as $propertyNode) {
+                $properties[$propertyNode->getColumnName()] = [
+                    'propertyName' => $propertyNode->getPropertyName(),
+                    'tcaType' => $tableTca['columns'][$propertyNode->getColumnName()]['config']['type'] ?? 'input',
+                    'dataType' => $propertyNode->getPropertyDataType(),
+                ];
+            }
+
+            $this->modelCreatorService->create(new ModelInformation(
+                $this->getExtensionInformation($graph),
+                $repositoryNode->getModelName(),
+                $repositoryNode->getTableName(),
+                true,
+                $properties,
+            ));
         }
     }
 }

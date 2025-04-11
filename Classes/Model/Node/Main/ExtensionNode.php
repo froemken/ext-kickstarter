@@ -66,10 +66,7 @@ class ExtensionNode extends AbstractNode
 
     public function getNamespaceForAutoload(): string
     {
-        return sprintf(
-            '"%s": "Classes"',
-            $this->getVendorName() . '\\\\' . $this->getExtensionName() . '\\\\'
-        );
+        return $this->getVendorName() . '\\\\' . $this->getExtensionName() . '\\\\';
     }
 
     public function getTablePrefix(): string

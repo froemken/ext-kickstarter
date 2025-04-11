@@ -9,8 +9,8 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-use StefanFroemken\ExtKickstarter\Controller\KickstartController;
 use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
+use StefanFroemken\ExtKickstarter\Controller\KickstartController;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 $extConf = GeneralUtility::makeInstance(ExtConf::class);

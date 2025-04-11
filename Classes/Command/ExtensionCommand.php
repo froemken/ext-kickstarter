@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -31,7 +32,7 @@ class ExtensionCommand extends Command
     use ExtensionInformationTrait;
 
     public function __construct(
-        private readonly iterable $creators,
+        private readonly ExtensionCreatorService $extensionCreatorService,
     ) {
         parent::__construct();
     }
@@ -58,14 +59,10 @@ class ExtensionCommand extends Command
 
         $io->title('Questions to build a new TYPO3 Extension');
 
-        $extensionInformation = $this->askForExtensionInformation(
+        $this->extensionCreatorService->create($this->askForExtensionInformation(
             $io,
             $this->askForExtensionKey($io, $input->getArgument('extension_key'))
-        );
-
-        foreach ($this->creators as $creator) {
-            $creator->create($extensionInformation);
-        }
+        ));
 
         return Command::SUCCESS;
     }

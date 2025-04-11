@@ -42,4 +42,11 @@ abstract class AbstractColumnNode extends AbstractNode
             ? GeneralUtility::underscoredToLowerCamelCase($this->getColumnName())
             : '';
     }
+
+    public function getPropertyDataType(): string
+    {
+        return $this->isModelProperty()
+            ? $this->getProperties()['propertyDataType'] ?? 'string'
+            : '';
+    }
 }
