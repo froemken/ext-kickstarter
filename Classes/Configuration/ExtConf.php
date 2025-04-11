@@ -28,11 +28,13 @@ final class ExtConf
     private const DEFAULT_SETTINGS = [
         // general
         'exportDirectory' => '',
+        'activateModule' => false,
     ];
 
     public function __construct(
         // general
         private string $exportDirectory = self::DEFAULT_SETTINGS['exportDirectory'],
+        private bool $activateModule = self::DEFAULT_SETTINGS['activateModule'],
     ) {}
 
     public static function create(ExtensionConfiguration $extensionConfiguration): self
@@ -51,6 +53,7 @@ final class ExtConf
         return new self(
             // general
             exportDirectory: (string)$extensionSettings['exportDirectory'],
+            activateModule: (bool)$extensionSettings['activateModule'],
         );
     }
 
@@ -69,5 +72,10 @@ final class ExtConf
 
         // sprintf() in ExtensionInformation will add trailing slash
         return rtrim($exportDirectory, '/');
+    }
+
+    public function isActivateModule(): bool
+    {
+        return $this->activateModule;
     }
 }

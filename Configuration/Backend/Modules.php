@@ -10,22 +10,29 @@ declare(strict_types=1);
  */
 
 use StefanFroemken\ExtKickstarter\Controller\KickstartController;
+use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Definitions for modules provided by EXT:ext_kickstarter
- */
-return [
-    'system_kickstarter' => [
-        'parent' => 'system',
-        'position' => ['after' => '*'],
-        'access' => 'admin',
-        'path' => '/module/ext_kickstarter/overview',
-        'icon' => 'EXT:ext_kickstarter/Resources/Public/Icons/Extension.svg',
-        'labels' => 'LLL:EXT:ext_kickstarter/Resources/Private/Language/locallang_kickstarter.xlf',
-        'routes' => [
-            '_default' => [
-                'target' => KickstartController::class . '::processRequest',
+$extConf = GeneralUtility::makeInstance(ExtConf::class);
+if ($extConf->isActivateModule()) {
+    /**
+     * Definitions for modules provided by EXT:ext_kickstarter
+     */
+    return [
+        'system_kickstarter' => [
+            'parent' => 'system',
+            'position' => ['after' => '*'],
+            'access' => 'admin',
+            'path' => '/module/ext_kickstarter/overview',
+            'icon' => 'EXT:ext_kickstarter/Resources/Public/Icons/Extension.svg',
+            'labels' => 'LLL:EXT:ext_kickstarter/Resources/Private/Language/locallang_kickstarter.xlf',
+            'routes' => [
+                '_default' => [
+                    'target' => KickstartController::class . '::processRequest',
+                ],
             ],
         ],
-    ],
-];
+    ];
+}
+
+return [];
