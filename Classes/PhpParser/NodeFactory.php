@@ -62,7 +62,7 @@ class NodeFactory
     {
         $docComment = <<<'EOT'
 /*
- * This file is part of the package stefanfroemken/blog-example.
+ * This file is part of the package {PACKAGE_NAME}.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
