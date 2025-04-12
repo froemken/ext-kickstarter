@@ -41,5 +41,5 @@ FAQ
         after rewriting a PHP file.
         Extension Kickstarter does not have any kind of configuration file
         where you can define what have to be overwritten or not like done
-        in EXT:extension_builder. I prefer to backup your extension before
+        in :t3ext:`extension_builder`. I prefer to backup your extension before
         you start modifying it with extension kickstarter.
