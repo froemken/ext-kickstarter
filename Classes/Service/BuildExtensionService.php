@@ -101,11 +101,27 @@ readonly class BuildExtensionService
     {
         $extensionNode = $graph->getExtensionNode();
         foreach ($extensionNode->getExtbasePluginNodes() as $extbasePluginNode) {
+            $referencedControllerActions = [];
+            foreach ($extbasePluginNode->getControllerNodes() as $controllerNode) {
+                $controllerActionNames = [];
+                foreach ($controllerNode->getControllerActionNodes() as $controllerActionNode) {
+                    $controllerActionNames[] = $controllerActionNode->getActionName();
+                }
+                $referencedControllerActions[$controllerNode->getControllerName()]['cached'] = $controllerActionNames;
+
+                $uncachedControllerActionNames = [];
+                foreach ($controllerNode->getUncachedControllerActionNodes() as $uncachedControllerActionNode) {
+                    $uncachedControllerActionNames[] = $uncachedControllerActionNode->getActionName();
+                }
+                $referencedControllerActions[$controllerNode->getControllerName()]['uncached'] = $uncachedControllerActionNames;
+            }
+
             $this->pluginCreatorService->create(new PluginInformation(
                 $this->getExtensionInformation($graph),
                 true,
                 $extbasePluginNode->getPluginName(),
                 $extbasePluginNode->getPluginName(),
+                $referencedControllerActions
             ));
         }
     }
