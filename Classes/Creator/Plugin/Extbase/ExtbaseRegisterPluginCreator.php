@@ -97,6 +97,9 @@ class ExtbaseRegisterPluginCreator implements ExtbasePluginCreatorInterface
                 $pluginInformation->getExtensionInformation()->getExtensionName(),
                 $pluginInformation->getPluginName(),
                 $pluginInformation->getPluginLabel(),
+                $pluginInformation->getPluginIconIdentifier(),
+                'plugins',
+                $pluginInformation->getPluginDescription(),
             ]
         ));
     }
