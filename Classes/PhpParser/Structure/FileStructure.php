@@ -253,7 +253,7 @@ class FileStructure
 
             // Collect nodes for class itself
             $classStmts = [];
-            array_push($classStmts, ...$this->getTraitStructures()->getStmts());
+            array_push($classStmts, ...$this->getTraitStructures()->getStmts(true));
             array_push($classStmts, ...$this->getClassConstStructures()->getStmts());
             array_push($classStmts, ...$this->getPropertyStructures()->getStmts());
             array_push($classStmts, ...$this->getMethodStructures()->getStmts());
@@ -262,7 +262,7 @@ class FileStructure
 
             // Collect nodes for class namespace
             $namespaceStmts = [];
-            array_push($namespaceStmts, ...$this->getUseStructures()->getStmts());
+            array_push($namespaceStmts, ...$this->getUseStructures()->getStmts(true));
             $namespaceStmts[] = $classNode;
 
             $namespaceNode->stmts = $namespaceStmts;
@@ -270,7 +270,7 @@ class FileStructure
             $stmts[] = $namespaceNode;
         } else {
             // Add nodes for non-classes
-            array_push($stmts, ...$this->getUseStructures()->getStmts());
+            array_push($stmts, ...$this->getUseStructures()->getStmts(true));
             array_push($stmts, ...$this->getExpressionStructures()->getStmts());
             array_push($stmts, ...$this->getFunctionStructures()->getStmts());
             array_push($stmts, ...$this->getReturnStructures()->getStmts());

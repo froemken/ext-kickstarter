@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use PhpParser\Node;
-use PhpParser\NodeFinder;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService;
@@ -70,80 +68,78 @@ class PluginCommand extends Command
             $io
         );
 
-        $isExtbasePlugin = $io->confirm('Do you prefer to create an extbase based plugin?');
-
         $pluginLabel = (string)$io->ask(
             'Please provide a label for your plugin. You will see the label in the backend.',
         );
-        $pluginName = $this->askForPluginName($io, $extensionInformation, $pluginLabel);
+        $pluginName = $this->askForPluginName($io, $pluginLabel);
+
+        $referencedControllerActions = [];
+        $isExtbasePlugin = $io->confirm('Do you prefer to create an extbase based plugin?');
+        if ($isExtbasePlugin) {
+            $extbaseControllerClassnames = $extensionInformation->getExtbaseControllerClassnames();
+            if ($extbaseControllerClassnames === []) {
+                $io->error([
+                    'Your extension does not contain any extbase controllers.',
+                    'Please create at least one extbase controller with \'typo3 make:controller\' before creating a plugin.',
+                ]);
+                die();
+            }
+
+            $referencedControllerActions = $this->askForReferencedControllerActions(
+                $io,
+                $extbaseControllerClassnames,
+                $extensionInformation,
+            );
+        }
 
         return new PluginInformation(
             $extensionInformation,
             $isExtbasePlugin,
             $pluginLabel,
             $pluginName,
+            $referencedControllerActions,
         );
     }
 
     private function askForPluginName(
         SymfonyStyle $io,
-        ExtensionInformation $extensionInformation,
         string $pluginLabel,
     ): string {
-        do {
-            $pluginName = (string)$io->ask(
-                'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
-                GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
-            );
-            if ($this->isPluginNameRegistered($extensionInformation, $pluginName)) {
-                $io->error(sprintf(
-                    '%s: %s',
-                    'Your given plugin name is already registered in "ext_localconf.php" of your given extension with key',
-                    $extensionInformation->getExtensionKey()
-                ));
-                $validComposerPackageName = false;
-            } else {
-                $validComposerPackageName = true;
-            }
-        } while (!$validComposerPackageName);
-
-        return $pluginName;
+        return (string)$io->ask(
+            'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
+            GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
+        );
     }
 
-    private function isPluginNameRegistered(ExtensionInformation $extensionInformation, string $pluginName): bool
-    {
-        $nodeFinder = new NodeFinder();
-        $file = $extensionInformation->getExtensionPath() . 'ext_localconf.php';
-        $extensionName = $extensionInformation->getExtensionName();
+    private function askForReferencedControllerActions(
+        SymfonyStyle $io,
+        array $extbaseControllerClassnames,
+        ExtensionInformation $extensionInformation,
+    ): array {
+        $referencedControllerActions = [];
 
-        // Early return, if ext_localconf.php does not exist
-        if (is_file($file) === false) {
-            return false;
+        $referencedExtbaseControllerNames = (array)$io->choice(
+            'Select the extbase controller classes you want to reference to your plugin.',
+            $extbaseControllerClassnames,
+            null,
+            true
+        );
+
+        foreach ($referencedExtbaseControllerNames as $referencedExtbaseControllerName) {
+            $referencedControllerActions[$referencedExtbaseControllerName]['cached'] = $io->choice(
+                'Select the CACHED actions for your controller ' . $referencedExtbaseControllerName . ' you want to reference to your plugin.',
+                $extensionInformation->getExtbaseControllerActionNames($referencedExtbaseControllerName),
+                null,
+                true
+            );
+            $referencedControllerActions[$referencedExtbaseControllerName]['uncached'] = $io->choice(
+                'Select the UNCACHED actions for your controller ' . $referencedExtbaseControllerName . ' you want to reference to your plugin.',
+                $extensionInformation->getExtbaseControllerActionNames($referencedExtbaseControllerName),
+                null,
+                true
+            );
         }
 
-        $fileStructure = $this->buildFileStructure($file);
-
-        // Find all classes that extend another class
-        $matchingStatements = $nodeFinder->find($fileStructure->getExpressionStructures()->getStmts(), function (Node $node) use ($extensionName, $pluginName) {
-            if ($node instanceof Node\Expr\StaticCall
-                && $node->class->toString() === 'ExtensionUtility'
-                && $node->name->toString() === 'configurePlugin'
-            ) {
-                $extensionNameArg = $node->args[0] instanceof Node\Arg && $node->args[0]->value instanceof Node\Scalar\String_
-                    ? $node->args[0]->value->value
-                    : '';
-
-                $pluginNameArg = $node->args[1] instanceof Node\Arg && $node->args[1]->value instanceof Node\Scalar\String_
-                    ? $node->args[1]->value->value
-                    : '';
-
-                return strtolower($extensionNameArg) === strtolower($extensionName)
-                    && strtolower($pluginNameArg) === strtolower($pluginName);
-            }
-
-            return false;
-        });
-
-        return $matchingStatements !== [];
+        return $referencedControllerActions;
     }
 }
