@@ -26,7 +26,7 @@
 	"require": {
 		"ext-pdo": "*",
 		"typo3/cms-core": "^13.4.3",
-		"nikic/php-parser": "^5.3"
+		"typo3/cms-install": "^13.4.3"
 	},
 	"require-dev": {
 		"ergebnis/composer-normalize": "^2.44",
