@@ -53,12 +53,6 @@ class UpgradeWizardCreator implements UpgradeWizardCreatorInterface
 
     private function addClassNodes(FileStructure $fileStructure, UpgradeWizardInformation $upgradeWizardInformation): void
     {
-        $upgradeWizardIdentifier = sprintf(
-            '%s_%s',
-            lcfirst($upgradeWizardInformation->getExtensionInformation()->getExtensionName()),
-            lcfirst($upgradeWizardInformation->getUpgradeWizardClassName())
-        );
-
         $fileStructure->addDeclareStructure(
             new DeclareStructure($this->nodeFactory->createDeclareStrictTypes())
         );
@@ -84,7 +78,7 @@ class UpgradeWizardCreator implements UpgradeWizardCreatorInterface
                     ->addAttribute($this->builderFactory->attribute(
                         'UpgradeWizard',
                         [
-                            $upgradeWizardIdentifier,
+                            'identifier' => $upgradeWizardInformation->getUpgradeWizardIdentifier(),
                         ]
                     ))
                     ->makeFinal()

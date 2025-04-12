@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 readonly class UpgradeWizardInformation
 {
     private const UPGRADE_WIZARD_PATH = 'Classes/Upgrade/';
@@ -28,6 +30,17 @@ readonly class UpgradeWizardInformation
     public function getUpgradeWizardClassName(): string
     {
         return $this->upgradeWizardClassName;
+    }
+
+    public function getUpgradeWizardIdentifier(): string
+    {
+        $identifier = substr($this->getUpgradeWizardClassName(), 0, -7);
+
+        return sprintf(
+            '%s/%s',
+            str_replace('_', '-', $this->getExtensionInformation()->getExtensionKey()),
+            str_replace('_', '-', GeneralUtility::camelCaseToLowerCaseUnderscored($identifier))
+        );
     }
 
     public function getUpgradeWizardFilename(): string
