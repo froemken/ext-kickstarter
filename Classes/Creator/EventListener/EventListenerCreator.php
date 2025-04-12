@@ -19,6 +19,7 @@ use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -45,6 +46,7 @@ class EventListenerCreator implements EventListenerCreatorInterface
 
         if (!is_file($eventListenerFilePath)) {
             $this->addClassNodes($fileStructure, $eventListenerInformation);
+
             file_put_contents($eventListenerFilePath, $fileStructure->getFileContents());
         }
     }
@@ -54,12 +56,18 @@ class EventListenerCreator implements EventListenerCreatorInterface
         $fileStructure->addDeclareStructure(
             new DeclareStructure($this->nodeFactory->createDeclareStrictTypes())
         );
+
         $fileStructure->addNamespaceStructure(
             new NamespaceStructure($this->nodeFactory->createNamespace(
                 $eventListenerInformation->getNamespace(),
                 $eventListenerInformation->getExtensionInformation(),
             ))
         );
+
+        $fileStructure->addUseStructure(new UseStructure(
+            $this->builderFactory->use('TYPO3\CMS\Core\Attribute\AsEventListener')->getNode()
+        ));
+
         $fileStructure->addClassStructure(
             new ClassStructure(
                 $this->builderFactory
@@ -68,6 +76,7 @@ class EventListenerCreator implements EventListenerCreatorInterface
                     ->getNode(),
             )
         );
+
         $fileStructure->addMethodStructure(
             new MethodStructure(
                 $this->builderFactory
@@ -75,6 +84,12 @@ class EventListenerCreator implements EventListenerCreatorInterface
                     ->addParam($this->builderFactory->param('event')->setType('Replace\Me\Event'))
                     ->makePublic()
                     ->setReturnType('void')
+                    ->addAttribute($this->builderFactory->attribute(
+                        'AsEventListener',
+                        [
+                            'identifier' => $eventListenerInformation->getEventListenerIdentifier(),
+                        ]
+                    ))
                     ->getNode()
             )
         );
