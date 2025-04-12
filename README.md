@@ -1,20 +1,25 @@
 # TYPO3 Extension Kickstarter
 
-`ext_kickstarter` is a TYPO3 extension that simplifies and accelerates the creation of new TYPO3 extensions by automating file generation, controller setup, and plugin registration through easy-to-use CLI commands. With a few CLI commands, it generates essential files like `LICENSE`, `ext_emconf.php`, `composer.json`, and more. Whether starting from scratch or extending existing functionality, `ext_kickstarter` helps streamline development.
+`ext_kickstarter` is a TYPO3 extension that simplifies and accelerates the creation of new TYPO3 extensions by automating file generation, controller setup, and plugin registration through easy-to-use CLI commands. With a few CLI commands, it generates essential files like `LICENSE`, `ext_emconf.php`,`composer.json`, and more. Whether starting from scratch or extending existing functionality, `ext_kickstarter` helps streamline development.
 
 ---
 
 ## Features
 
-- **Generate New TYPO3 Extensions**  
+- **Generate New TYPO3 Extensions**
   Automates the creation of TYPO3 extensions with pre-configured files.
 
 - **CLI Commands for Common Tasks**
     - Create a new extension
-    - Generate controllers
-    - Register plugins
+    - Generate controllers (extbase and native)
+    - Register plugins (extbase and native)
     - Extend existing controllers with additional actions.
     - Create basic TCA for tables
+    - Create extbase domain model
+    - Create extbase domain repository
+    - Create extbase type converters
+    - Create event
+    - Create event listener
 
 ---
 
@@ -55,7 +60,7 @@ DDEV:
 ddev typo3 make:extension
 ```
 
-**Warning:** This command will delete an existing extension in the target directory before creating a new one.
+**Warning:** This command will ask you to delete an existing extension in the target directory before creating a new one.
 
 ### Generate a Controller
 
