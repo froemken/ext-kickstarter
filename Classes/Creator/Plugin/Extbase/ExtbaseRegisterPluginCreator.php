@@ -13,10 +13,12 @@ namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
+use PhpParser\NodeFinder;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -54,11 +56,36 @@ class ExtbaseRegisterPluginCreator implements ExtbasePluginCreatorInterface
         $fileStructure->addUseStructure(new UseStructure(
             $this->builderFactory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode()
         ));
-        $fileStructure->addExpressionStructure(new ExpressionStructure(
-            $this->getExpressionForRegisterPlugin($pluginInformation)
-        ));
+
+        if ($this->getStaticCallForRegisterPlugin($fileStructure, $pluginInformation) === null) {
+            $fileStructure->addExpressionStructure(new ExpressionStructure(
+                $this->getExpressionForRegisterPlugin($pluginInformation)
+            ));
+        }
 
         file_put_contents($targetFile, $fileStructure->getFileContents());
+    }
+
+    private function getStaticCallForRegisterPlugin(
+        FileStructure $fileStructure,
+        PluginInformation $pluginInformation
+    ): ?Node\Expr\StaticCall {
+        $nodeFinder = new NodeFinder();
+        $matchedNode = $nodeFinder->findFirst($fileStructure->getExpressionStructures()->getStmts(), static function (Node $node) use ($pluginInformation): bool {
+            return $node instanceof Node\Expr\StaticCall
+                && $node->class->toString() === 'ExtensionUtility'
+                && $node->name->toString() === 'registerPlugin'
+                && isset($node->args[0], $node->args[1])
+                && $node->args[0] instanceof Node\Arg
+                && ($extensionNameNode = $node->args[0])
+                && $extensionNameNode->value instanceof Node\Scalar\String_
+                && $extensionNameNode->value->value === $pluginInformation->getExtensionInformation()->getExtensionName()
+                && ($pluginNameNode = $node->args[1])
+                && $pluginNameNode->value instanceof Node\Scalar\String_
+                && $pluginNameNode->value->value === $pluginInformation->getPluginName();
+        });
+
+        return $matchedNode instanceof Node\Expr\StaticCall ? $matchedNode : null;
     }
 
     private function getExpressionForRegisterPlugin(PluginInformation $pluginInformation): Node\Stmt\Expression

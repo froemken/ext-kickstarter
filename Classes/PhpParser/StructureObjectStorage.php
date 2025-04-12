@@ -13,15 +13,25 @@ namespace StefanFroemken\ExtKickstarter\PhpParser;
 
 class StructureObjectStorage extends \SplObjectStorage
 {
-    public function getStmts(): array
+    /**
+     * Param "sorted" is interesting for "traits" and "use" imports which should be inserted sorted
+     */
+    public function getStmts(bool $sorted = false): array
     {
         $stmts = [];
 
         foreach ($this as $structure) {
-            $stmts[] = $structure->getNode();
+            if ($sorted && $name = $structure->getName()) {
+                $stmts[$name] = $structure->getNode();
+            } else {
+                $stmts[] = $structure->getNode();
+            }
         }
 
-        return $stmts;
+        ksort($stmts);
+
+        // Because of array_push, we need increment array keys
+        return array_values($stmts);
     }
 
     public function hasNodeWithName(string $name): bool

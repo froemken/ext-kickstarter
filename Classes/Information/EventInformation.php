@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-class EventInformation
+readonly class EventInformation
 {
     private const EVENT_PATH = 'Classes/Event/';
 
     public function __construct(
-        private readonly ExtensionInformation $extensionInformation,
-        private readonly string $eventClassName,
+        private ExtensionInformation $extensionInformation,
+        private string $eventClassName,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
