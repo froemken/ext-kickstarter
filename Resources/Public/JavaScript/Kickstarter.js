@@ -779,39 +779,6 @@ class ExtbaseRepository extends LiteGraph.LGraphNode {
 
 LiteGraph.registerNodeType("Extbase/Repository", ExtbaseRepository);
 
-/**
- * Only needed, if you don't want to register all actions of a controller in plugin configuration.
- * If used, it overwrites the "Controller::class -> index,update,show,list" string
- */
-class OverwritePluginControllerActionMapping extends LiteGraph.LGraphNode {
-    constructor() {
-        super();
-
-        this.title = "Mapping";
-
-        this.addInput("extbasePlugin", "ExtbasePluginControllers");
-        this.addInput("extbaseModule", "ExtbaseModuleControllers");
-
-        this.addProperty("controllerName", "DefaultController");
-        this.addProperty("actionNames", "list,show");
-        this.addProperty("uncached", false);
-
-        this.addWidget("text", "Controller", this.properties.controllerName, "controllerName");
-        this.addWidget("text", "Actions", this.properties.actionNames, "actionNames");
-    }
-
-    onPropertyChanged = function (propertyName, newPropertyValue, previousPropertyValue) {
-        if (propertyName === "controllerName") {
-            const capitalizedControllerName = newPropertyValue.charAt(0).toUpperCase() + newPropertyValue.slice(1);
-            const shouldAppendController = !capitalizedControllerName.endsWith("Controller");
-            this.setProperty("controllerName", capitalizedControllerName + (shouldAppendController ? "Controller" : ""));
-            return true;
-        }
-    }
-}
-
-LiteGraph.registerNodeType("Extbase/OverwritePluginControllerActionMapping", OverwritePluginControllerActionMapping);
-
 // Container auswählen
 const container = document.getElementById("graph-container");
 
