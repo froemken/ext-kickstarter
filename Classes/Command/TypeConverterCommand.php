@@ -67,6 +67,9 @@ class TypeConverterCommand extends Command
         return new TypeConverterInformation(
             $extensionInformation,
             $this->askForTypeConverterClassName($io),
+            (int)$io->ask('Set priority', '10'),
+            (string)$io->ask('Set source data type(s).', 'int,string,array'),
+            (string)$io->ask('Set target data type. Can be any PHP data type or object/model (in that case FQCN: "\MyVendor\MxExt\Domain\Model\Car")'),
         );
     }
 
