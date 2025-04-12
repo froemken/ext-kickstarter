@@ -11,8 +11,11 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use PhpParser\NodeTraverser;
+use PhpParser\ParserFactory;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use StefanFroemken\ExtKickstarter\PhpParser\Visitor\FileVisitor;
 use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
@@ -58,6 +61,39 @@ class ExtensionCommand extends Command
         ]);
 
         $io->title('Questions to build a new TYPO3 Extension');
+
+        $template = <<<'EOT'
+<?php
+
+$EM_CONF[$_EXTKEY] = [
+    'title' => 'Cars',
+    'description' => 'list and show car records',
+    'category' => 'plugin',
+    'state' => 'stable',
+    'author' => 'Stefan Froemken',
+    'author_email' => 'froemken@gmail.com',
+    'author_company' => '',
+    'version' => '0.0.1',
+    'constraints' => [
+        'depends' => [
+            'typo3' => '13.4.0-13.4.99',
+        ],
+        'conflicts' => [],
+        'suggests' => [],
+    ],
+];
+EOT;
+        $parser = (new ParserFactory())->createForHostVersion();
+        $stmts = $parser->parse($template);
+
+        // This visitor loops through all nodes and collects them grouped in a FileStructure object
+        $fileVisitor = new FileVisitor();
+
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor($fileVisitor);
+        $traverser->traverse($stmts);
+
+        $fileStructure = $fileVisitor->getFileStructure();
 
         $this->extensionCreatorService->create($this->askForExtensionInformation(
             $io,
