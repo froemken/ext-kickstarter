@@ -11,13 +11,16 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-readonly class PluginInformation
+class PluginInformation
 {
+    private const CONFIGURATION_PATH = 'Configuration/';
+
     public function __construct(
         private readonly ExtensionInformation $extensionInformation,
         private readonly bool $extbasePlugin,
         private readonly string $pluginLabel,
         private readonly string $pluginName,
+        private string $pluginDescription,
         private readonly string $pluginType,
         private array $referencedControllerActions,
     ) {}
@@ -45,6 +48,24 @@ readonly class PluginInformation
     public function getPluginType(): string
     {
         return $this->pluginType;
+    }
+
+    public function getPluginDescription(): string
+    {
+        return $this->pluginDescription;
+    }
+
+    public function getConfigurationPath(): string
+    {
+        return $this->extensionInformation->getExtensionPath() . self::CONFIGURATION_PATH;
+    }
+
+    public function getPluginIconIdentifier(): string
+    {
+        return sprintf(
+            'ext-%s-plugin',
+            str_replace('_', '-', $this->extensionInformation->getExtensionKey()),
+        );
     }
 
     public function getReferencedControllerActions(bool $cached): array
