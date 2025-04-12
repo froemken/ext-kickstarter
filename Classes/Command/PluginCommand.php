@@ -71,7 +71,15 @@ class PluginCommand extends Command
         $pluginLabel = (string)$io->ask(
             'Please provide a label for your plugin. You will see the label in the backend.',
         );
-        $pluginName = $this->askForPluginName($io, $pluginLabel);
+
+        $pluginName = (string)$io->ask(
+            'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
+            GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
+        );
+
+        $pluginDescription = (string)$io->ask(
+            'Please provide a shot plugin description. You will see it in new content element wizard.',
+        );
 
         $referencedControllerActions = [];
         $isExtbasePlugin = $io->confirm('Do you prefer to create an extbase based plugin?');
@@ -97,17 +105,8 @@ class PluginCommand extends Command
             $isExtbasePlugin,
             $pluginLabel,
             $pluginName,
+            $pluginDescription,
             $referencedControllerActions,
-        );
-    }
-
-    private function askForPluginName(
-        SymfonyStyle $io,
-        string $pluginLabel,
-    ): string {
-        return (string)$io->ask(
-            'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
-            GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
         );
     }
 
