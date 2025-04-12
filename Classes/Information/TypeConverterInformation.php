@@ -18,6 +18,9 @@ readonly class TypeConverterInformation
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private string $typeConverterClassName,
+        private int $priority,
+        private string $source,
+        private string $target,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -28,6 +31,21 @@ readonly class TypeConverterInformation
     public function getTypeConverterClassName(): string
     {
         return $this->typeConverterClassName;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function getSource(): string
+    {
+        return $this->source;
+    }
+
+    public function getTarget(): string
+    {
+        return $this->target;
     }
 
     public function getTypeConverterFilename(): string
