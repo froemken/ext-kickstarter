@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 readonly class EventListenerInformation
 {
     private const EVENT_LISTENER_PATH = 'Classes/EventListener/';
@@ -33,6 +35,17 @@ readonly class EventListenerInformation
     public function getEventListenerFilename(): string
     {
         return $this->eventListenerClassName . '.php';
+    }
+
+    public function getEventListenerIdentifier(): string
+    {
+        $identifier = substr($this->getEventListenerClassName(), 0, -13);
+
+        return sprintf(
+            '%s/%s',
+            str_replace('_', '-', $this->extensionInformation->getExtensionKey()),
+            str_replace('_', '-', GeneralUtility::camelCaseToLowerCaseUnderscored($identifier))
+        );
     }
 
     public function getEventListenerFilePath(): string
