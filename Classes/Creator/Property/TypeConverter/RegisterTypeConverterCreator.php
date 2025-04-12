@@ -56,7 +56,7 @@ class RegisterTypeConverterCreator implements TypeConverterCreatorInterface
                             'sources' => $typeConverterInformation->getSource(),
                             'target' => $typeConverterInformation->getTarget(),
                         ],
-                    ]
+                    ],
                 ],
             );
         } catch (\RuntimeException) {
