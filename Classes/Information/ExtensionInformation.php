@@ -11,26 +11,30 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
+use PhpParser\Node;
+use PhpParser\NodeFinder;
+use PhpParser\ParserFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ExtensionInformation
+readonly class ExtensionInformation
 {
     private const TCA_PATH = 'Configuration/TCA/';
+    private const CONTROLLER_PATH = 'Classes/Controller/';
     private const TCA_OVERRIDES_PATH = 'Configuration/TCA/Overrides/';
 
     public function __construct(
-        private readonly string $extensionKey,
-        private readonly string $composerPackageName,
-        private readonly string $title,
-        private readonly string $description,
-        private readonly string $version,
-        private readonly string $category,
-        private readonly string $state,
-        private readonly string $author,
-        private readonly string $authorEmail,
-        private readonly string $authorCompany,
-        private readonly string $namespaceForAutoload,
-        private readonly string $extensionPath,
+        private string $extensionKey,
+        private string $composerPackageName,
+        private string $title,
+        private string $description,
+        private string $version,
+        private string $category,
+        private string $state,
+        private string $author,
+        private string $authorEmail,
+        private string $authorCompany,
+        private string $namespaceForAutoload,
+        private string $extensionPath,
     ) {}
 
     public function getExtensionKey(): string
@@ -117,6 +121,11 @@ class ExtensionInformation
         return $this->extensionPath;
     }
 
+    public function getControllerPath(): string
+    {
+        return $this->getExtensionPath() . self::CONTROLLER_PATH;
+    }
+
     public function getTcaPath(): string
     {
         return $this->getExtensionPath() . self::TCA_PATH;
@@ -130,6 +139,80 @@ class ExtensionInformation
     public function getFilePathForTcaTable(string $tcaTableName): string
     {
         return $this->getTcaPath() . $tcaTableName . '.php';
+    }
+
+    public function getFilePathForController(string $classname): string
+    {
+        return $this->getControllerPath() . $classname . '.php';
+    }
+
+    public function getControllerClassnames(): array
+    {
+        $controllerPath = $this->getControllerPath();
+        if (!is_dir($controllerPath)) {
+            return [];
+        }
+
+        $controllerClasses = [];
+        foreach (scandir($controllerPath) as $file) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+
+            $controllerClasses[] = pathinfo($file, PATHINFO_FILENAME);
+        }
+
+        sort($controllerClasses);
+
+        return $controllerClasses;
+    }
+
+    public function getExtbaseControllerClassnames(): array
+    {
+        $nodeFinder = new NodeFinder();
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
+
+        $extbaseControllerClassnames = [];
+        foreach ($this->getControllerClassnames() as $controllerClassname) {
+            $stmts = $parser->parse(file_get_contents($this->getFilePathForController($controllerClassname)));
+            $classNode = $nodeFinder->findFirst($stmts, static function (Node $node): bool {
+                return $node instanceof Node\Stmt\Class_
+                    && $node->extends->name === 'ActionController';
+            });
+
+            if ($classNode instanceof Node\Stmt\Class_) {
+                $extbaseControllerClassnames[] = $classNode->name->name;
+            }
+        }
+
+        sort($extbaseControllerClassnames);
+
+        return $extbaseControllerClassnames;
+    }
+
+    public function getExtbaseControllerActionNames(string $extbaseControllerClassname): array
+    {
+        $nodeFinder = new NodeFinder();
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
+
+        $extbaseControllerActionNames = [];
+
+        $stmts = $parser->parse(file_get_contents($this->getFilePathForController($extbaseControllerClassname)));
+        $classMethodNodes = $nodeFinder->find($stmts, static function (Node $node): bool {
+            return $node instanceof Node\Stmt\ClassMethod
+                && $node->isPublic()
+                && str_ends_with($node->name->name, 'Action');
+        });
+
+        foreach ($classMethodNodes as $classMethodNode) {
+            if ($classMethodNode instanceof Node\Stmt\ClassMethod) {
+                $extbaseControllerActionNames[] = $classMethodNode->name->name;
+            }
+        }
+
+        sort($extbaseControllerActionNames);
+
+        return $extbaseControllerActionNames;
     }
 
     public function getConfiguredTcaTables(): array

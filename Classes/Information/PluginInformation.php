@@ -11,13 +11,14 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-class PluginInformation
+readonly class PluginInformation
 {
     public function __construct(
-        private readonly ExtensionInformation $extensionInformation,
-        private readonly bool $extbasePlugin,
-        private readonly string $pluginLabel,
-        private readonly string $pluginName,
+        private ExtensionInformation $extensionInformation,
+        private bool $extbasePlugin,
+        private string $pluginLabel,
+        private string $pluginName,
+        private array $referencedControllerActions,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -38,6 +39,38 @@ class PluginInformation
     public function getPluginName(): string
     {
         return $this->pluginName;
+    }
+
+    public function getReferencedControllerActions(bool $cached): array
+    {
+        $referencedControllerActions = [];
+
+        foreach ($this->referencedControllerActions as $referencedExtbaseControllerClassname => $referencedControllerActionNames) {
+            // Remove "Action" from action name
+            $controllerActionNames = array_map(static function ($controllerActionName) {
+                return substr($controllerActionName, 0, -6);
+            }, $referencedControllerActionNames[$cached ? 'cached' : 'uncached']);
+
+            $referencedControllerActions[$referencedExtbaseControllerClassname] = implode(
+                ', ',
+                $controllerActionNames
+            );
+        }
+
+        return $referencedControllerActions;
+    }
+
+    /**
+     * Needed to create all "use" imports
+     */
+    public function getReferencedControllerNames(): array
+    {
+        return array_keys($this->referencedControllerActions);
+    }
+
+    public function getNamespaceForControllerName(string $controllerName): string
+    {
+        return $this->extensionInformation->getNamespacePrefix() . 'Controller\\' . $controllerName;
     }
 
     /**

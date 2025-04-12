@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-class TypeConverterInformation
+readonly class TypeConverterInformation
 {
     private const TYPE_CONVERTER_PATH = 'Classes/Property/TypeConverter/';
 
     public function __construct(
-        private readonly ExtensionInformation $extensionInformation,
-        private readonly string $typeConverterClassName,
+        private ExtensionInformation $extensionInformation,
+        private string $typeConverterClassName,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation

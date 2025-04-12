@@ -11,17 +11,17 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-class ModelInformation
+readonly class ModelInformation
 {
     private const DOMAIN_MODEL_PATH = 'Classes/Domain/Model/';
     private const CLASSES_FILE_PATH = 'Configuration/Extbase/Persistence/Classes.php';
 
     public function __construct(
-        private readonly ExtensionInformation $extensionInformation,
-        private readonly string $modelClassName,
-        private readonly string $mappedTableName,
-        private readonly bool $abstractEntity,
-        private readonly array $properties,
+        private ExtensionInformation $extensionInformation,
+        private string $modelClassName,
+        private string $mappedTableName,
+        private bool $abstractEntity,
+        private array $properties,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation

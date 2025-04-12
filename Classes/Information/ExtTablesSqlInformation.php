@@ -11,17 +11,17 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-class ExtTablesSqlInformation
+readonly class ExtTablesSqlInformation
 {
     public function __construct(
-        private readonly string $columnName,
-        private readonly string $columnType,
-        private readonly bool $notNull = true, // Default in Doctrine
-        private readonly bool $unsigned = false, // Default in Doctrine
-        private readonly mixed $default = null, // Default in Doctrine
-        private readonly ?int $length = null,
-        private readonly ?int $precision = null,
-        private readonly ?int $scale = null,
+        private string $columnName,
+        private string $columnType,
+        private bool $notNull = true, // Default in Doctrine
+        private bool $unsigned = false, // Default in Doctrine
+        private mixed $default = null, // Default in Doctrine
+        private ?int $length = null,
+        private ?int $precision = null,
+        private ?int $scale = null,
     ) {}
 
     private function getQuotedColumnName(): string
