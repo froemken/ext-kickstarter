@@ -68,6 +68,13 @@ services:
         description: 'Add a TCA table to your TYPO3 extension.'
         schedulable: false
 
+  StefanFroemken\ExtKickstarter\Command\TestEnvCommand:
+    tags:
+      - name: console.command
+        command: 'make:testenv'
+        description: 'Add test environment to your TYPO3 extension.'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\TypeConverterCommand:
     tags:
       - name: console.command
@@ -111,6 +118,9 @@ services:
   StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService:
     arguments:
       $tableCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.tca.table' }
+  StefanFroemken\ExtKickstarter\Service\Creator\TestEnvCreatorService:
+    arguments:
+      $testEnvCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.test.env' }
   StefanFroemken\ExtKickstarter\Service\Creator\UpgradeWizardCreatorService:
     arguments:
       $upgradeCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.upgrade-wizard' }

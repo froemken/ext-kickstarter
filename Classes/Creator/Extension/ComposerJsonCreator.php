@@ -44,6 +44,13 @@ class ComposerJsonCreator implements ExtensionCreatorInterface
                     $extensionInformation->getNamespaceForAutoload() => 'Classes/',
                 ],
             ],
+            'config' => [
+                'allow-plugins' => [
+                    'typo3/class-alias-loader' => true,
+                    'typo3/cms-composer-installers' => true
+                ],
+                'sort-packages' => true,
+            ],
             'extra' => [
                 'typo3/cms' => [
                     'extension-key' => $extensionInformation->getExtensionKey(),
