@@ -42,6 +42,9 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
         ->registerForAutoconfiguration(Creator\Tca\Table\TcaTableCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.tca.table');
     $container
+        ->registerForAutoconfiguration(Creator\Test\Environment\TestEnvCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.test.env');
+    $container
         ->registerForAutoconfiguration(Creator\Upgrade\UpgradeWizardCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.upgrade-wizard');
 };
