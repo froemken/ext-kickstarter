@@ -139,6 +139,16 @@ I have that on my `list <https://github.com/froemken/ext-kickstarter/issues/10>`
 ..  code-block:: bash
     vendor/bin/typo3 make:typeconverter
 
+make:testenv
+============
+
+This command will add TYPO3 testing environment to your extension.
+
+You will find the new files in directory ``Build/*``.
+
+..  code-block:: bash
+    vendor/bin/typo3 make:testenv
+
 make:upgrade
 ============
 

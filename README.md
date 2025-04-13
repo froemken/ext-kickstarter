@@ -20,6 +20,7 @@
     - Create extbase type converters
     - Create event
     - Create event listener
+    - Create testing environment
 
 ---
 
@@ -96,6 +97,17 @@ DDEV:
 
 ```bash
 ddev typo3 make:table
+```
+
+### Add testing environment
+
+```bash
+vendor/bin/typo3 make:testenv
+```
+DDEV:
+
+```bash
+ddev typo3 make:testenv
 ```
 
 ### Create an Event Listener
