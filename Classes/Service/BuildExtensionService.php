@@ -121,6 +121,7 @@ readonly class BuildExtensionService
                 true,
                 $extbasePluginNode->getPluginName(),
                 $extbasePluginNode->getPluginName(),
+                '',
                 $referencedControllerActions
             ));
         }
