@@ -35,8 +35,7 @@ class ExtensionInformation
         private readonly string $authorCompany,
         private readonly string $namespaceForAutoload,
         private readonly string $extensionPath,
-    ) {
-    }
+    ) {}
 
     public function getExtensionKey(): string
     {

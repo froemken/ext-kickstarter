@@ -47,7 +47,7 @@ class ComposerJsonCreator implements ExtensionCreatorInterface
             'config' => [
                 'allow-plugins' => [
                     'typo3/class-alias-loader' => true,
-                    'typo3/cms-composer-installers' => true
+                    'typo3/cms-composer-installers' => true,
                 ],
                 'sort-packages' => true,
             ],
