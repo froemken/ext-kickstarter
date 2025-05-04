@@ -37,7 +37,7 @@ class ComposerJsonCreator implements TestEnvCreatorInterface
         }
 
         if (!isset($composerConfig['require-dev']['phpunit/phpunit'])) {
-            $composerConfig['require-dev']['phpunit/phpunit'] = '^11.2.5';
+            $composerConfig['require-dev']['phpunit/phpunit'] = '^10.5';
         }
 
         if (!isset($composerConfig['require-dev']['typo3/coding-standards'])) {
@@ -45,7 +45,7 @@ class ComposerJsonCreator implements TestEnvCreatorInterface
         }
 
         if (!isset($composerConfig['require-dev']['typo3/testing-framework'])) {
-            $composerConfig['require-dev']['typo3/testing-framework'] = '^9.0.1';
+            $composerConfig['require-dev']['typo3/testing-framework'] = '^8.2';
         }
 
         ksort($composerConfig['require-dev']);
