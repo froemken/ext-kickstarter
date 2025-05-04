@@ -57,12 +57,12 @@ class ExtbaseConfigurePluginCreator implements ExtbasePluginCreatorInterface
     {
         if ($pluginInformation->getPluginType() === 'plugin') {
             $pluginTypeNode = new Node\Expr\ClassConstFetch(
-                new Node\Name('TYPO3\CMS\Extbase\Utility\ExtensionUtility'),
+                new Node\Name('ExtensionUtility'),
                 'PLUGIN_TYPE_PLUGIN'
             );
         } else {
             $pluginTypeNode = new Node\Expr\ClassConstFetch(
-                new Node\Name('TYPO3\CMS\Extbase\Utility\ExtensionUtility'),
+                new Node\Name('ExtensionUtility'),
                 'PLUGIN_TYPE_CONTENT_ELEMENT'
             );
         }
