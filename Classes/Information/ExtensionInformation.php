@@ -177,7 +177,8 @@ readonly class ExtensionInformation
             $stmts = $parser->parse(file_get_contents($this->getFilePathForController($controllerClassname)));
             $classNode = $nodeFinder->findFirst($stmts, static function (Node $node): bool {
                 return $node instanceof Node\Stmt\Class_
-                    && $node->extends->name === 'ActionController';
+                    && $node->extends instanceof Node\Name
+                    && $node->extends->toString() === 'ActionController';
             });
 
             if ($classNode instanceof Node\Stmt\Class_) {
