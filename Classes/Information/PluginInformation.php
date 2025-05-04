@@ -20,9 +20,9 @@ class PluginInformation
         private readonly bool $extbasePlugin,
         private readonly string $pluginLabel,
         private readonly string $pluginName,
-        private string $pluginDescription,
+        private readonly string $pluginDescription,
         private readonly string $pluginType,
-        private array $referencedControllerActions,
+        private readonly array $referencedControllerActions,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation

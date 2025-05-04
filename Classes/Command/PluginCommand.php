@@ -120,6 +120,7 @@ class PluginCommand extends Command
         array $extbaseControllerClassnames,
         ExtensionInformation $extensionInformation,
     ): array {
+        $skipAction = 'no choice (skip)';
         $referencedControllerActions = [];
 
         $referencedExtbaseControllerNames = (array)$io->choice(
@@ -130,18 +131,28 @@ class PluginCommand extends Command
         );
 
         foreach ($referencedExtbaseControllerNames as $referencedExtbaseControllerName) {
+            $extbaseControllerActionNames = $extensionInformation->getExtbaseControllerActionNames($referencedExtbaseControllerName);
+            $extbaseControllerActionNames[] = $skipAction;
+
             $referencedControllerActions[$referencedExtbaseControllerName]['cached'] = $io->choice(
                 'Select the CACHED actions for your controller ' . $referencedExtbaseControllerName . ' you want to reference to your plugin.',
-                $extensionInformation->getExtbaseControllerActionNames($referencedExtbaseControllerName),
+                $extbaseControllerActionNames,
                 null,
                 true
             );
+            if (in_array($skipAction, $referencedControllerActions[$referencedExtbaseControllerName]['cached'])) {
+                $referencedControllerActions[$referencedExtbaseControllerName]['cached'] = [];
+            }
+
             $referencedControllerActions[$referencedExtbaseControllerName]['uncached'] = $io->choice(
                 'Select the UNCACHED actions for your controller ' . $referencedExtbaseControllerName . ' you want to reference to your plugin.',
-                $extensionInformation->getExtbaseControllerActionNames($referencedExtbaseControllerName),
+                $extbaseControllerActionNames,
                 null,
                 true
             );
+            if (in_array($skipAction, $referencedControllerActions[$referencedExtbaseControllerName]['uncached'])) {
+                $referencedControllerActions[$referencedExtbaseControllerName]['uncached'] = [];
+            }
         }
 
         return $referencedControllerActions;
