@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 
-readonly class ExtensionCreatorService
+class ExtensionCreatorService
 {
     public function __construct(
-        private iterable $extensionCreators,
+        private readonly iterable $extensionCreators,
     ) {}
 
     public function create(ExtensionInformation $extensionInformation): void

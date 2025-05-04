@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\TestEnvInformation;
 
-readonly class TestEnvCreatorService
+class TestEnvCreatorService
 {
     public function __construct(
-        private iterable $testEnvCreators,
+        private readonly iterable $testEnvCreators,
     ) {}
 
     public function create(TestEnvInformation $testEnvInformation): void

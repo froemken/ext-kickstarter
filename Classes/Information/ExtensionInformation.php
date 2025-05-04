@@ -16,25 +16,25 @@ use PhpParser\NodeFinder;
 use PhpParser\ParserFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-readonly class ExtensionInformation
+class ExtensionInformation
 {
     private const TCA_PATH = 'Configuration/TCA/';
     private const CONTROLLER_PATH = 'Classes/Controller/';
     private const TCA_OVERRIDES_PATH = 'Configuration/TCA/Overrides/';
 
     public function __construct(
-        private string $extensionKey,
-        private string $composerPackageName,
-        private string $title,
-        private string $description,
-        private string $version,
-        private string $category,
-        private string $state,
-        private string $author,
-        private string $authorEmail,
-        private string $authorCompany,
-        private string $namespaceForAutoload,
-        private string $extensionPath,
+        private readonly string $extensionKey,
+        private readonly string $composerPackageName,
+        private readonly string $title,
+        private readonly string $description,
+        private readonly string $version,
+        private readonly string $category,
+        private readonly string $state,
+        private readonly string $author,
+        private readonly string $authorEmail,
+        private readonly string $authorCompany,
+        private readonly string $namespaceForAutoload,
+        private readonly string $extensionPath,
     ) {
     }
 

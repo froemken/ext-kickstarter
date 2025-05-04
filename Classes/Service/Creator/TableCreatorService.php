@@ -13,7 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\TableInformation;
 
-readonly class TableCreatorService
+class TableCreatorService
 {
     public const TABLE_COLUMN_TYPES = [
         'category' => [
@@ -120,7 +120,7 @@ readonly class TableCreatorService
     ];
 
     public function __construct(
-        private iterable $tableCreators,
+        private readonly iterable $tableCreators,
     ) {}
 
     public function create(TableInformation $tableInformation): void

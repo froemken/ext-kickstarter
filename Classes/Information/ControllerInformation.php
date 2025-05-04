@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-readonly class ControllerInformation
+class ControllerInformation
 {
     private const CONTROLLER_PATH = 'Classes/Controller/';
 
     public function __construct(
-        private ExtensionInformation $extensionInformation,
-        private bool $isExtbaseController,
-        private string $controllerName,
-        private array $actionMethodNames,
+        private readonly ExtensionInformation $extensionInformation,
+        private readonly bool $isExtbaseController,
+        private readonly string $controllerName,
+        private readonly array $actionMethodNames,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation

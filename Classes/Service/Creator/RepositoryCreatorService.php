@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\RepositoryInformation;
 
-readonly class RepositoryCreatorService
+class RepositoryCreatorService
 {
     public function __construct(
-        private iterable $repositoryCreators,
+        private readonly iterable $repositoryCreators,
     ) {}
 
     public function create(RepositoryInformation $repositoryInformation): void

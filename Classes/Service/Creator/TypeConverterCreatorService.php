@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\TypeConverterInformation;
 
-readonly class TypeConverterCreatorService
+class TypeConverterCreatorService
 {
     public function __construct(
-        private iterable $typeConverterCreators,
+        private readonly iterable $typeConverterCreators,
     ) {}
 
     public function create(TypeConverterInformation $typeConverterInformation): void

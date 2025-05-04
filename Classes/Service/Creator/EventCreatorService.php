@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\EventInformation;
 
-readonly class EventCreatorService
+class EventCreatorService
 {
     public function __construct(
-        private iterable $eventCreators,
+        private readonly iterable $eventCreators,
     ) {}
 
     public function create(EventInformation $eventInformation): void

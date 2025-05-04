@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
 
-readonly class ModelCreatorService
+class ModelCreatorService
 {
     public function __construct(
-        private iterable $modelCreators,
+        private readonly iterable $modelCreators,
     ) {}
 
     public function create(ModelInformation $modelInformation): void

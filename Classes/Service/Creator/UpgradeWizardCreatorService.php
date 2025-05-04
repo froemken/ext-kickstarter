@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\UpgradeWizardInformation;
 
-readonly class UpgradeWizardCreatorService
+class UpgradeWizardCreatorService
 {
     public function __construct(
-        private iterable $upgradeCreators,
+        private readonly iterable $upgradeCreators,
     ) {}
 
     public function create(UpgradeWizardInformation $upgradeWizardInformation): void

@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-readonly class UpgradeWizardInformation
+class UpgradeWizardInformation
 {
     private const UPGRADE_WIZARD_PATH = 'Classes/Upgrade/';
 
     public function __construct(
-        private ExtensionInformation $extensionInformation,
-        private string $upgradeWizardClassName,
+        private readonly ExtensionInformation $extensionInformation,
+        private readonly string $upgradeWizardClassName,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation

@@ -11,16 +11,16 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-readonly class TableInformation
+class TableInformation
 {
     private const TABLE_PATH = 'Configuration/TCA/';
 
     public function __construct(
-        private ExtensionInformation $extensionInformation,
-        private string $tableName,
-        private string $title,
-        private string $label,
-        private array $columns,
+        private readonly ExtensionInformation $extensionInformation,
+        private readonly string $tableName,
+        private readonly string $title,
+        private readonly string $label,
+        private readonly array $columns,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation

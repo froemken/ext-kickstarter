@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\EventListenerInformation;
 
-readonly class EventListenerCreatorService
+class EventListenerCreatorService
 {
     public function __construct(
-        private iterable $eventListenerCreators,
+        private readonly iterable $eventListenerCreators,
     ) {}
 
     public function create(EventListenerInformation $eventListenerInformation): void

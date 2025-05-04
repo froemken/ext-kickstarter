@@ -30,17 +30,17 @@ use StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use TYPO3\CMS\Core\Http\JsonResponse;
 
-readonly class BuildExtensionService
+class BuildExtensionService
 {
     use ExtensionInformationTrait;
 
     public function __construct(
-        private ExtensionCreatorService $extensionCreatorService,
-        private PluginCreatorService $pluginCreatorService,
-        private ControllerCreatorService $controllerCreatorService,
-        private RepositoryCreatorService $repositoryCreatorService,
-        private TableCreatorService $tableCreatorService,
-        private ModelCreatorService $modelCreatorService,
+        private readonly ExtensionCreatorService $extensionCreatorService,
+        private readonly PluginCreatorService $pluginCreatorService,
+        private readonly ControllerCreatorService $controllerCreatorService,
+        private readonly RepositoryCreatorService $repositoryCreatorService,
+        private readonly TableCreatorService $tableCreatorService,
+        private readonly ModelCreatorService $modelCreatorService,
     ) {}
 
     public function build(Graph $graph): ResponseInterface

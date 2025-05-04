@@ -13,11 +13,11 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 
-readonly class PluginCreatorService
+class PluginCreatorService
 {
     public function __construct(
-        private iterable $extbasePluginCreators,
-        private iterable $nativePluginCreators,
+        private readonly iterable $extbasePluginCreators,
+        private readonly iterable $nativePluginCreators,
     ) {}
 
     public function create(PluginInformation $pluginInformation): void

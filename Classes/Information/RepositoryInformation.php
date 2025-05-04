@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-readonly class RepositoryInformation
+class RepositoryInformation
 {
     private const DOMAIN_REPOSITORY_PATH = 'Classes/Domain/Repository/';
 
     public function __construct(
-        private ExtensionInformation $extensionInformation,
-        private string $repositoryClassName,
+        private readonly ExtensionInformation $extensionInformation,
+        private readonly string $repositoryClassName,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation

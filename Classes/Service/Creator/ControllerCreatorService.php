@@ -13,11 +13,11 @@ namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 
-readonly class ControllerCreatorService
+class ControllerCreatorService
 {
     public function __construct(
-        private iterable $extbaseControllerCreators,
-        private iterable $nativeControllerCreators,
+        private readonly iterable $extbaseControllerCreators,
+        private readonly iterable $nativeControllerCreators,
     ) {}
 
     public function create(ControllerInformation $controllerInformation): void

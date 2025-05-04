@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-readonly class TestEnvInformation
+class TestEnvInformation
 {
     private const BUILD_PATH = 'Build/';
 
     public function __construct(
-        private ExtensionInformation $extensionInformation,
+        private readonly ExtensionInformation $extensionInformation,
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
