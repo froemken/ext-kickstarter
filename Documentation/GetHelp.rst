@@ -7,7 +7,7 @@ Where to get help
 =================
 
 You can get help in the
-`TYPO3 Slack <https://typo3.org/community/meet/chat-slack>`. Currently, there
+`TYPO3 Slack <https://typo3.org/community/meet/chat-slack>`_. Currently, there
 is no independent Slack channel for this extension available. I prefer
 using `#extension-builder` for now.
 
