@@ -1,0 +1,66 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/ControllerCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/EventCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/EventListenerCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/ExtensionCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/ModelCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/PluginCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/RepositoryCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/TableCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/TestEnvCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/TypeConverterCommand.php
+
+		-
+			message: "#^Variable \\$composerManifest might not be defined\\.$#"
+			count: 1
+			path: ../../Classes/Command/UpgradeWizardCommand.php
+
+		-
+			message: "#^Access to undefined constant static\\(StefanFroemken\\\\ExtKickstarter\\\\Model\\\\Node\\\\Tca\\\\AbstractColumnNode\\)\\:\\:TYPE\\.$#"
+			count: 1
+			path: ../../Classes/Model/Node/Tca/AbstractColumnNode.php
+
+		-
+			message: "#^Variable \\$tableTca on left side of \\?\\? is never defined\\.$#"
+			count: 1
+			path: ../../Classes/Service/BuildExtensionService.php
