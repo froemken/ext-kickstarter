@@ -11,11 +11,11 @@ Installation
 Install with Composer
 =====================
 
-Install the extension via Composer:
+Install the extension for development installations via Composer:
 
 ..  code-block:: bash
 
-    composer req stefanfroemken/ext-kickstarter
+    composer req stefanfroemken/ext-kickstarter --dev
 
 ..  _installation-classic:
 
