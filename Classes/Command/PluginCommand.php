@@ -82,7 +82,7 @@ class PluginCommand extends Command
         );
 
         $pluginDescription = (string)$io->ask(
-            'Please provide a shot plugin description. You will see it in new content element wizard.',
+            'Please provide a short plugin description. You will see it in new content element wizard.',
         );
 
         $referencedControllerActions = [];
