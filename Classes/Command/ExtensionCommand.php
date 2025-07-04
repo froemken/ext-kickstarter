@@ -267,7 +267,9 @@ EOT;
     {
         do {
             $email = $io->ask('Email address');
-
+            if (!$email) {
+                return '';
+            }
             if (!GeneralUtility::validEmail($email)) {
                 $io->error('You have entered an invalid email address.');
                 $validEmail = false;
