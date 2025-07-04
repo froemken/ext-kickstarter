@@ -19,9 +19,10 @@
 		}
 	],
 	"support": {
+        "docs": "https://docs.typo3.org/p/stefanfroemken/ext-kickstarter/main/en-us/Index.html",
 		"email": "froemken@gmail.com",
-		"issues": "https://github.com/froemken/ext_kickstarter/issues",
-		"source": "https://github.com/froemken/ext_kickstarter"
+		"issues": "https://github.com/froemken/ext-kickstarter/issues",
+		"source": "https://github.com/froemken/ext-kickstarter"
 	},
 	"require": {
 		"ext-pdo": "*",
@@ -40,10 +41,6 @@
 		"psr-4": {
 			"StefanFroemken\\ExtKickstarter\\": "Classes"
 		}
-	},
-	"replace": {
-		"typo3-ter/ext_kickstarer": "self.version",
-		"typo3-ter/ext-kickstarer": "self.version"
 	},
 	"config": {
 		"allow-plugins": {
