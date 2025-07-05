@@ -226,4 +226,61 @@ EOT;
             ])
             ->getNode();
     }
+
+    /**
+     * Creates a PhpParser expression node representing a literal value.
+     *
+     * Supports scalars, booleans, null, and arrays.
+     *
+     * Example usages:
+     *
+     * // Scalar
+     * $this->createValue('hello'); // 'hello'
+     * $this->createValue(42);      // 42
+     *
+     * // Boolean
+     * $this->createValue(true);    // true
+     *
+     * // Null
+     * $this->createValue(null);    // null
+     *
+     * // Array
+     * $this->createValue(['foo', 'bar']); // ['foo', 'bar']
+     *
+     * // Associative Array
+     * $this->createValue(['key' => 'value']); // ['key' => 'value']
+     */
+    public function createValue(mixed $value): Node\Expr
+    {
+        if (is_int($value)) {
+            return new Node\Scalar\LNumber($value);
+        }
+        if (is_float($value)) {
+            return new Node\Scalar\DNumber($value);
+        }
+        if (is_string($value)) {
+            return new Node\Scalar\String_($value);
+        }
+        if (is_bool($value)) {
+            return new Node\Expr\ConstFetch(
+                new Node\Name($value ? 'true' : 'false')
+            );
+        }
+        if (is_null($value)) {
+            return new Node\Expr\ConstFetch(new Node\Name('null'));
+        }
+        if (is_array($value)) {
+            $items = [];
+            foreach ($value as $k => $v) {
+                $items[] = new Node\Expr\ArrayItem(
+                    $this->createValue($v),
+                    is_int($k) ? null : new Node\Scalar\String_((string)$k)
+                );
+            }
+            return new Node\Expr\Array_($items, ['kind' => Node\Expr\Array_::KIND_SHORT]);
+        }
+
+        throw new \InvalidArgumentException('Unsupported default value type: ' . gettype($value));
+    }
+
 }
