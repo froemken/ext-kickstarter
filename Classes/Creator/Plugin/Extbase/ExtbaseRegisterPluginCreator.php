@@ -40,8 +40,8 @@ class ExtbaseRegisterPluginCreator implements ExtbasePluginCreatorInterface
     public function create(PluginInformation $pluginInformation): void
     {
         $overridesPath = sprintf(
-            '%s/%s/',
-            $pluginInformation->getExtensionInformation()->getExtensionPath(),
+            '/%s/%s/',
+            trim($pluginInformation->getExtensionInformation()->getExtensionPath(), '/'),
             'Configuration/TCA/Overrides',
         );
         GeneralUtility::mkdir_deep($overridesPath);
