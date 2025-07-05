@@ -64,8 +64,8 @@ final class ExtConf
         if (!$exportDirectory) {
             // Fall back to typo3temp/ext-kickstarter
             return sprintf(
-                '%s/%s/',
-                Environment::getPublicPath(),
+                '/%s/%s/',
+                trim(Environment::getPublicPath(), '/'),
                 'typo3temp/ext-kickstarter',
             );
         }
