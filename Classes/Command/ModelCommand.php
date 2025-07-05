@@ -161,21 +161,58 @@ class ModelCommand extends Command
         $properties = [];
         $tableTca = $extensionInformation->getTcaForTable($mappedTableName);
 
-        $columnNames = $io->choice(
-            'Which column names should be used for your model?',
-            $extensionInformation->getColumnNamesFromTca($tableTca),
-            null,
-            true
+        // Step 1: Handle domain fields
+        $domainColumns = $extensionInformation->getDomainColumnNamesFromTca($tableTca);
+        $domainFieldChoice = $io->choice(
+            'Which domain fields should be included?',
+            ['All', 'Choose manually'],
+            'All'
         );
 
-        foreach ($columnNames as $columnName) {
+        $selectedDomainColumns = [];
+        if ($domainFieldChoice === 'All') {
+            $selectedDomainColumns = $domainColumns;
+        } else {
+            $selectedDomainColumns = $io->choice(
+                'Select the domain fields you want to include in your model',
+                $domainColumns,
+                null,
+                true
+            );
+        }
+
+        // Step 2: Ask about system fields (all, none, or custom)
+        $systemColumns = $extensionInformation->getSystemColumnNamesFromTca($tableTca);
+        $systemFieldChoice = $io->choice(
+            'Which system fields should be included?',
+            ['All', 'None', 'Choose manually'],
+            'None'
+        );
+
+        $selectedSystemColumns = [];
+        if ($systemFieldChoice === 'All') {
+            $selectedSystemColumns = $systemColumns;
+        } elseif ($systemFieldChoice === 'Choose manually') {
+            $selectedSystemColumns = $io->choice(
+                'Select the system fields to include',
+                $systemColumns,
+                null,
+                true
+            );
+        }
+
+        // Combine selected columns
+        $selectedColumns = array_merge($selectedDomainColumns, $selectedSystemColumns);
+
+        // Process selected columns into properties
+        foreach ($selectedColumns as $columnName) {
             $propertyName = GeneralUtility::underscoredToLowerCamelCase($columnName);
 
             $properties[$columnName] = [
                 'propertyName' => $propertyName,
                 'tcaType' => $tableTca['columns'][$columnName]['config']['type'] ?? 'input',
                 'dataType' => $io->choice(
-                    'Which data type you prefer for your property: "' . $propertyName . '"?',
+                    'Which data type do you prefer for the property "' . $propertyName . '"?',
                     self::DATA_TYPES,
                     'string'
                 ),

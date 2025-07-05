@@ -18,6 +18,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 readonly class ExtensionInformation
 {
+    protected const SYSTEM_COLUMNS = [
+        'endtime',
+        'starttime',
+        'hidden',
+        'sys_language_uid',
+        'l10n_parent',
+        'l10n_diffsource',
+    ];
     private const TCA_PATH = 'Configuration/TCA/';
     private const CONTROLLER_PATH = 'Classes/Controller/';
     private const TCA_OVERRIDES_PATH = 'Configuration/TCA/Overrides/';
@@ -258,5 +266,25 @@ readonly class ExtensionInformation
         sort($columnNames);
 
         return $columnNames;
+    }
+
+    public function getSystemColumnNamesFromTca(array $tableTca): array
+    {
+        return $this->filterColumns($tableTca, true);
+    }
+
+    public function getDomainColumnNamesFromTca(array $tableTca): array
+    {
+        return $this->filterColumns($tableTca, false);
+    }
+
+    private function filterColumns(array $tableTca, bool $systemColumns): array
+    {
+        $allColumns = $this->getColumnNamesFromTca($tableTca);
+
+        return array_values(array_filter($allColumns, function ($column) use ($systemColumns) {
+            $isSystem = in_array($column, self::SYSTEM_COLUMNS, true);
+            return $systemColumns ? $isSystem : !$isSystem;
+        }));
     }
 }
