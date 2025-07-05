@@ -97,8 +97,8 @@ trait ExtensionInformationTrait
         $extConf = GeneralUtility::makeInstance(ExtConf::class);
 
         return sprintf(
-            '%s/%s/',
-            $extConf->getExportDirectory(),
+            '/%s/%s/',
+            trim($extConf->getExportDirectory(), '/'),
             $extensionKey
         );
     }
