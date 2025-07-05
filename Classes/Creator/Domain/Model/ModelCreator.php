@@ -95,7 +95,12 @@ class ModelCreator implements DomainCreatorInterface
             ))
         );
 
+        $initializableProps = [];
+
         foreach ($modelInformation->getProperties() as $property) {
+            if (($property['initializeObject'] ?? null) === true) {
+                $initializableProps[] = $property;
+            }
             if ($property['dataType'] === ObjectStorage::class) {
                 $fileStructure->addUseStructure(
                     new UseStructure($this->nodeFactory->createUseImport('TYPO3\CMS\Extbase\Persistence\ObjectStorage'))
@@ -110,12 +115,18 @@ class ModelCreator implements DomainCreatorInterface
                 $property['dataType'] = 'DateTime';
             }
 
+            $propertyBuilder = $this->builderFactory
+                ->property($property['propertyName'])
+                ->makeProtected()
+                ->setType($property['dataType']);
+
+            if (array_key_exists('defaultValue', $property)) {
+                $propertyBuilder->setDefault(
+                    $this->nodeFactory->createValue($property['defaultValue'])
+                );
+            }
             $fileStructure->addPropertyStructure(new PropertyStructure(
-                $this->builderFactory
-                    ->property($property['propertyName'])
-                    ->makeProtected()
-                    ->setType($property['dataType'])
-                    ->getNode()
+                $propertyBuilder->getNode()
             ));
             $fileStructure->addMethodStructure(new MethodStructure(
                 $this->builderFactory
@@ -140,5 +151,63 @@ class ModelCreator implements DomainCreatorInterface
                     ->getNode()
             ));
         }
+        if (!empty($initializableProps)) {
+            $this->addInitializeObjectMethod($fileStructure, $initializableProps);
+        }
+    }
+
+    /**
+     * @param FileStructure $fileStructure
+     * @param array $initializableProps
+     */
+    public function addInitializeObjectMethod(FileStructure $fileStructure, array $initializableProps): void
+    {
+        $fileStructure->addMethodStructure(new MethodStructure(
+            $this->builderFactory
+                ->method('__construct')
+                ->makePublic()
+                ->addStmt(
+                    new \PhpParser\Node\Expr\MethodCall(
+                        new \PhpParser\Node\Expr\Variable('this'),
+                        'initializeObject'
+                    )
+                )
+                ->getNode()
+        ));
+
+        $initStmts = [];
+        foreach ($initializableProps as $initProp) {
+            $type = $initProp['dataType'];
+            $name = $initProp['propertyName'];
+
+            $expr = match ($type) {
+                'ObjectStorage' => new \PhpParser\Node\Expr\New_(
+                    new \PhpParser\Node\Name('ObjectStorage')
+                ),
+                'DateTime' => new \PhpParser\Node\Expr\New_(
+                    new \PhpParser\Node\Name('DateTime')
+                ),
+                default => null,
+            };
+
+            if ($expr !== null) {
+                $initStmts[] = new Assign(
+                    $this->builderFactory->propertyFetch(
+                        $this->builderFactory->var('this'),
+                        $name
+                    ),
+                    $expr
+                );
+            }
+        }
+
+        $fileStructure->addMethodStructure(new MethodStructure(
+            $this->builderFactory
+                ->method('initializeObject')
+                ->makePublic()
+                ->setReturnType('void')
+                ->addStmts($initStmts)
+                ->getNode()
+        ));
     }
 }
