@@ -208,18 +208,52 @@ class ModelCommand extends Command
         foreach ($selectedColumns as $columnName) {
             $propertyName = GeneralUtility::underscoredToLowerCamelCase($columnName);
 
+            $dataType = $io->choice(
+                "Which data type you prefer for your property: \"{$propertyName}\"?",
+                self::DATA_TYPES,
+                'string'
+            );
+
+            // Basic meta
             $properties[$columnName] = [
                 'propertyName' => $propertyName,
-                'tcaType' => $tableTca['columns'][$columnName]['config']['type'] ?? 'input',
-                'dataType' => $io->choice(
-                    'Which data type do you prefer for the property "' . $propertyName . '"?',
-                    self::DATA_TYPES,
-                    'string'
-                ),
+                'tcaType'      => $tableTca['columns'][$columnName]['config']['type'] ?? 'input',
+                'dataType'     => $dataType,
             ];
+
+            // handle object-initializable types
+            if (!in_array($dataType, ['int', 'float', 'string', 'bool', 'array'], true)) {
+                $properties[$columnName]['initializeObject'] = true;
+                continue;
+            }
+
+            // 1) read TCA default, 2) convert to native, 3) ask user (pre-filled)
+            $tcaDefault     = (string)($tableTca['columns'][$columnName]['config']['default'] ?? '');
+            $defaultValue   = $this->askForDefaultValue($io, $propertyName, $dataType, $tcaDefault);
+
+            $properties[$columnName]['defaultValue'] = $defaultValue;
         }
 
         return $properties;
+    }
+
+    private function askForDefaultValue(
+        SymfonyStyle $io,
+        string $propertyName,
+        string $dataType,
+        ?string $suggestedDefault = null
+    ): mixed {
+        return match ($dataType) {
+            'int' => (int)$io->ask("Default value for '$propertyName' (int)", $suggestedDefault ?? '0'),
+            'float' => (float)$io->ask("Default value for '$propertyName' (float)", $suggestedDefault ?? '0.0'),
+            'bool' => $io->confirm("Default value for '$propertyName' (bool)?", (bool)$suggestedDefault),
+            'string' => (string)$io->ask("Default value for '$propertyName' (string)", $suggestedDefault ?? ''),
+            'array' => json_decode(
+                (string)$io->ask("Default value for '$propertyName' (array, JSON format)", $suggestedDefault ? json_encode($suggestedDefault) : '[]'),
+                true
+            ),
+            default => null,
+        };
     }
 
     private function tryToCorrectModelClassName(string $givenModelClassName): string
