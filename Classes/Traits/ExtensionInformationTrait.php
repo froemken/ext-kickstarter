@@ -48,6 +48,7 @@ trait ExtensionInformationTrait
             $composerManifest = json_decode((file_get_contents($composerManifestPath) ?: ''), true, 512, JSON_THROW_ON_ERROR) ?? [];
         } catch (\JsonException $e) {
             $io->error(['Could not decode composer.json. Please check syntax: ' . $e->getMessage()]);
+            die();
         }
 
         $extEmConfManifest = $this->getExtEmConf($extensionKey, $extensionPath);

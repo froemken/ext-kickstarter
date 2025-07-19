@@ -187,7 +187,6 @@ readonly class BuildExtensionService
             foreach ($repositoryNode->getTableNode()->getModelProperties() as $propertyNode) {
                 $properties[$propertyNode->getColumnName()] = [
                     'propertyName' => $propertyNode->getPropertyName(),
-                    'tcaType' => $tableTca['columns'][$propertyNode->getColumnName()]['config']['type'] ?? 'input',
                     'dataType' => $propertyNode->getPropertyDataType(),
                 ];
             }
