@@ -32,6 +32,8 @@ class ExpressionStructure extends AbstractStructure
 
     public function getName(): string
     {
-        return $this->node->expr->name->toString();
+        return property_exists($this->node->expr, 'name')
+            ? $this->node->expr->name->toString()
+            : '';
     }
 }

@@ -67,11 +67,14 @@ class TcaTableCreator implements TcaTableCreatorInterface
         /** @var ReturnStructure $returnStructure */
         $returnStructure = $fileStructure->getReturnStructures()->current();
 
-        foreach ($returnStructure->getNode()->expr->items as $item) {
-            if ($item->key->value === $section) {
-                return $item;
+        if (($expr = $returnStructure->getNode()->expr) && $expr instanceof Array_) {
+            foreach ($expr->items as $item) {
+                if ($item->key instanceof String_ && $item->key->value === $section) {
+                    return $item;
+                }
             }
         }
+
 
         return null;
     }

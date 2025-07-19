@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Creator\Domain\Model;
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt\Return_;
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
@@ -77,7 +78,9 @@ class ClassMapCreator implements DomainCreatorInterface
     private function classMapExists(Array_ $arrayNode, ModelInformation $modelInformation): bool
     {
         foreach ($arrayNode->items as $arrayItem) {
-            if ($arrayItem->key->value === $modelInformation->getModelClassName()) {
+            if ($arrayItem->key instanceof Scalar\String_
+                && $arrayItem->key->value === $modelInformation->getModelClassName()
+            ) {
                 return true;
             }
         }
