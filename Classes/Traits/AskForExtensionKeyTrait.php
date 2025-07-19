@@ -19,7 +19,7 @@ trait AskForExtensionKeyTrait
     {
         $io->text([
             'Building a new TYPO3 extension needs a unique identifier, the so called extension key. See:',
-            'https://docs.typo3.org/m/typo3/reference-coreapi/12.4/en-us/ExtensionArchitecture/BestPractises/ExtensionKey.html',
+            'https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/BestPractises/ExtensionKey.html',
         ]);
 
         do {
@@ -52,10 +52,10 @@ trait AskForExtensionKeyTrait
 
     private function tryToCorrectExtensionKey(string $givenExtensionKey): string
     {
-        // Lower case all chars
+        // Lower case the given extension key
         $cleanedExtensionKey = strtolower($givenExtensionKey);
 
-        // Change "-" to "_". Migrates package names to extension key
+        // Change "-" to "_". Migrates package names to the extension key
         $cleanedExtensionKey = str_replace('-', '_', $cleanedExtensionKey);
 
         // Remove invalid chars

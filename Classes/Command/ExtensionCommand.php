@@ -11,11 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\PhpParser\Visitor\FileVisitor;
 use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
@@ -63,39 +60,6 @@ class ExtensionCommand extends Command
 
         $io->title('Questions to build a new TYPO3 Extension');
 
-        $template = <<<'EOT'
-<?php
-
-$EM_CONF[$_EXTKEY] = [
-    'title' => 'Cars',
-    'description' => 'list and show car records',
-    'category' => 'plugin',
-    'state' => 'stable',
-    'author' => 'Stefan Froemken',
-    'author_email' => 'froemken@gmail.com',
-    'author_company' => '',
-    'version' => '0.0.1',
-    'constraints' => [
-        'depends' => [
-            'typo3' => '13.4.0-13.4.99',
-        ],
-        'conflicts' => [],
-        'suggests' => [],
-    ],
-];
-EOT;
-        $parser = (new ParserFactory())->createForHostVersion();
-        $stmts = $parser->parse($template);
-
-        // This visitor loops through all nodes and collects them grouped in a FileStructure object
-        $fileVisitor = new FileVisitor();
-
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor($fileVisitor);
-        $traverser->traverse($stmts);
-
-        $fileStructure = $fileVisitor->getFileStructure();
-
         $extensionInformation = $this->askForExtensionInformation(
             $io,
             $this->askForExtensionKey($io, $input->getArgument('extension_key'))
@@ -119,17 +83,25 @@ EOT;
                     '<info>Move the extension to a directory outside the web root (e.g., "packages").</info>',
                     '',
                     'Then add the path to your composer.json using:',
-                    sprintf('  <comment>composer config repositories.%1$s path packages/%1$s</comment>', $extensionInformation->getExtensionKey()),
+                    sprintf(
+                        '<comment>composer config repositories.%1$s path packages/%1$s</comment>',
+                        $extensionInformation->getExtensionKey()
+                    ),
                     '',
                 ]);
             }
+
             $io->writeln([
                 '<info>Install the extension with Composer using:</info>',
-                sprintf('  <comment>composer req %s:@dev</comment>', $extensionInformation->getComposerPackageName()),
+                sprintf(
+                    '<comment>composer req %s:@dev</comment>',
+                    $extensionInformation->getComposerPackageName()
+                ),
                 '',
             ]);
             return;
         }
+
         // Classic mode
         if (!str_contains($path, 'typo3conf/ext')) {
             $io->writeln([
@@ -137,10 +109,14 @@ EOT;
                 '',
             ]);
         }
+
         $io->writeln([
             '<info>Activate the extension in the TYPO3 backend under:</info>',
-            '  <comment>Admin Tools → Extension Manager</comment>',
-            sprintf('  <comment>(%s)</comment>', $extensionInformation->getComposerPackageName()),
+            '<comment>Admin Tools → Extension Manager</comment>',
+            sprintf(
+                '<comment>(%s)</comment>',
+                $extensionInformation->getComposerPackageName()
+            ),
             '',
         ]);
     }
@@ -171,7 +147,7 @@ EOT;
 
         $io->text([
             'The title of the extension will be used to identify the extension much easier',
-            'in the TYPO3 ExtensionManager and also in TER (https://extension.typo3.org)',
+            'in the TYPO3 ExtensionManager and also in TER (https://extensions.typo3.org)',
         ]);
         $title = (string)$io->ask(
             'Please provide the title of your extension',
@@ -180,7 +156,7 @@ EOT;
 
         $io->text([
             'The description describes your new extension in short. It should not exceed more than two sentences.',
-            'This will help users in TER (https://extension.typo3.org) to get the point of what your extension does/provides',
+            'This will help users in TER (https://extensions.typo3.org) to get the point of what your extension does/provides',
         ]);
         $description = (string)$io->ask('Description');
 
@@ -281,7 +257,7 @@ EOT;
         $defaultComposerPackageName = null;
 
         do {
-            $composerPackageName = $io->ask('Composer package name', $defaultComposerPackageName);
+            $composerPackageName = (string)$io->ask('Composer package name', $defaultComposerPackageName);
 
             if (!preg_match('#^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*$#', $composerPackageName)) {
                 $io->error('Invalid composer package name. Package name must follow a specific pattern (see: https://getcomposer.org/doc/04-schema.md#name)');
@@ -310,7 +286,7 @@ EOT;
         ]);
 
         do {
-            $version = $io->ask('Version', '0.0.1');
+            $version = (string)$io->ask('Version', '0.0.1');
 
             if (!preg_match('#^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$#', $version)) {
                 $io->error('Invalid version string. The version must match a specific pattern (see: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)');
@@ -326,11 +302,8 @@ EOT;
     private function askForEmail(SymfonyStyle $io): string
     {
         do {
-            $email = $io->ask('Email address');
-            if (!$email) {
-                return '';
-            }
-            if (!GeneralUtility::validEmail($email)) {
+            $email = (string)$io->ask('Email address');
+            if ($email !== '' && !GeneralUtility::validEmail($email)) {
                 $io->error('You have entered an invalid email address.');
                 $validEmail = false;
             } else {
