@@ -92,7 +92,7 @@ trait ExtensionInformationTrait
             throw new \InvalidArgumentException('Extension key must not be empty', 1741623620);
         }
 
-        // We are in a trait. I would try to prevent moving it into inject or constructor
+        // We are in a trait. I would try to prevent moving it into "inject" or constructor
         // You will never know, from where this trait will be called ;-)
         $extConf = GeneralUtility::makeInstance(ExtConf::class);
 
@@ -115,6 +115,6 @@ trait ExtensionInformationTrait
 
         GeneralUtility::mkdir_deep($extensionPath);
 
-        return $extensionPath . '/';
+        return $extensionPath;
     }
 }
