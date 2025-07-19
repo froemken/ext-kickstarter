@@ -25,11 +25,11 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ControllerInterface;
 /**
  * Controller to show an overview about the models
  */
-class KickstartController implements ControllerInterface
+readonly class KickstartController implements ControllerInterface
 {
     public function __construct(
-        readonly private ModuleTemplateFactory $moduleTemplateFactory,
-        readonly private BuildExtensionService $buildExtensionService
+        private ModuleTemplateFactory $moduleTemplateFactory,
+        private BuildExtensionService $buildExtensionService
     ) {}
 
     public function processRequest(ServerRequestInterface $request): ResponseInterface
