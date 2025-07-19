@@ -16,6 +16,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractColumnNode extends AbstractNode
 {
+    public const TYPE = '';
+
     public function getColumnName(): string
     {
         return $this->getProperties()['columnName'] ?? '';

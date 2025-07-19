@@ -217,7 +217,6 @@ class ModelCommand extends Command
             // Basic meta
             $properties[$columnName] = [
                 'propertyName' => $propertyName,
-                'tcaType' => $tableTca['columns'][$columnName]['config']['type'] ?? 'input',
                 'dataType' => $io->choice(
                     'Which data type do you prefer for the property "' . $propertyName . '"?',
                     self::DATA_TYPES,
