@@ -29,12 +29,18 @@ final class FileVisitor extends NodeVisitorAbstract
         $this->fileStructure = new Structure\FileStructure();
     }
 
-    public function beforeTraverse(array $nodes): void
+    /**
+     * @return Node[]|null
+     */
+    public function beforeTraverse(array $nodes): ?array
     {
-        return;
+        return null;
     }
 
-    public function enterNode($node): void
+    /**
+     * @return int|Node|Node[]|null
+     */
+    public function enterNode($node): int|Node|array|null
     {
         if ($node instanceof Node\Stmt\Declare_) {
             $this->fileStructure->addDeclareStructure(new Structure\DeclareStructure($node));
@@ -59,6 +65,8 @@ final class FileVisitor extends NodeVisitorAbstract
         } elseif ($node instanceof Node\Stmt\Return_) {
             $this->fileStructure->addReturnStructure(new Structure\ReturnStructure($node));
         }
+
+        return null;
     }
 
     public function getFileStructure(): Structure\FileStructure

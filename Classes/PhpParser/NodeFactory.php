@@ -104,7 +104,7 @@ EOT;
     public function createUseTrait(string $traitName): Node\Stmt\TraitUse
     {
         // In ->getNode() only "Node" was registered as a return value. Adding TraitUse here, too
-        /** @var Node|Node\Stmt\TraitUse $node */
+        /** @var Node\Stmt\TraitUse $node */
         $node = $this->factory
             ->useTrait($traitName)
             ->getNode();
