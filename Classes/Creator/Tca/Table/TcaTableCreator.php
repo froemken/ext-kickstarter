@@ -75,7 +75,6 @@ class TcaTableCreator implements TcaTableCreatorInterface
             }
         }
 
-
         return null;
     }
 
