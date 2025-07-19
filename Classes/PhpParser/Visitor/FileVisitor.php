@@ -32,7 +32,7 @@ final class FileVisitor extends NodeVisitorAbstract
     /**
      * @return Node[]|null
      */
-    public function beforeTraverse(array $nodes): null|array
+    public function beforeTraverse(array $nodes): ?array
     {
         return null;
     }
