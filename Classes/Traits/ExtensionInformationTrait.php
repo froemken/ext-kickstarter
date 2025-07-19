@@ -76,7 +76,7 @@ trait ExtensionInformationTrait
         $EM_CONF = null;
         if (@file_exists($path)) {
             include $path;
-            if (is_array($EM_CONF[$_EXTKEY])) {
+            if (is_array($EM_CONF[$_EXTKEY] ?? false)) {
                 return $EM_CONF[$_EXTKEY];
             }
         }
