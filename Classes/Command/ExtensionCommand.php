@@ -24,6 +24,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -95,12 +96,53 @@ EOT;
 
         $fileStructure = $fileVisitor->getFileStructure();
 
-        $this->extensionCreatorService->create($this->askForExtensionInformation(
+        $extensionInformation = $this->askForExtensionInformation(
             $io,
             $this->askForExtensionKey($io, $input->getArgument('extension_key'))
-        ));
+        );
+
+        $this->extensionCreatorService->create($extensionInformation);
+
+        $path = $extensionInformation->getExtensionPath();
+
+        $io->success(sprintf('The extension was saved to path %s', $path));
+        $this->printInstallationInstructions($io, $path, $extensionInformation);
 
         return Command::SUCCESS;
+    }
+
+    public function printInstallationInstructions(SymfonyStyle $io, string $path, ExtensionInformation $extensionInformation): void
+    {
+        if (Environment::isComposerMode()) {
+            if (str_contains($path, 'typo3temp')) {
+                $io->writeln([
+                    '<info>Move the extension to a directory outside the web root (e.g., "packages").</info>',
+                    '',
+                    'Then add the path to your composer.json using:',
+                    sprintf('  <comment>composer config repositories.%1$s path packages/%1$s</comment>', $extensionInformation->getExtensionKey()),
+                    '',
+                ]);
+            }
+            $io->writeln([
+                '<info>Install the extension with Composer using:</info>',
+                sprintf('  <comment>composer req %s:@dev</comment>', $extensionInformation->getComposerPackageName()),
+                '',
+            ]);
+            return;
+        }
+        // Classic mode
+        if (!str_contains($path, 'typo3conf/ext')) {
+            $io->writeln([
+                '<info>Move the extension to the directory "typo3conf/ext/".</info>',
+                '',
+            ]);
+        }
+        $io->writeln([
+            '<info>Activate the extension in the TYPO3 backend under:</info>',
+            '  <comment>Admin Tools → Extension Manager</comment>',
+            sprintf('  <comment>(%s)</comment>', $extensionInformation->getComposerPackageName()),
+            '',
+        ]);
     }
 
     private function askForExtensionInformation(SymfonyStyle $io, string $extensionKey): ExtensionInformation
@@ -150,7 +192,18 @@ EOT;
         ]);
         $category = (string)$io->choice(
             'Category',
-            ['be', 'module', 'fe', 'plugin', 'misc', 'services', 'templates', 'example', 'doc', 'distribution'],
+            [
+                'be',
+                'module',
+                'fe',
+                'plugin',
+                'misc',
+                'services',
+                'templates',
+                'example',
+                'doc',
+                'distribution',
+            ],
             'plugin'
         );
 
@@ -160,7 +213,14 @@ EOT;
         ]);
         $state = (string)$io->choice(
             'State',
-            ['alpha', 'beta', 'stable', 'experimental', 'test', 'excludeFromUpdates'],
+            [
+                'alpha',
+                'beta',
+                'stable',
+                'experimental',
+                'test',
+                'excludeFromUpdates',
+            ],
             'alpha'
         );
 
@@ -285,7 +345,11 @@ EOT;
             '\\\\',
             array_map(
                 fn($part) => str_replace(
-                    ['-', '_', '.'],
+                    [
+                        '-',
+                        '_',
+                        '.',
+                    ],
                     '',
                     ucwords($part, '-_ .')
                 ),
