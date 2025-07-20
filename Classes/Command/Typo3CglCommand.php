@@ -21,7 +21,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class RepositoryCommand extends Command
+class Typo3CglCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
@@ -55,74 +55,5 @@ class RepositoryCommand extends Command
         $this->repositoryCreatorService->create($this->askForRepositoryInformation($io, $input));
 
         return Command::SUCCESS;
-    }
-
-    private function askForRepositoryInformation(SymfonyStyle $io, InputInterface $input): RepositoryInformation
-    {
-        $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
-            $io
-        );
-
-        return new RepositoryInformation(
-            $extensionInformation,
-            $this->askForRepositoryClassName($io),
-        );
-    }
-
-    private function askForRepositoryClassName(SymfonyStyle $io): string
-    {
-        $defaultRepositoryClassName = null;
-
-        do {
-            $repositoryClassName = (string)$io->ask(
-                'Please provide the class name of your new Extbase Repository.',
-                $defaultRepositoryClassName,
-            );
-
-            if ($repositoryClassName === '') {
-                $io->error('Class name can not be empty.');
-                $validRepositoryClassName = false;
-            } elseif (preg_match('/^[0-9]/', $repositoryClassName)) {
-                $io->error('Class name should not start with a number.');
-                $defaultRepositoryClassName = $this->tryToCorrectRepositoryClassName($repositoryClassName);
-                $validRepositoryClassName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $repositoryClassName)) {
-                $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultRepositoryClassName = $this->tryToCorrectRepositoryClassName($repositoryClassName);
-                $validRepositoryClassName = false;
-            } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $repositoryClassName) === 0) {
-                $io->error('Action must be written in UpperCamelCase like "CarRepository".');
-                $defaultRepositoryClassName = $this->tryToCorrectRepositoryClassName($repositoryClassName);
-                $validRepositoryClassName = false;
-            } elseif (!str_ends_with($repositoryClassName, 'Repository')) {
-                $io->error('Class name must end with "Repository".');
-                $defaultRepositoryClassName = $this->tryToCorrectRepositoryClassName($repositoryClassName);
-                $validRepositoryClassName = false;
-            } else {
-                $validRepositoryClassName = true;
-            }
-        } while (!$validRepositoryClassName);
-
-        return $repositoryClassName;
-    }
-
-    private function tryToCorrectRepositoryClassName(string $givenRepositoryClassName): string
-    {
-        // Remove invalid chars
-        $cleanedRepositoryClassName = preg_replace('/[^a-zA-Z0-9]/', '', $givenRepositoryClassName);
-
-        // Upper case first char
-        $cleanedRepositoryClassName = ucfirst($cleanedRepositoryClassName);
-
-        // Remove ending "rePOsiTory" with wrong case
-        if (str_ends_with(strtolower($cleanedRepositoryClassName), 'repository')) {
-            $cleanedRepositoryClassName = substr($cleanedRepositoryClassName, 0, -10);
-        }
-
-        // Add "Repository" with correct case
-        $cleanedRepositoryClassName .= 'Repository';
-
-        return $cleanedRepositoryClassName;
     }
 }

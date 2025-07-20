@@ -227,10 +227,11 @@ class FileStructure
     }
 
     /**
-     * Collect all registered nodes in specific order and render/print new file content
+     * Collect all registered nodes in a specific order and render/print new file content
      */
     public function getFileContents(): string
     {
+        // PhpParser does a rtrim on PHP content. To be more PSR-compatible, we add NL to the end of all files.
         return $this->printer->prettyPrintFile($this->getStmts());
     }
 

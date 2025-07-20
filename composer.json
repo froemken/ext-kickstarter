@@ -28,7 +28,8 @@
 	"require": {
 		"ext-pdo": "*",
 		"typo3/cms-core": "^13.4.3",
-		"typo3/cms-install": "^13.4.3"
+		"typo3/cms-install": "^13.4.3",
+		"friendsofphp/php-cs-fixer": "^3.49"
 	},
 	"require-dev": {
 		"ergebnis/composer-normalize": "^2.44",
