@@ -146,7 +146,11 @@ class TableCommand extends Command
 
     private function askForTableColumnConfiguration(string $tableColumnName, SymfonyStyle $io): array
     {
-        $tableColumnType = $io->choice('Choose TCA column type', array_keys(TableCreatorService::TABLE_COLUMN_TYPES), 'input');
+        $tableColumnType = $io->choice(
+            'Choose TCA column type',
+            array_keys(TableCreatorService::TABLE_COLUMN_TYPES),
+            'input'
+        );
 
         return TableCreatorService::TABLE_COLUMN_TYPES[$tableColumnType] ?? [];
     }
