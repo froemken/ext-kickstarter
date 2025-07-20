@@ -76,7 +76,7 @@ class EventCommand extends Command
 
         do {
             $eventClassName = (string)$io->ask(
-                'Please provide the class name of your new Event.',
+                'Please provide the class name of your new Event',
                 $defaultEventClassName,
             );
 

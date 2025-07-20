@@ -96,7 +96,7 @@ class ModelCommand extends Command
 
         do {
             $modelClassName = (string)$io->ask(
-                'Please provide the class name of your new Extbase Model.',
+                'Please provide the class name of your new Extbase Model',
                 $defaultModelClassName,
             );
 

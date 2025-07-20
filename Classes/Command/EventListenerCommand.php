@@ -76,7 +76,7 @@ class EventListenerCommand extends Command
 
         do {
             $eventListenerClassName = (string)$io->ask(
-                'Please provide the class name of your new Event Listener.',
+                'Please provide the class name of your new Event Listener',
                 $defaultEventListenerClassName,
             );
 

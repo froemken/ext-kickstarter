@@ -76,7 +76,7 @@ class UpgradeWizardCommand extends Command
 
         do {
             $upgradeWizardClassName = (string)$io->ask(
-                'Please provide the class name of your new Upgrade Wizard.',
+                'Please provide the class name of your new Upgrade Wizard',
                 $defaultUpgradeWizardClassName,
             );
 

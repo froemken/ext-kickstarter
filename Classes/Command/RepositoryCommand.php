@@ -76,7 +76,7 @@ class RepositoryCommand extends Command
 
         do {
             $repositoryClassName = (string)$io->ask(
-                'Please provide the class name of your new Extbase Repository.',
+                'Please provide the class name of your new Extbase Repository',
                 $defaultRepositoryClassName,
             );
 
