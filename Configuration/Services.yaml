@@ -82,6 +82,13 @@ services:
         description: 'Create a new Extbase Type Converter to your TYPO3 extension.'
         schedulable: false
 
+  StefanFroemken\ExtKickstarter\Command\ApplyTypo3CglCommand:
+    tags:
+      - name: console.command
+        command: 'make:applycgl'
+        description: 'Enforces TYPO3 Coding Guidelines (CGL) on extension code. Note: Requires TYPO3 to be installed in Composer mode.'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\UpgradeWizardCommand:
     tags:
       - name: console.command
