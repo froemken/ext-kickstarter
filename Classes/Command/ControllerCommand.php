@@ -80,7 +80,7 @@ class ControllerCommand extends Command
 
         do {
             $actionMethod = (string)$io->ask(
-                'Please provide the name of your action method.',
+                'Please provide the name of your action method',
                 $defaultActionName,
             );
 
@@ -117,7 +117,7 @@ class ControllerCommand extends Command
         $defaultControllerName = null;
         do {
             $controllerName = (string)$io->ask(
-                'Please provide the name of your controller.',
+                'Please provide the name of your controller',
                 $defaultControllerName,
             );
 
