@@ -26,8 +26,11 @@ class ExtensionInformation
         'l10n_parent',
         'l10n_diffsource',
     ];
+
     private const TCA_PATH = 'Configuration/TCA/';
+
     private const CONTROLLER_PATH = 'Classes/Controller/';
+
     private const TCA_OVERRIDES_PATH = 'Configuration/TCA/Overrides/';
 
     public function __construct(
