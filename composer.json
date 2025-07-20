@@ -20,7 +20,7 @@
 	],
 	"homepage": "https://www.typo3lexikon.de/",
 	"support": {
-        "docs": "https://docs.typo3.org/p/stefanfroemken/ext-kickstarter/main/en-us/Index.html",
+		"docs": "https://docs.typo3.org/p/stefanfroemken/ext-kickstarter/main/en-us/Index.html",
 		"email": "froemken@gmail.com",
 		"issues": "https://github.com/froemken/ext-kickstarter/issues",
 		"source": "https://github.com/froemken/ext-kickstarter"
