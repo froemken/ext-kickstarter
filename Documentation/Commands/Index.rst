@@ -158,3 +158,36 @@ You will find the new file in directory ``Classes/Upgrade/*``.
 
 ..  code-block:: bash
     vendor/bin/typo3 make:upgrade
+
+make:applycgl
+=============
+
+This command enforces TYPO3 Coding Guidelines (CGL) on your extension code by applying PHP CS Fixer rules. Since it's not PhpParser's responsibility to generate source code in a specific format like PSR, this command provides an additional step to ensure your code follows TYPO3's coding standards.
+
+Requirements
+-----------
+
+*   TYPO3 must be running in Composer mode
+*   PHP function ``exec`` must be available
+*   ``php-cs-fixer`` must be installed
+
+The command will process the following directories if they exist in your extension:
+
+*   ``Classes/``
+*   ``Configuration/``
+*   ``Tests/``
+
+Usage
+-----
+
+..  code-block:: bash
+    vendor/bin/typo3 make:applycgl
+
+The command will:
+
+#.  Verify that all requirements are met
+#.  Locate the php-cs-fixer binary and configuration
+#.  Apply TYPO3 coding guidelines to all applicable files in your extension
+#.  Display the results of the formatting process
+
+Note: The command uses a predefined configuration file located at ``EXT:ext_kickstarter/Build/cgl/.php-cs-fixer.dist.php``
