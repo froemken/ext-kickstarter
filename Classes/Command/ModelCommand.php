@@ -164,7 +164,7 @@ class ModelCommand extends Command
         // Step 1: Handle domain fields
         $domainColumns = $extensionInformation->getDomainColumnNamesFromTca($tableTca);
         $domainFieldChoice = $io->choice(
-            'Which domain fields should be included?',
+            'Which domain fields should be included',
             ['All', 'Choose manually'],
             'All'
         );
@@ -184,7 +184,7 @@ class ModelCommand extends Command
         // Step 2: Ask about system fields (all, none, or custom)
         $systemColumns = $extensionInformation->getSystemColumnNamesFromTca($tableTca);
         $systemFieldChoice = $io->choice(
-            'Which system fields should be included?',
+            'Which system fields should be included',
             ['All', 'None', 'Choose manually'],
             'None'
         );
@@ -209,7 +209,7 @@ class ModelCommand extends Command
             $propertyName = GeneralUtility::underscoredToLowerCamelCase($columnName);
 
             $dataType = $io->choice(
-                "Which data type you prefer for your property: \"{$propertyName}\"?",
+                "Which data type you prefer for your property: \"{$propertyName}\"",
                 self::DATA_TYPES,
                 'string'
             );
