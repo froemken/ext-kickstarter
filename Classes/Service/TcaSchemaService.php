@@ -148,10 +148,10 @@ class TcaSchemaService
             case 'check':
                 $extTablesSqlInformation = new ExtTablesSqlInformation(
                     $fieldConfig['columnName'],
-                    'VARCHAR',
+                    'SMALLINT',
                     true,
                     true,
-                    $fieldConfig['default'] ?? 0
+                    (int)($fieldConfig['default'] ?? 0)
                 );
                 break;
 
