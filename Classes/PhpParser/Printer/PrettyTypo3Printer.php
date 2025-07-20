@@ -44,7 +44,6 @@ class PrettyTypo3Printer extends Standard
 
     private function shouldRenderNodesInMultiline(array $nodes): bool
     {
-
         // Early return on empty nodes
         if ($nodes === []) {
             return false;
@@ -69,7 +68,7 @@ class PrettyTypo3Printer extends Standard
             return true;
         }
 
-        // For existing code, we should check, if arguments are already in multiline. If yes, keep it.
+        // For existing code, we should check if arguments are already in multiline. If yes, keep it.
         $startLine = reset($nodes)->getAttribute('startLine');
         $endLine = end($nodes)->getAttribute('endLine');
 
@@ -98,7 +97,7 @@ class PrettyTypo3Printer extends Standard
     }
 
     /**
-     * Sum up all indent, method, argument and return type length to get full length of code.
+     * Sum up all indents, methods, arguments and return type length to get the full length of code.
      */
     private function getLineLengthOfNodes(array $nodes): int
     {
