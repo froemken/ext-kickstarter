@@ -76,7 +76,7 @@ class TypeConverterCommand extends Command
 
         do {
             $typeConverterClassName = (string)$io->ask(
-                'Please provide the class name of your new Type Converter.',
+                'Please provide the class name of your new Type Converter',
                 $defaultTypeConverterClassName,
             );
 

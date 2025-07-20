@@ -69,10 +69,10 @@ class PluginCommand extends Command
         );
 
         $pluginLabel = (string)$io->ask(
-            'Please provide a label for your plugin. You will see the label in the backend.',
+            'Please provide a label for your plugin. You will see the label in the backend',
         );
         $pluginName = (string)$io->ask(
-            'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend.',
+            'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend',
             GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
         );
         $pluginType = (string)$io->choice(
@@ -82,7 +82,7 @@ class PluginCommand extends Command
         );
 
         $pluginDescription = (string)$io->ask(
-            'Please provide a short plugin description. You will see it in new content element wizard.',
+            'Please provide a short plugin description. You will see it in new content element wizard',
         );
 
         $referencedControllerActions = [];
