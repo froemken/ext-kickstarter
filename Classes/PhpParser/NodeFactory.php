@@ -282,5 +282,4 @@ EOT;
 
         throw new \InvalidArgumentException('Unsupported default value type: ' . gettype($value));
     }
-
 }

@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Information;
 readonly class ModelInformation
 {
     private const DOMAIN_MODEL_PATH = 'Classes/Domain/Model/';
+
     private const CLASSES_FILE_PATH = 'Configuration/Extbase/Persistence/Classes.php';
 
     public function __construct(

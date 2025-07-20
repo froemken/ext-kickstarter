@@ -25,14 +25,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApplyTypo3CglCommand extends Command
 {
+    use AskForExtensionKeyTrait;
+    use ExtensionInformationTrait;
+
     private const DIRECTORIES = [
         'Classes',
         'Configuration',
         'Tests',
     ];
-
-    use AskForExtensionKeyTrait;
-    use ExtensionInformationTrait;
 
     public function __construct(
         private readonly RepositoryCreatorService $repositoryCreatorService,
