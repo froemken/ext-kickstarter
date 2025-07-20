@@ -119,7 +119,7 @@ class PluginCommand extends Command
         $referencedControllerActions = [];
 
         $referencedExtbaseControllerNames = (array)$io->choice(
-            'Select the extbase controller classes you want to reference to your plugin.',
+            'Select the extbase controller classes you want to reference to your plugin',
             $extbaseControllerClassnames,
             null,
             true
@@ -130,7 +130,7 @@ class PluginCommand extends Command
             $extbaseControllerActionNames[] = $skipAction;
 
             $referencedControllerActions[$referencedExtbaseControllerName]['cached'] = $io->choice(
-                'Select the CACHED actions for your controller ' . $referencedExtbaseControllerName . ' you want to reference to your plugin.',
+                'Select the CACHED actions for your controller ' . $referencedExtbaseControllerName . ' you want to reference to your plugin',
                 $extbaseControllerActionNames,
                 null,
                 true
@@ -140,7 +140,7 @@ class PluginCommand extends Command
             }
 
             $referencedControllerActions[$referencedExtbaseControllerName]['uncached'] = $io->choice(
-                'Select the UNCACHED actions for your controller ' . $referencedExtbaseControllerName . ' you want to reference to your plugin.',
+                'Select the UNCACHED actions for your controller ' . $referencedExtbaseControllerName . ' you want to reference to your plugin',
                 $extbaseControllerActionNames,
                 null,
                 true
