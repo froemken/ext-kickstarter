@@ -27,6 +27,8 @@ class TcaTableCreator implements TcaTableCreatorInterface
 {
     use FileStructureBuilderTrait;
 
+    private const FIELDS_GENERAL = '###FIELDS_GENERAL###';
+
     private BuilderFactory $factory;
 
     public function __construct()
@@ -98,6 +100,17 @@ class TcaTableCreator implements TcaTableCreatorInterface
         return $existingTcaColumns;
     }
 
+    /**
+     * Adds types -> showitems, for example:
+     *
+     * ```
+     * 'types' => [
+     *   [
+     *     'showitem' => 'hidden, sys_language_uid, l10n_diffsource, test',
+     *   ],
+     * ],
+     * ```
+     */
     private function addNewTcaTypeItems(array $existingTcaTypes, TableInformation $tableInformation): void
     {
         if (!isset($existingTcaTypes[0]->value->items[0]->value)) {
@@ -106,17 +119,63 @@ class TcaTableCreator implements TcaTableCreatorInterface
 
         /** @var String_ $showItems */
         $showItems = $existingTcaTypes[0]->value->items[0]->value;
-        $existingColumnNames = GeneralUtility::trimExplode(',', $showItems->value, true);
+        $showItemsString = $showItems->value;
 
+        $existingFieldNames = GeneralUtility::trimExplode(',', $showItemsString);
+
+        // Collect fields to add
+        $newFields = [];
         foreach ($tableInformation->getColumns() as $columnName => $columnConfiguration) {
-            if (in_array($columnName, $existingColumnNames, true)) {
-                continue;
+            if (!in_array($columnName, $existingFieldNames, true)) {
+                $newFields[] = $columnName;
             }
-
-            $existingColumnNames[] = $columnName;
         }
 
-        $showItems->value = implode(', ', $existingColumnNames);
+        if ($newFields === []) {
+            return; // Nothing to add
+        }
+
+        // Step 1: Placeholder logic
+        $placeholder = self::FIELDS_GENERAL;
+        if (str_contains($showItemsString, $placeholder)) {
+            $showItems->value = str_replace($placeholder, implode(', ', $newFields) . ',', $showItemsString);
+            return;
+        }
+
+        // Step 2: Split by --div-- and insert into first tab
+        $tabs = preg_split('/(\s*--div--;[^,]+,\s*)/', $showItemsString, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+        $inserted = false;
+        for ($i = 0; $i < count($tabs); $i++) {
+            if (!$inserted && str_starts_with(trim($tabs[$i]), '--div--')   && isset($tabs[$i + 1])) {
+                $existingFields = GeneralUtility::trimExplode(',', $tabs[$i + 1], true);
+
+                // Add only new fields
+                foreach ($newFields as $field) {
+                    if (!in_array($field, $existingFields, true)) {
+                        $existingFields[] = $field;
+                    }
+                }
+
+                $tabs[$i + 1] = implode(', ', $existingFields) . ',';
+                $inserted = true;
+            }
+        }
+
+        if ($inserted) {
+            $showItems->value = implode('', $tabs);
+        } else {
+            // No tabs at all: fallback to flat list
+            $existingFields = GeneralUtility::trimExplode(',', $showItemsString, true);
+
+            foreach ($newFields as $field) {
+                if (!in_array($field, $existingFields, true)) {
+                    $existingFields[] = $field;
+                }
+            }
+
+            $showItems->value = implode(', ', $existingFields);
+        }
     }
 
     private function addTableNode(FileStructure $fileStructure, TableInformation $tableInformation): void
@@ -160,7 +219,15 @@ class TcaTableCreator implements TcaTableCreatorInterface
     {
         return $this->factory->val([
             '0' => [
-                'showitem' => 'hidden, sys_language_uid, l10n_diffsource',
+                'showitem' => '
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
+                    ' . self::FIELDS_GENERAL . '
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language,
+                    --palette--;;language,
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+                    hidden,--palette--;;access,
+                --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:extended,
+            ',
             ],
         ]);
     }
@@ -170,6 +237,9 @@ class TcaTableCreator implements TcaTableCreatorInterface
         return $this->factory->val([
             'access' => [
                 'showitem' => 'starttime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:starttime_formlabel,endtime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:endtime_formlabel',
+            ],
+            'language' => [
+                'showitem' => 'sys_language_uid, l10n_parent',
             ],
         ]);
     }
