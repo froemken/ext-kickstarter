@@ -92,7 +92,7 @@ class TableCommand extends Command
             'Would you like to adopt the suggested table name: ' . $extensionInformation->getTableNamePrefix() . $tableName . '?',
         );
 
-        if ($isTableNameConfirmed) {
+        if ($isTableNameConfirmed !== '' && $isTableNameConfirmed !== '0') {
             return $extensionInformation->getTableNamePrefix() . $tableName;
         }
 
@@ -108,7 +108,7 @@ class TableCommand extends Command
         do {
             $tableColumnName = (string)$io->ask('Enter column name we should create for you', $defaultColumnName);
 
-            if (preg_match('/^[0-9]/', $tableColumnName)) {
+            if (preg_match('/^\d/', $tableColumnName)) {
                 $io->error('Table column should not start with a number.');
                 $defaultColumnName = $this->tryToCorrectColumnName($tableColumnName);
                 $validTableColumnName = false;
@@ -121,7 +121,7 @@ class TableCommand extends Command
                     'Please provide a label for the column',
                     ucwords(str_replace('_', ' ', $tableColumnName))
                 );
-                $tableColumns[$tableColumnName]['config'] = $this->askForTableColumnConfiguration($tableColumnName, $io);
+                $tableColumns[$tableColumnName]['config'] = $this->askForTableColumnConfiguration($io);
                 if ($io->confirm('Do you want to add another table column?')) {
                     continue;
                 }
@@ -144,7 +144,7 @@ class TableCommand extends Command
         return preg_replace('/[^a-zA-Z0-9_]/', '', $cleanedColumnName);
     }
 
-    private function askForTableColumnConfiguration(string $tableColumnName, SymfonyStyle $io): array
+    private function askForTableColumnConfiguration(SymfonyStyle $io): array
     {
         $tableColumnType = $io->choice(
             'Choose TCA column type',

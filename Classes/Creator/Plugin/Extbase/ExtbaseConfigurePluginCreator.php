@@ -64,7 +64,7 @@ class ExtbaseConfigurePluginCreator implements ExtbasePluginCreatorInterface
             ));
         }
 
-        if ($staticCall = $this->getStaticCallForConfigurePlugin($fileStructure, $pluginInformation)) {
+        if (($staticCall = $this->getStaticCallForConfigurePlugin($fileStructure, $pluginInformation)) instanceof StaticCall) {
             if (($cachedControllerActions = $staticCall->args[2]->value) && $cachedControllerActions instanceof Array_) {
                 $this->addMissingControllerAndActions($cachedControllerActions, $this->getReferencedControllerActions($pluginInformation, true));
             }
@@ -124,7 +124,7 @@ class ExtbaseConfigurePluginCreator implements ExtbasePluginCreatorInterface
                 && $node->name->toString() === 'configurePlugin'
                 && isset($node->args[0], $node->args[1])
                 && $node->args[0] instanceof Arg
-                && ($extensionNameNode = $node->args[0])
+                && (($extensionNameNode = $node->args[0]) instanceof Arg)
                 && $extensionNameNode->value instanceof String_
                 && $extensionNameNode->value->value === $pluginInformation->getExtensionInformation()->getExtensionName()
                 && ($pluginNameNode = $node->args[1])

@@ -68,7 +68,7 @@ readonly class PluginInformation
 
         foreach ($this->referencedControllerActions as $referencedExtbaseControllerClassname => $referencedControllerActionNames) {
             // Remove "Action" from action name
-            $controllerActionNames = array_map(static function ($controllerActionName) {
+            $controllerActionNames = array_map(static function ($controllerActionName): string {
                 return substr($controllerActionName, 0, -6);
             }, $referencedControllerActionNames[$cached ? 'cached' : 'uncached']);
 

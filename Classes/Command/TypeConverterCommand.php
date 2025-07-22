@@ -83,7 +83,7 @@ class TypeConverterCommand extends Command
                 $defaultTypeConverterClassName,
             );
 
-            if (preg_match('/^[0-9]/', $typeConverterClassName)) {
+            if (preg_match('/^\d/', $typeConverterClassName)) {
                 $io->error('Class name should not start with a number.');
                 $defaultTypeConverterClassName = $this->tryToCorrectTypeConverterClassName($typeConverterClassName);
                 $validTypeConverterClassName = false;

@@ -169,10 +169,12 @@ readonly class ExtensionInformation
 
         $controllerClasses = [];
         foreach (scandir($controllerPath) as $file) {
-            if ($file === '.' || $file === '..') {
+            if ($file === '.') {
                 continue;
             }
-
+            if ($file === '..') {
+                continue;
+            }
             $controllerClasses[] = pathinfo($file, PATHINFO_FILENAME);
         }
 
@@ -239,10 +241,12 @@ readonly class ExtensionInformation
         }
 
         foreach (scandir($tcaPath) as $file) {
-            if ($file === '.' || $file === '..') {
+            if ($file === '.') {
                 continue;
             }
-
+            if ($file === '..') {
+                continue;
+            }
             $filePath = $tcaPath . '/' . $file;
 
             if (is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'php') {
@@ -288,7 +292,7 @@ readonly class ExtensionInformation
     {
         $allColumns = $this->getColumnNamesFromTca($tableTca);
 
-        return array_values(array_filter($allColumns, function ($column) use ($systemColumns) {
+        return array_values(array_filter($allColumns, function ($column) use ($systemColumns): bool {
             $isSystem = in_array($column, self::SYSTEM_COLUMNS, true);
             return $systemColumns ? $isSystem : !$isSystem;
         }));

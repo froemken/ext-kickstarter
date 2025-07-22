@@ -30,7 +30,7 @@ trait AskForExtensionKeyTrait
                 $io->error('Extension key length must be between 3 and 30 characters');
                 $defaultExtensionKey = $this->tryToCorrectExtensionKey($extensionKey);
                 $validExtensionKey = false;
-            } elseif (!preg_match('/^[a-z][a-z0-9_]*$/', $extensionKey)) {
+            } elseif (in_array(preg_match('/^[a-z][a-z0-9_]*$/', $extensionKey), [0, false], true)) {
                 $io->error('Extension key can only start with a lowercase letter and contain lowercase letters, numbers, or underscores');
                 $defaultExtensionKey = $this->tryToCorrectExtensionKey($extensionKey);
                 $validExtensionKey = false;
@@ -62,7 +62,7 @@ trait AskForExtensionKeyTrait
         $cleanedExtensionKey = preg_replace('/[^a-z0-9_]/', '', $cleanedExtensionKey);
 
         // Remove leading numbers
-        $cleanedExtensionKey = preg_replace('/^[0-9]+/', '', $cleanedExtensionKey);
+        $cleanedExtensionKey = preg_replace('/^\d+/', '', $cleanedExtensionKey);
 
         // Remove leading and trailing "_"
         return trim($cleanedExtensionKey, '_');

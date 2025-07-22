@@ -80,7 +80,7 @@ class EventCommand extends Command
                 $defaultEventClassName,
             );
 
-            if (preg_match('/^[0-9]/', $eventClassName)) {
+            if (preg_match('/^\d/', $eventClassName)) {
                 $io->error('Class name should not start with a number.');
                 $defaultEventClassName = $this->tryToCorrectEventClassName($eventClassName);
                 $validEventClassName = false;

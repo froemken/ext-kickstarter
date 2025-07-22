@@ -80,7 +80,7 @@ class UpgradeWizardCommand extends Command
                 $defaultUpgradeWizardClassName,
             );
 
-            if (preg_match('/^[0-9]/', $upgradeWizardClassName)) {
+            if (preg_match('/^\d/', $upgradeWizardClassName)) {
                 $io->error('Class name should not start with a number.');
                 $defaultUpgradeWizardClassName = $this->tryToCorrectUpgradeWizardClassName($upgradeWizardClassName);
                 $validUpgradeWizardClassName = false;

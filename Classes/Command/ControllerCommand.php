@@ -84,7 +84,7 @@ class ControllerCommand extends Command
                 $defaultActionName,
             );
 
-            if (preg_match('/^[0-9]/', $actionMethod)) {
+            if (preg_match('/^\d/', $actionMethod)) {
                 $io->error('Action name should not start with a number.');
                 $defaultActionName = $this->tryToCorrectActionname($actionMethod);
                 $validActionName = false;
@@ -121,7 +121,7 @@ class ControllerCommand extends Command
                 $defaultControllerName,
             );
 
-            if (preg_match('/^[0-9]/', $controllerName)) {
+            if (preg_match('/^\d/', $controllerName)) {
                 $io->error('Controller name should not start with a number.');
                 $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
                 $validControllerName = false;

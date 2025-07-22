@@ -20,7 +20,7 @@ use StefanFroemken\ExtKickstarter\Creator\Upgrade\UpgradeWizardCreatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $containerConfigurator, ContainerBuilder $container) {
+return static function (ContainerConfigurator $containerConfigurator, ContainerBuilder $container): void {
     $container
         ->registerForAutoconfiguration(ExtbaseControllerCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.controller.extbase');

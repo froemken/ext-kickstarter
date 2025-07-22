@@ -37,9 +37,19 @@ return RectorConfig::configure()
     ->withImportNames(importShortClasses: false, removeUnusedImports: true)
     // If you use importNames(), you should consider excluding some TYPO3 files.
     ->withSkip([
+        RemoveParentCallWithoutParentRector::class,
         '*Build/*', // Exclude any "Build" subdirectory
         '*Resources/*', // Exclude any "Build" subdirectory
         '*Model/*'
     ])
+    ->withPreparedSets(
+        deadCode: true,
+        codeQuality: true,
+        typeDeclarations: true,
+        privatization: true,
+        instanceOf: true,
+        earlyReturn: true,
+        strictBooleans: true,
+    )
     ->withSkip([])
 ;

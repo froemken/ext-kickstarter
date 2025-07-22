@@ -61,7 +61,7 @@ class ExtbaseRegisterPluginCreator implements ExtbasePluginCreatorInterface
             $this->builderFactory->use('TYPO3\CMS\Extbase\Utility\ExtensionUtility')->getNode()
         ));
 
-        if ($this->getStaticCallForRegisterPlugin($fileStructure, $pluginInformation) === null) {
+        if (!$this->getStaticCallForRegisterPlugin($fileStructure, $pluginInformation) instanceof StaticCall) {
             $fileStructure->addExpressionStructure(new ExpressionStructure(
                 $this->getExpressionForRegisterPlugin($pluginInformation)
             ));
@@ -81,7 +81,7 @@ class ExtbaseRegisterPluginCreator implements ExtbasePluginCreatorInterface
                 && $node->name->toString() === 'registerPlugin'
                 && isset($node->args[0], $node->args[1])
                 && $node->args[0] instanceof Arg
-                && ($extensionNameNode = $node->args[0])
+                && (($extensionNameNode = $node->args[0]) instanceof Arg)
                 && $extensionNameNode->value instanceof String_
                 && $extensionNameNode->value->value === $pluginInformation->getExtensionInformation()->getExtensionName()
                 && ($pluginNameNode = $node->args[1])

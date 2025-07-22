@@ -83,7 +83,7 @@ class RepositoryCommand extends Command
             if ($repositoryClassName === '') {
                 $io->error('Class name can not be empty.');
                 $validRepositoryClassName = false;
-            } elseif (preg_match('/^[0-9]/', $repositoryClassName)) {
+            } elseif (preg_match('/^\d/', $repositoryClassName)) {
                 $io->error('Class name should not start with a number.');
                 $defaultRepositoryClassName = $this->tryToCorrectRepositoryClassName($repositoryClassName);
                 $validRepositoryClassName = false;

@@ -34,7 +34,6 @@ use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\BuilderFactory;
-use PhpParser\Node;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 
 class NodeFactory
@@ -296,7 +295,7 @@ EOT;
             foreach ($value as $k => $v) {
                 $items[] = new ArrayItem(
                     $this->createValue($v),
-                    is_int($k) ? null : new String_((string)$k)
+                    is_int($k) ? null : new String_($k)
                 );
             }
             return new Array_($items, ['kind' => Array_::KIND_SHORT]);
