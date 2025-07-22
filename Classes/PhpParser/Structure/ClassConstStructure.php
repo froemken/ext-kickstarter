@@ -11,21 +11,21 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node;
+use PhpParser\Node\Stmt\ClassConst;
 
 /**
  * Contains the AST of a ClassConst node
  */
 class ClassConstStructure extends AbstractStructure
 {
-    private Node\Stmt\ClassConst $node;
+    private ClassConst $node;
 
-    public function __construct(Node\Stmt\ClassConst $node)
+    public function __construct(ClassConst $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): Node\Stmt\ClassConst
+    public function getNode(): ClassConst
     {
         return $this->node;
     }

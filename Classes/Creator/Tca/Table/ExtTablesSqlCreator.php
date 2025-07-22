@@ -50,10 +50,8 @@ class ExtTablesSqlCreator implements TcaTableCreatorInterface
                 $existingColumns[] = $matches[1];
             }
 
-            if ($inTable && preg_match('/^(\s*)(KEY|INDEX|UNIQUE) /i', $extTablesSqlLine, $matches)) {
-                if ($insertIndex === null) {
-                    $insertIndex = $index;
-                }
+            if ($inTable && preg_match('/^(\s*)(KEY|INDEX|UNIQUE) /i', $extTablesSqlLine, $matches) && $insertIndex === null) {
+                $insertIndex = $index;
             }
 
             if ($inTable && trim($extTablesSqlLine) === ');') {

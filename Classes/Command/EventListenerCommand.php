@@ -80,7 +80,7 @@ class EventListenerCommand extends Command
                 $defaultEventListenerClassName,
             );
 
-            if (preg_match('/^[0-9]/', $eventListenerClassName)) {
+            if (preg_match('/^\d/', $eventListenerClassName)) {
                 $io->error('Class name should not start with a number.');
                 $defaultEventListenerClassName = $this->tryToCorrectEventListenerClassName($eventListenerClassName);
                 $validEventListenerClassName = false;

@@ -259,7 +259,7 @@ class ExtensionCommand extends Command
         do {
             $composerPackageName = (string)$io->ask('Composer package name', $defaultComposerPackageName);
 
-            if (!preg_match('#^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*$#', $composerPackageName)) {
+            if (in_array(preg_match('#^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*$#', $composerPackageName), [0, false], true)) {
                 $io->error('Invalid composer package name. Package name must follow a specific pattern (see: https://getcomposer.org/doc/04-schema.md#name)');
                 $defaultComposerPackageName = preg_replace(
                     '/[^0-9a-z-\/_]/',
@@ -288,7 +288,7 @@ class ExtensionCommand extends Command
         do {
             $version = (string)$io->ask('Version', '0.0.1');
 
-            if (!preg_match('#^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$#', $version)) {
+            if (in_array(preg_match('#^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$#', $version), [0, false], true)) {
                 $io->error('Invalid version string. The version must match a specific pattern (see: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)');
                 $validVersion = false;
             } else {
@@ -319,7 +319,7 @@ class ExtensionCommand extends Command
         return implode(
             '\\\\',
             array_map(
-                fn($part) => str_replace(
+                fn($part): string|array => str_replace(
                     [
                         '-',
                         '_',

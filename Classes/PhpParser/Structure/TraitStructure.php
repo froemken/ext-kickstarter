@@ -11,21 +11,21 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node;
+use PhpParser\Node\Stmt\TraitUse;
 
 /**
  * Contains the AST of a TraitUse node
  */
 class TraitStructure extends AbstractStructure
 {
-    private Node\Stmt\TraitUse $node;
+    private TraitUse $node;
 
-    public function __construct(Node\Stmt\TraitUse $node)
+    public function __construct(TraitUse $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): Node\Stmt\TraitUse
+    public function getNode(): TraitUse
     {
         return $this->node;
     }

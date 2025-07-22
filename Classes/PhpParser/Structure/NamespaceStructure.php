@@ -11,21 +11,21 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node;
+use PhpParser\Node\Stmt\Namespace_;
 
 /**
  * Contains the AST of a Namespace_ node
  */
 class NamespaceStructure extends AbstractStructure
 {
-    private Node\Stmt\Namespace_ $node;
+    private Namespace_ $node;
 
-    public function __construct(Node\Stmt\Namespace_ $node)
+    public function __construct(Namespace_ $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): Node\Stmt\Namespace_
+    public function getNode(): Namespace_
     {
         return $this->node;
     }

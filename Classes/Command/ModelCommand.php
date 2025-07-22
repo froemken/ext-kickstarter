@@ -100,7 +100,7 @@ class ModelCommand extends Command
                 $defaultModelClassName,
             );
 
-            if (preg_match('/^[0-9]/', $modelClassName)) {
+            if (preg_match('/^\d/', $modelClassName)) {
                 $io->error('Class name should not start with a number.');
                 $defaultModelClassName = $this->tryToCorrectModelClassName($modelClassName);
                 $validModelClassName = false;
@@ -252,7 +252,7 @@ class ModelCommand extends Command
             'bool' => $io->confirm("Default value for '$propertyName' (bool)?", (bool)$suggestedDefault),
             'string' => (string)$io->ask("Default value for '$propertyName' (string)", $suggestedDefault ?? ''),
             'array' => json_decode(
-                (string)$io->ask("Default value for '$propertyName' (array, JSON format)", $suggestedDefault ? json_encode($suggestedDefault) : '[]'),
+                (string)$io->ask("Default value for '$propertyName' (array, JSON format)", $suggestedDefault !== null && $suggestedDefault !== '' && $suggestedDefault !== '0' ? json_encode($suggestedDefault) : '[]'),
                 true
             ),
             default => null,

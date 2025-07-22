@@ -61,7 +61,7 @@ final class ExtConf
     {
         $exportDirectory = trim($this->exportDirectory);
 
-        if (!$exportDirectory) {
+        if ($exportDirectory === '' || $exportDirectory === '0') {
             // Fall back to typo3temp/ext-kickstarter
             return sprintf(
                 '/%s/%s/',

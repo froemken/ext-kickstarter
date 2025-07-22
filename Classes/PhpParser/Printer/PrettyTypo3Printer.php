@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\PhpParser\Printer;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Declare_;
 use PhpParser\PrettyPrinter\Standard;
@@ -58,7 +60,7 @@ class PrettyTypo3Printer extends Standard
         // If all nodes are of type Array_ we try to render TCA, which is a long array. Yes: multiline
         $allNodesOfTypeArray = true;
         foreach ($nodes as $node) {
-            if (!$node instanceof Node\Expr\ArrayItem) {
+            if (!$node instanceof ArrayItem) {
                 $allNodesOfTypeArray = false;
                 break;
             }
@@ -108,7 +110,7 @@ class PrettyTypo3Printer extends Standard
 
         $lineLength = $indentLength + $methodNameLength + $methodReturnTypeLength;
         foreach ($nodes as $node) {
-            if ($node instanceof Node\Arg) {
+            if ($node instanceof Arg) {
                 // Adding 2 because of ", " between each argument
                 $lineLength += strlen($this->p($node)) + 2;
             }

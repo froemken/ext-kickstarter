@@ -13,6 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeFinder;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
@@ -41,7 +45,7 @@ class RegisterPluginIconIdentifierCreator implements ExtbasePluginCreatorInterfa
         $fileStructure = $this->buildFileStructure($targetFile);
 
         if (!is_file($targetFile)) {
-            $fileStructure->addReturnStructure(new ReturnStructure(new Node\Stmt\Return_(new Node\Expr\Array_())));
+            $fileStructure->addReturnStructure(new ReturnStructure(new Return_(new Array_())));
         }
 
         $fileStructure->addUseStructure(new UseStructure(
@@ -51,7 +55,7 @@ class RegisterPluginIconIdentifierCreator implements ExtbasePluginCreatorInterfa
         if (!$this->hasArrayItemWithPluginIcon($fileStructure, $pluginInformation)) {
             $returnNode = $this->getReturnNode($fileStructure);
             if (($arrayNode = $returnNode->expr)
-                && $arrayNode instanceof Node\Expr\Array_
+                && $arrayNode instanceof Array_
             ) {
                 $arrayNode->items = $this->getNewPluginIcons($arrayNode, $pluginInformation)->items;
             }
@@ -60,9 +64,9 @@ class RegisterPluginIconIdentifierCreator implements ExtbasePluginCreatorInterfa
         file_put_contents($targetFile, $fileStructure->getFileContents());
     }
 
-    private function getNewPluginIcons(Node\Expr\Array_ $existingIcons, PluginInformation $pluginInformation): Node\Expr\Array_
+    private function getNewPluginIcons(Array_ $existingIcons, PluginInformation $pluginInformation): Array_
     {
-        $existingIcons->items[] = new Node\Expr\ArrayItem(
+        $existingIcons->items[] = new ArrayItem(
             $this->builderFactory->val([
                 'provider' => $this->builderFactory->classConstFetch('SvgIconProvider', 'class'),
                 'source' => 'EXT:' . $pluginInformation->getExtensionInformation()->getExtensionKey() . '/Resources/Public/Icons/Plugin.svg',
@@ -73,25 +77,25 @@ class RegisterPluginIconIdentifierCreator implements ExtbasePluginCreatorInterfa
         return $existingIcons;
     }
 
-    private function getReturnNode(FileStructure $fileStructure): ?Node\Stmt\Return_
+    private function getReturnNode(FileStructure $fileStructure): ?Return_
     {
         $nodeFinder = new NodeFinder();
         $returnNode = $nodeFinder->findFirst($fileStructure->getReturnStructures()->getStmts(), static function (Node $node): bool {
-            return $node instanceof Node\Stmt\Return_;
+            return $node instanceof Return_;
         });
 
-        return $returnNode instanceof Node\Stmt\Return_ ? $returnNode : null;
+        return $returnNode instanceof Return_ ? $returnNode : null;
     }
 
     private function hasArrayItemWithPluginIcon(FileStructure $fileStructure, PluginInformation $pluginInformation): bool
     {
         $nodeFinder = new NodeFinder();
         $iconIdentifierNode = $nodeFinder->findFirst($fileStructure->getReturnStructures()->getStmts(), static function (Node $node) use ($pluginInformation): bool {
-            return $node instanceof Node\Expr\ArrayItem
-                && $node->key instanceof Node\Scalar\String_
+            return $node instanceof ArrayItem
+                && $node->key instanceof String_
                 && $node->key->value === $pluginInformation->getPluginIconIdentifier();
         });
 
-        return $iconIdentifierNode instanceof Node\Expr\ArrayItem;
+        return $iconIdentifierNode instanceof ArrayItem;
     }
 }

@@ -11,21 +11,21 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node;
+use PhpParser\Node\Stmt\Expression;
 
 /**
  * Contains the AST of a StaticCall node
  */
 class ExpressionStructure extends AbstractStructure
 {
-    private Node\Stmt\Expression $node;
+    private Expression $node;
 
-    public function __construct(Node\Stmt\Expression $node)
+    public function __construct(Expression $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): Node\Stmt\Expression
+    public function getNode(): Expression
     {
         return $this->node;
     }

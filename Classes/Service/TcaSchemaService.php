@@ -414,7 +414,7 @@ class TcaSchemaService
                         if (
                             !is_array($fieldConfig['fileFolderConfig'] ?? false)
                             && ($items !== [] || ($fieldConfig['foreign_table'] ?? '') !== '')
-                            && $itemsContainsOnlyIntegers === true
+                            && $itemsContainsOnlyIntegers
                         ) {
                             // If the item list is empty, or if it contains only int values, an int field is enough.
                             // Also, the config must not be a 'fileFolderConfig' field which takes string values.

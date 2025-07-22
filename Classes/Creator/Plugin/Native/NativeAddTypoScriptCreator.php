@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Native;
 
 use PhpParser\BuilderFactory;
-use PhpParser\Node;
+use PhpParser\Node\Stmt\Expression;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
@@ -53,7 +53,7 @@ class NativeAddTypoScriptCreator implements NativePluginCreatorInterface
         file_put_contents($targetFile, $fileStructure->getFileContents());
     }
 
-    private function getExpressionForAddTypoScript(PluginInformation $pluginInformation): Node\Stmt\Expression
+    private function getExpressionForAddTypoScript(PluginInformation $pluginInformation): Expression
     {
         $typoScriptSetup = str_replace(
             [
@@ -67,7 +67,7 @@ class NativeAddTypoScriptCreator implements NativePluginCreatorInterface
             $this->getTypoScriptSetup(),
         );
 
-        return new Node\Stmt\Expression($this->builderFactory->staticCall(
+        return new Expression($this->builderFactory->staticCall(
             'ExtensionManagementUtility',
             'addTypoScript',
             [
