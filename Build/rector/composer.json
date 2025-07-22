@@ -5,8 +5,9 @@
 	"type": "typo3-cms-extension",
 	"authors": [
 		{
-			"name": "TYPO3 Documentation Team and contributors",
-			"role": "Developer"
+			"name": "Stefan Froemken",
+			"email": "froemken@gmail.com",
+			"role": "Lead Developer"
 		}
 	],
 	"require": {
