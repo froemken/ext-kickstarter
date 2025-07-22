@@ -79,3 +79,6 @@ Documentation-GENERATED-temp/
 /.Build
 /composer.json.testing
 /composer.lock
+/Build/rector/composer.json.testing
+/Build/rector/composer.lock
+/Build/rector/.Build/
