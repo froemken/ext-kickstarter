@@ -20,6 +20,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -36,6 +37,7 @@ class ApplyTypo3CglCommand extends Command
 
     public function __construct(
         private readonly RepositoryCreatorService $repositoryCreatorService,
+        private readonly ExtensionConfiguration $extensionConfiguration,
     ) {
         parent::__construct();
     }
@@ -102,7 +104,7 @@ class ApplyTypo3CglCommand extends Command
         }
 
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->askForExtensionKey($this->extensionConfiguration, $io, $input->getArgument('extension_key')),
             $io
         );
 
