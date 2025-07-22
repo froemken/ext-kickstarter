@@ -11,16 +11,16 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 
-use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ClassConstFetch;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Arg;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Name;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeFinder;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;

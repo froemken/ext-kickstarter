@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector;
-use Rector\PostRector\Rector\NameImportingPostRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 use Rector\ValueObject\PhpVersion;
 use Ssch\TYPO3Rector\CodeQuality\General\ConvertImplicitVariablesToExplicitGlobalsRector;
@@ -40,7 +39,7 @@ return RectorConfig::configure()
         RemoveParentCallWithoutParentRector::class,
         '*Build/*', // Exclude any "Build" subdirectory
         '*Resources/*', // Exclude any "Build" subdirectory
-        '*Model/*'
+        '*Model/*',
     ])
     ->withPreparedSets(
         deadCode: true,

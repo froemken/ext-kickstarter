@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Extension;
 
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\BuilderFactory;
+use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Stmt\Expression;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;

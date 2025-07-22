@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Printer;
 
-use PhpParser\Node\Expr\ArrayItem;
-use PhpParser\Node\Arg;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Declare_;
 use PhpParser\PrettyPrinter\Standard;

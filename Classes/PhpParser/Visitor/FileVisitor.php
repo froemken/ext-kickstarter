@@ -11,31 +11,31 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Visitor;
 
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
-use PhpParser\Node\Stmt\Declare_;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
-use PhpParser\Node\Stmt\Namespace_;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
-use PhpParser\Node\Stmt\Class_;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
-use PhpParser\Node\Stmt\TraitUse;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\TraitStructure;
-use PhpParser\Node\Stmt\Use_;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
-use PhpParser\Node\Stmt\ClassConst;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassConstStructure;
-use PhpParser\Node\Stmt\ClassMethod;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
-use PhpParser\Node\Stmt\Property;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\PropertyStructure;
-use PhpParser\Node\Stmt\Function_;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\FunctionStructure;
-use PhpParser\Node\Stmt\Expression;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
-use PhpParser\Node\Stmt\Return_;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\ReturnStructure;
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassConst;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Declare_;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Function_;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\TraitUse;
+use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassConstStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\FunctionStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\PropertyStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ReturnStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\TraitStructure;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 
 /**
  * This visitor walks through all kind of detected PHP Parser nodes of any kind of PHP file

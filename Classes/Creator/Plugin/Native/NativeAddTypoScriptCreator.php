@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Native;
 
-use PhpParser\Node\Stmt\Expression;
 use PhpParser\BuilderFactory;
+use PhpParser\Node\Stmt\Expression;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;

@@ -11,8 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Stmt\Return_;
+
 /**
  * Contains the AST of a Return_ node
  *

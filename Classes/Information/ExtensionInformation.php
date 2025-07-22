@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Name;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeFinder;
 use PhpParser\ParserFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Arg;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\Expression;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeFinder;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;

@@ -11,29 +11,29 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser;
 
+use PhpParser\BuilderFactory;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\DNumber;
+use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassConst;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Declare_;
 use PhpParser\Node\Stmt\DeclareDeclare;
-use PhpParser\Node\Scalar\LNumber;
-use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\TraitUse;
-use PhpParser\Node\Stmt\ClassConst;
 use PhpParser\Node\Stmt\Property;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
-use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Name;
-use PhpParser\Node\Arg;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Scalar\DNumber;
-use PhpParser\Node\Expr\ConstFetch;
-use PhpParser\Node\Expr\ArrayItem;
-use PhpParser\Node\Expr\Array_;
-use PhpParser\BuilderFactory;
+use PhpParser\Node\Stmt\TraitUse;
+use PhpParser\Node\Stmt\Use_;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 
 class NodeFactory
