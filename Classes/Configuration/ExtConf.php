@@ -23,7 +23,9 @@ use TYPO3\CMS\Core\Core\Environment;
 #[Autoconfigure(constructor: 'create')]
 final class ExtConf
 {
-    private const EXT_KEY = 'ext_kickstarter';
+    public const EXT_KEY = 'ext_kickstarter';
+
+    public const LAST_EXTENSION_REGISTRY_KEY = 'lastExtension';
 
     private const DEFAULT_SETTINGS = [
         // general

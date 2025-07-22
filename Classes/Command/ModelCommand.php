@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
@@ -28,7 +28,6 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class ModelCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
@@ -46,6 +45,7 @@ class ModelCommand extends Command
 
     public function __construct(
         private readonly ModelCreatorService $modelCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -80,7 +80,7 @@ class ModelCommand extends Command
     private function askForModelInformation(SymfonyStyle $io, InputInterface $input): ModelInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
             $io
         );
 

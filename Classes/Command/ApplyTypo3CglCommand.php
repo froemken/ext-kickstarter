@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,7 +25,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApplyTypo3CglCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
 
     private const DIRECTORIES = [
@@ -36,6 +35,7 @@ class ApplyTypo3CglCommand extends Command
 
     public function __construct(
         private readonly RepositoryCreatorService $repositoryCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -102,7 +102,7 @@ class ApplyTypo3CglCommand extends Command
         }
 
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
             $io
         );
 
