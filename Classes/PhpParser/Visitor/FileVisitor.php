@@ -11,9 +11,31 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Visitor;
 
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
+use PhpParser\Node\Stmt\Declare_;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
+use PhpParser\Node\Stmt\Namespace_;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
+use PhpParser\Node\Stmt\Class_;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
+use PhpParser\Node\Stmt\TraitUse;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\TraitStructure;
+use PhpParser\Node\Stmt\Use_;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
+use PhpParser\Node\Stmt\ClassConst;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassConstStructure;
+use PhpParser\Node\Stmt\ClassMethod;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
+use PhpParser\Node\Stmt\Property;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\PropertyStructure;
+use PhpParser\Node\Stmt\Function_;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\FunctionStructure;
+use PhpParser\Node\Stmt\Expression;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
+use PhpParser\Node\Stmt\Return_;
+use StefanFroemken\ExtKickstarter\PhpParser\Structure\ReturnStructure;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
 /**
  * This visitor walks through all kind of detected PHP Parser nodes of any kind of PHP file
@@ -22,11 +44,11 @@ use StefanFroemken\ExtKickstarter\PhpParser\Structure;
  */
 final class FileVisitor extends NodeVisitorAbstract
 {
-    private Structure\FileStructure $fileStructure;
+    private FileStructure $fileStructure;
 
     public function __construct()
     {
-        $this->fileStructure = new Structure\FileStructure();
+        $this->fileStructure = new FileStructure();
     }
 
     /**
@@ -42,34 +64,34 @@ final class FileVisitor extends NodeVisitorAbstract
      */
     public function enterNode($node): int|Node|array|null
     {
-        if ($node instanceof Node\Stmt\Declare_) {
-            $this->fileStructure->addDeclareStructure(new Structure\DeclareStructure($node));
-        } elseif ($node instanceof Node\Stmt\Namespace_) {
-            $this->fileStructure->addNamespaceStructure(new Structure\NamespaceStructure($node));
-        } elseif ($node instanceof Node\Stmt\Class_) {
-            $this->fileStructure->addClassStructure(new Structure\ClassStructure($node));
-        } elseif ($node instanceof Node\Stmt\TraitUse) {
-            $this->fileStructure->addTraitStructure(new Structure\TraitStructure($node));
-        } elseif ($node instanceof Node\Stmt\Use_) {
-            $this->fileStructure->addUseStructure(new Structure\UseStructure($node));
-        } elseif ($node instanceof Node\Stmt\ClassConst) {
-            $this->fileStructure->addClassConstStructure(new Structure\ClassConstStructure($node));
-        } elseif ($node instanceof Node\Stmt\ClassMethod) {
-            $this->fileStructure->addMethodStructure(new Structure\MethodStructure($node));
-        } elseif ($node instanceof Node\Stmt\Property) {
-            $this->fileStructure->addPropertyStructure(new Structure\PropertyStructure($node));
-        } elseif ($node instanceof Node\Stmt\Function_) {
-            $this->fileStructure->addFunctionStructure(new Structure\FunctionStructure($node));
-        } elseif ($node instanceof Node\Stmt\Expression) {
-            $this->fileStructure->addExpressionStructure(new Structure\ExpressionStructure($node));
-        } elseif ($node instanceof Node\Stmt\Return_) {
-            $this->fileStructure->addReturnStructure(new Structure\ReturnStructure($node));
+        if ($node instanceof Declare_) {
+            $this->fileStructure->addDeclareStructure(new DeclareStructure($node));
+        } elseif ($node instanceof Namespace_) {
+            $this->fileStructure->addNamespaceStructure(new NamespaceStructure($node));
+        } elseif ($node instanceof Class_) {
+            $this->fileStructure->addClassStructure(new ClassStructure($node));
+        } elseif ($node instanceof TraitUse) {
+            $this->fileStructure->addTraitStructure(new TraitStructure($node));
+        } elseif ($node instanceof Use_) {
+            $this->fileStructure->addUseStructure(new UseStructure($node));
+        } elseif ($node instanceof ClassConst) {
+            $this->fileStructure->addClassConstStructure(new ClassConstStructure($node));
+        } elseif ($node instanceof ClassMethod) {
+            $this->fileStructure->addMethodStructure(new MethodStructure($node));
+        } elseif ($node instanceof Property) {
+            $this->fileStructure->addPropertyStructure(new PropertyStructure($node));
+        } elseif ($node instanceof Function_) {
+            $this->fileStructure->addFunctionStructure(new FunctionStructure($node));
+        } elseif ($node instanceof Expression) {
+            $this->fileStructure->addExpressionStructure(new ExpressionStructure($node));
+        } elseif ($node instanceof Return_) {
+            $this->fileStructure->addReturnStructure(new ReturnStructure($node));
         }
 
         return null;
     }
 
-    public function getFileStructure(): Structure\FileStructure
+    public function getFileStructure(): FileStructure
     {
         return $this->fileStructure;
     }

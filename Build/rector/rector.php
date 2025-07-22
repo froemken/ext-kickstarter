@@ -15,8 +15,7 @@ use Ssch\TYPO3Rector\Set\Typo3SetList;
 
 return RectorConfig::configure()
     ->withPaths([
-        __DIR__ . '/../../Classes',
-        __DIR__ . '/../../Configuration',
+        __DIR__ . '/../../',
     ])
     // uncomment to reach your current PHP version
     // ->withPhpSets()
@@ -24,7 +23,7 @@ return RectorConfig::configure()
     ->withSets([
         Typo3SetList::CODE_QUALITY,
         Typo3SetList::GENERAL,
-        Typo3LevelSetList::UP_TO_TYPO3_12,
+        Typo3LevelSetList::UP_TO_TYPO3_13,
     ])
     // To have a better analysis from PHPStan, we teach it here some more things
     ->withPHPStanConfigs([Typo3Option::PHPSTAN_FOR_RECTOR_PATH])
@@ -33,26 +32,14 @@ return RectorConfig::configure()
         ConvertImplicitVariablesToExplicitGlobalsRector::class,
     ])
     ->withConfiguredRule(ExtEmConfRector::class, [
-        ExtEmConfRector::PHP_VERSION_CONSTRAINT => '8.2.0-8.3.99',
-        ExtEmConfRector::TYPO3_VERSION_CONSTRAINT => '12.4.0-12.4.99',
         ExtEmConfRector::ADDITIONAL_VALUES_TO_BE_REMOVED => [],
     ])
     ->withImportNames(importShortClasses: false, removeUnusedImports: true)
     // If you use importNames(), you should consider excluding some TYPO3 files.
     ->withSkip([
-        RemoveParentCallWithoutParentRector::class,
         '*Build/*', // Exclude any "Build" subdirectory
         '*Resources/*', // Exclude any "Build" subdirectory
         '*Model/*'
     ])
-    ->withPreparedSets(
-        deadCode: true,
-        codeQuality: true,
-        typeDeclarations: true,
-        privatization: true,
-        instanceOf: true,
-        earlyReturn: true,
-        strictBooleans: true,
-    )
     ->withSkip([])
 ;

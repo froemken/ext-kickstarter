@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node;
-
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Expr;
 /**
  * Contains the AST of a Return_ node
  *
@@ -20,21 +20,21 @@ use PhpParser\Node;
  */
 class ReturnStructure extends AbstractStructure
 {
-    private Node\Stmt\Return_ $node;
+    private Return_ $node;
 
-    public function __construct(Node\Stmt\Return_ $node)
+    public function __construct(Return_ $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): Node\Stmt\Return_
+    public function getNode(): Return_
     {
         return $this->node;
     }
 
     public function getName(): string
     {
-        return $this->node->expr instanceof Node\Expr && property_exists($this->node->expr, 'name')
+        return $this->node->expr instanceof Expr && property_exists($this->node->expr, 'name')
             ? $this->node->expr->name->toString()
             : '';
     }

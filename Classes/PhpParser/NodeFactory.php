@@ -11,6 +11,28 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser;
 
+use PhpParser\Node\Stmt\Declare_;
+use PhpParser\Node\Stmt\DeclareDeclare;
+use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\TraitUse;
+use PhpParser\Node\Stmt\ClassConst;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Name;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Scalar\DNumber;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Expr\Array_;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
@@ -29,12 +51,12 @@ class NodeFactory
      *
      * declare(strict_types=1);
      */
-    public function createDeclareStrictTypes(): Node\Stmt\Declare_
+    public function createDeclareStrictTypes(): Declare_
     {
-        return new Node\Stmt\Declare_([
-            new Node\Stmt\DeclareDeclare(
+        return new Declare_([
+            new DeclareDeclare(
                 'strict_types',
-                new Node\Scalar\LNumber(1)
+                new LNumber(1)
             ),
         ]);
     }
@@ -44,7 +66,7 @@ class NodeFactory
      *
      * use TYPO3\CMS\Core\Utility\GeneralUtility;
      */
-    public function createUseImport(string $useImport): Node\Stmt\Use_
+    public function createUseImport(string $useImport): Use_
     {
         return $this->factory
             ->use($useImport)
@@ -58,7 +80,7 @@ class NodeFactory
      *
      * Don't forget to add the "use" and "class" nodes to this resulting node: $namespaceNode->stmts[]
      */
-    public function createNamespace(string $namespace, ExtensionInformation $extensionInformation): Node\Stmt\Namespace_
+    public function createNamespace(string $namespace, ExtensionInformation $extensionInformation): Namespace_
     {
         $docComment = <<<'EOT'
 /*
@@ -87,7 +109,7 @@ EOT;
      *
      * It is YOUR job to also register the use imports with ::createUseImport()
      */
-    public function createClass(string $className): Node\Stmt\Class_
+    public function createClass(string $className): Class_
     {
         return $this->factory
             ->class($className)
@@ -101,10 +123,10 @@ EOT;
      *
      * It is YOUR job to also register its use import with ::createUseImport()
      */
-    public function createUseTrait(string $traitName): Node\Stmt\TraitUse
+    public function createUseTrait(string $traitName): TraitUse
     {
         // In ->getNode() only "Node" was registered as a return value. Adding TraitUse here, too
-        /** @var Node\Stmt\TraitUse $node */
+        /** @var TraitUse $node */
         $node = $this->factory
             ->useTrait($traitName)
             ->getNode();
@@ -117,7 +139,7 @@ EOT;
      *
      * public TEMPLATE = 'EXT:my_ext/Resources/Private/Templates/Page.html';
      */
-    public function createClassConst(string $classConstName, mixed $value): Node\Stmt\ClassConst
+    public function createClassConst(string $classConstName, mixed $value): ClassConst
     {
         return $this->factory
             ->classConst($classConstName, $value)
@@ -129,7 +151,7 @@ EOT;
      *
      * protected string $address = '';
      */
-    public function createProperty(string $propertyName): Node\Stmt\Property
+    public function createProperty(string $propertyName): Property
     {
         return $this->factory
             ->property($propertyName)
@@ -145,7 +167,7 @@ EOT;
      *     return $this->fillColor;
      * }
      */
-    public function createMethod(string $methodName): Node\Stmt\ClassMethod
+    public function createMethod(string $methodName): ClassMethod
     {
         return $this->factory
             ->method($methodName)
@@ -167,7 +189,7 @@ EOT;
      *
      * It is YOUR job to also register the use imports with ::createUseImport()
      */
-    public function createExtbaseControllerClass(string $className): Node\Stmt\Class_
+    public function createExtbaseControllerClass(string $className): Class_
     {
         return $this->factory
             ->class($className)
@@ -183,18 +205,18 @@ EOT;
      *     return new HtmlResponse('Hello World!');
      * }
      */
-    public function createControllerActionMethod(string $methodName): Node\Stmt\ClassMethod
+    public function createControllerActionMethod(string $methodName): ClassMethod
     {
         return $this->factory
             ->method($methodName)
             ->makePublic()
             ->setReturnType('ResponseInterface')
             ->addStmts([
-                new Node\Stmt\Return_(
-                    new Node\Expr\New_(
-                        new Node\Name('HtmlResponse'),
+                new Return_(
+                    new New_(
+                        new Name('HtmlResponse'),
                         [
-                            new Node\Arg(new Node\Scalar\String_('Hello World!')),
+                            new Arg(new String_('Hello World!')),
                         ]
                     )
                 ),
@@ -210,16 +232,16 @@ EOT;
      *     return $this->htmlResponse();
      * }
      */
-    public function createExtbaseControllerActionMethod(string $methodName): Node\Stmt\ClassMethod
+    public function createExtbaseControllerActionMethod(string $methodName): ClassMethod
     {
         return $this->factory
             ->method($methodName)
             ->makePublic()
             ->setReturnType('ResponseInterface')
             ->addStmts([
-                new Node\Stmt\Return_(
-                    new Node\Expr\MethodCall(
-                        new Node\Expr\Variable('this'),
+                new Return_(
+                    new MethodCall(
+                        new Variable('this'),
                         'htmlResponse'
                     )
                 ),
@@ -250,36 +272,36 @@ EOT;
      * // Associative Array
      * $this->createValue(['key' => 'value']); // ['key' => 'value']
      */
-    public function createValue(mixed $value): Node\Expr
+    public function createValue(mixed $value): Expr
     {
         if (is_int($value)) {
-            return new Node\Scalar\LNumber($value);
+            return new LNumber($value);
         }
         if (is_float($value)) {
-            return new Node\Scalar\DNumber($value);
+            return new DNumber($value);
         }
         if (is_string($value)) {
-            return new Node\Scalar\String_($value);
+            return new String_($value);
         }
         if (is_bool($value)) {
-            return new Node\Expr\ConstFetch(
-                new Node\Name($value ? 'true' : 'false')
+            return new ConstFetch(
+                new Name($value ? 'true' : 'false')
             );
         }
         if (is_null($value)) {
-            return new Node\Expr\ConstFetch(new Node\Name('null'));
+            return new ConstFetch(new Name('null'));
         }
         if (is_array($value)) {
             $items = [];
             foreach ($value as $k => $v) {
-                $items[] = new Node\Expr\ArrayItem(
+                $items[] = new ArrayItem(
                     $this->createValue($v),
-                    is_int($k) ? null : new Node\Scalar\String_((string)$k)
+                    is_int($k) ? null : new String_((string)$k)
                 );
             }
-            return new Node\Expr\Array_($items, ['kind' => Node\Expr\Array_::KIND_SHORT]);
+            return new Array_($items, ['kind' => Array_::KIND_SHORT]);
         }
 
-        throw new \InvalidArgumentException('Unsupported default value type: ' . gettype($value));
+        throw new \InvalidArgumentException('Unsupported default value type: ' . gettype($value), 2697872207);
     }
 }

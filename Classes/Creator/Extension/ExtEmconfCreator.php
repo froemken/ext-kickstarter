@@ -11,8 +11,10 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Extension;
 
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\BuilderFactory;
-use PhpParser\Node;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
@@ -60,8 +62,8 @@ class ExtEmconfCreator implements ExtensionCreatorInterface
             ],
         ];
 
-        $fileStructure->addExpressionStructure(new ExpressionStructure(new Node\Stmt\Expression(new Node\Expr\Assign(
-            new Node\Expr\ArrayDimFetch(
+        $fileStructure->addExpressionStructure(new ExpressionStructure(new Expression(new Assign(
+            new ArrayDimFetch(
                 $this->factory->var('EM_CONF'),
                 $this->factory->var('_EXTKEY'),
             ),

@@ -11,21 +11,21 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node;
+use PhpParser\Node\Stmt\Property;
 
 /**
  * Contains the AST of a Property node
  */
 class PropertyStructure extends AbstractStructure
 {
-    private Node\Stmt\Property $node;
+    private Property $node;
 
-    public function __construct(Node\Stmt\Property $node)
+    public function __construct(Property $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): Node\Stmt\Property
+    public function getNode(): Property
     {
         return $this->node;
     }

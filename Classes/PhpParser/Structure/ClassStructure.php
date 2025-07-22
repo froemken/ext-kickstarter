@@ -11,21 +11,21 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node;
+use PhpParser\Node\Stmt\Class_;
 
 /**
  * Contains the AST of a Class_ node
  */
 class ClassStructure extends AbstractStructure
 {
-    private Node\Stmt\Class_ $node;
+    private Class_ $node;
 
-    public function __construct(Node\Stmt\Class_ $node)
+    public function __construct(Class_ $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): Node\Stmt\Class_
+    public function getNode(): Class_
     {
         return $this->node;
     }

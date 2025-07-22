@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
@@ -69,28 +73,28 @@ class ExtbaseRegisterPluginCreator implements ExtbasePluginCreatorInterface
     private function getStaticCallForRegisterPlugin(
         FileStructure $fileStructure,
         PluginInformation $pluginInformation
-    ): ?Node\Expr\StaticCall {
+    ): ?StaticCall {
         $nodeFinder = new NodeFinder();
         $matchedNode = $nodeFinder->findFirst($fileStructure->getExpressionStructures()->getStmts(), static function (Node $node) use ($pluginInformation): bool {
-            return $node instanceof Node\Expr\StaticCall
+            return $node instanceof StaticCall
                 && $node->class->toString() === 'ExtensionUtility'
                 && $node->name->toString() === 'registerPlugin'
                 && isset($node->args[0], $node->args[1])
-                && $node->args[0] instanceof Node\Arg
+                && $node->args[0] instanceof Arg
                 && ($extensionNameNode = $node->args[0])
-                && $extensionNameNode->value instanceof Node\Scalar\String_
+                && $extensionNameNode->value instanceof String_
                 && $extensionNameNode->value->value === $pluginInformation->getExtensionInformation()->getExtensionName()
                 && ($pluginNameNode = $node->args[1])
-                && $pluginNameNode->value instanceof Node\Scalar\String_
+                && $pluginNameNode->value instanceof String_
                 && $pluginNameNode->value->value === $pluginInformation->getPluginName();
         });
 
-        return $matchedNode instanceof Node\Expr\StaticCall ? $matchedNode : null;
+        return $matchedNode instanceof StaticCall ? $matchedNode : null;
     }
 
-    private function getExpressionForRegisterPlugin(PluginInformation $pluginInformation): Node\Stmt\Expression
+    private function getExpressionForRegisterPlugin(PluginInformation $pluginInformation): Expression
     {
-        return new Node\Stmt\Expression($this->builderFactory->staticCall(
+        return new Expression($this->builderFactory->staticCall(
             'ExtensionUtility',
             'registerPlugin',
             [

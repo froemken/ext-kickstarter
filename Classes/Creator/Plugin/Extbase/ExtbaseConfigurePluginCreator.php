@@ -11,6 +11,13 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Name;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrayItem;
@@ -58,10 +65,10 @@ class ExtbaseConfigurePluginCreator implements ExtbasePluginCreatorInterface
         }
 
         if ($staticCall = $this->getStaticCallForConfigurePlugin($fileStructure, $pluginInformation)) {
-            if (($cachedControllerActions = $staticCall->args[2]->value) && $cachedControllerActions instanceof Node\Expr\Array_) {
+            if (($cachedControllerActions = $staticCall->args[2]->value) && $cachedControllerActions instanceof Array_) {
                 $this->addMissingControllerAndActions($cachedControllerActions, $this->getReferencedControllerActions($pluginInformation, true));
             }
-            if (($unCachedControllerActions = $staticCall->args[3]->value) && $unCachedControllerActions instanceof Node\Expr\Array_) {
+            if (($unCachedControllerActions = $staticCall->args[3]->value) && $unCachedControllerActions instanceof Array_) {
                 $this->addMissingControllerAndActions($unCachedControllerActions, $this->getReferencedControllerActions($pluginInformation, false));
             }
         } else {
@@ -76,25 +83,25 @@ class ExtbaseConfigurePluginCreator implements ExtbasePluginCreatorInterface
     /**
      * @param array|ArrayItem[] $newControllersWithActions
      */
-    private function addMissingControllerAndActions(Node\Expr\Array_ $existingControllerActions, array $newControllersWithActions): void
+    private function addMissingControllerAndActions(Array_ $existingControllerActions, array $newControllersWithActions): void
     {
         $nodeFinder = new NodeFinder();
 
         foreach ($newControllersWithActions as $newControllerWithActions) {
-            if (!$newControllerWithActions->key instanceof Node\Expr\ClassConstFetch) {
+            if (!$newControllerWithActions->key instanceof ClassConstFetch) {
                 continue;
             }
 
             $controllerClassname = $newControllerWithActions->key->class->toString();
             $existingControllerActionNode = $nodeFinder->findFirst($existingControllerActions, static function (Node $node) use ($controllerClassname): bool {
                 return $node instanceof ArrayItem
-                    && $node->key instanceof Node\Expr\ClassConstFetch
+                    && $node->key instanceof ClassConstFetch
                     && $node->key->class->toString() === $controllerClassname;
             });
 
             if ($existingControllerActionNode instanceof ArrayItem) {
-                if ($existingControllerActionNode->value instanceof Node\Scalar\String_
-                    && $newControllerWithActions->value instanceof Node\Scalar\String_
+                if ($existingControllerActionNode->value instanceof String_
+                    && $newControllerWithActions->value instanceof String_
                 ) {
                     $existingActionNames = GeneralUtility::trimExplode(',', $existingControllerActionNode->value->value, true);
                     $newActionNames = GeneralUtility::trimExplode(',', $newControllerWithActions->value->value, true);
@@ -109,37 +116,37 @@ class ExtbaseConfigurePluginCreator implements ExtbasePluginCreatorInterface
     private function getStaticCallForConfigurePlugin(
         FileStructure $fileStructure,
         PluginInformation $pluginInformation
-    ): ?Node\Expr\StaticCall {
+    ): ?StaticCall {
         $nodeFinder = new NodeFinder();
         $matchedNode = $nodeFinder->findFirst($fileStructure->getExpressionStructures()->getStmts(), static function (Node $node) use ($pluginInformation): bool {
-            return $node instanceof Node\Expr\StaticCall
+            return $node instanceof StaticCall
                 && $node->class->toString() === 'ExtensionUtility'
                 && $node->name->toString() === 'configurePlugin'
                 && isset($node->args[0], $node->args[1])
-                && $node->args[0] instanceof Node\Arg
+                && $node->args[0] instanceof Arg
                 && ($extensionNameNode = $node->args[0])
-                && $extensionNameNode->value instanceof Node\Scalar\String_
+                && $extensionNameNode->value instanceof String_
                 && $extensionNameNode->value->value === $pluginInformation->getExtensionInformation()->getExtensionName()
                 && ($pluginNameNode = $node->args[1])
-                && $pluginNameNode->value instanceof Node\Scalar\String_
+                && $pluginNameNode->value instanceof String_
                 && $pluginNameNode->value->value === $pluginInformation->getPluginName();
         });
 
-        return $matchedNode instanceof Node\Expr\StaticCall ? $matchedNode : null;
+        return $matchedNode instanceof StaticCall ? $matchedNode : null;
     }
 
-    private function getExpressionForConfigurePlugin(PluginInformation $pluginInformation): Node\Stmt\Expression
+    private function getExpressionForConfigurePlugin(PluginInformation $pluginInformation): Expression
     {
-        return new Node\Stmt\Expression($this->builderFactory->staticCall(
+        return new Expression($this->builderFactory->staticCall(
             'ExtensionUtility',
             'configurePlugin',
             [
                 $pluginInformation->getExtensionInformation()->getExtensionName(),
                 $pluginInformation->getPluginName(),
-                new Node\Expr\Array_($this->getReferencedControllerActions($pluginInformation, true)),
-                new Node\Expr\Array_($this->getReferencedControllerActions($pluginInformation, false)),
-                new Node\Expr\ClassConstFetch(
-                    new Node\Name('ExtensionUtility'),
+                new Array_($this->getReferencedControllerActions($pluginInformation, true)),
+                new Array_($this->getReferencedControllerActions($pluginInformation, false)),
+                new ClassConstFetch(
+                    new Name('ExtensionUtility'),
                     'PLUGIN_TYPE_CONTENT_ELEMENT'
                 ),
             ]

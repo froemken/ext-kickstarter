@@ -1,11 +1,11 @@
 <?php
 
-use StefanFroemken\ExtKickstarter\Controller;
+use StefanFroemken\ExtKickstarter\Controller\KickstartController;
 
 return [
     'ext_kickstarter_build' => [
         'path' => '/ext-kickstarter/build',
         'methods' => ['POST'],
-        'target' => Controller\KickstartController::class . '::build',
+        'target' => KickstartController::class . '::build',
     ],
 ];

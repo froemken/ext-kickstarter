@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Information;
 
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 use PhpParser\ParserFactory;
@@ -187,12 +190,12 @@ readonly class ExtensionInformation
         foreach ($this->getControllerClassnames() as $controllerClassname) {
             $stmts = $parser->parse(file_get_contents($this->getFilePathForController($controllerClassname)));
             $classNode = $nodeFinder->findFirst($stmts, static function (Node $node): bool {
-                return $node instanceof Node\Stmt\Class_
-                    && $node->extends instanceof Node\Name
+                return $node instanceof Class_
+                    && $node->extends instanceof Name
                     && $node->extends->toString() === 'ActionController';
             });
 
-            if ($classNode instanceof Node\Stmt\Class_) {
+            if ($classNode instanceof Class_) {
                 $extbaseControllerClassnames[] = $classNode->name->name;
             }
         }
@@ -211,13 +214,13 @@ readonly class ExtensionInformation
 
         $stmts = $parser->parse(file_get_contents($this->getFilePathForController($extbaseControllerClassname)));
         $classMethodNodes = $nodeFinder->find($stmts, static function (Node $node): bool {
-            return $node instanceof Node\Stmt\ClassMethod
+            return $node instanceof ClassMethod
                 && $node->isPublic()
                 && str_ends_with($node->name->name, 'Action');
         });
 
         foreach ($classMethodNodes as $classMethodNode) {
-            if ($classMethodNode instanceof Node\Stmt\ClassMethod) {
+            if ($classMethodNode instanceof ClassMethod) {
                 $extbaseControllerActionNames[] = $classMethodNode->name->name;
             }
         }

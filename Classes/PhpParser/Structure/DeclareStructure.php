@@ -11,21 +11,21 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
 
-use PhpParser\Node;
+use PhpParser\Node\Stmt\Declare_;
 
 /**
  * Contains the AST of a Declare_ node
  */
 class DeclareStructure extends AbstractStructure
 {
-    private Node\Stmt\Declare_ $node;
+    private Declare_ $node;
 
-    public function __construct(Node\Stmt\Declare_ $node)
+    public function __construct(Declare_ $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): Node\Stmt\Declare_
+    public function getNode(): Declare_
     {
         return $this->node;
     }
