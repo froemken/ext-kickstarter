@@ -65,6 +65,13 @@ class ExtTablesSqlCreator implements TcaTableCreatorInterface
                         $updatedLines[] = $this->formatColumnDefinition($columnDefinitionLine);
                     }
                 }
+
+                // Remove the trailing comma from the last element if it's a column definition
+                if ($updatedLines !== []) {
+                    $lastKey = array_key_last($updatedLines);
+                    $updatedLines[$lastKey] = rtrim($updatedLines[$lastKey], ',');
+                }
+
                 $inTable = false;
             }
 
