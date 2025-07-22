@@ -24,6 +24,12 @@ bug reports, feature requests, and coordination.
 
 ## 🧪 Running the Tests
 
+Before running the tests, make sure to update the required tools:
+
+```bash
+Build/Scripts/runTests.sh -s composerUpdate
+```
+
 To run the current test suites, use the following commands:
 
 ### For `cgl`:
