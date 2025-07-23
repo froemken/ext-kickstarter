@@ -37,7 +37,23 @@ To run the current test suites, use the following commands:
 ```bash
 Build/Scripts/runTests.sh -s cgl
 ```
+
 ### For `phpstan`:
+
+```bash
+Build/Scripts/runTests.sh -s phpstan
+```
+
+### For `rector`:
+
+Rector is installed independently as it is not fully compatible with TYPO3 v13.
+Before running the tests, make sure to update rector:
+
+```bash
+Build/Scripts/runTests.sh -s composerUpdateRector
+```
+
+Then you can run rector:
 
 ```bash
 Build/Scripts/runTests.sh -s phpstan
