@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
-
 use StefanFroemken\ExtKickstarter\Information\CommandInformation;
 
 readonly class CommandCreatorService
