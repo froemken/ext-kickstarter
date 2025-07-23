@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter;
 
+use StefanFroemken\ExtKickstarter\Creator\Command\CommandCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Controller\Extbase\ExtbaseControllerCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Controller\Native\NativeControllerCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Domain\Model\DomainCreatorInterface;
@@ -21,6 +22,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $containerConfigurator, ContainerBuilder $container): void {
+    $container
+        ->registerForAutoconfiguration(CommandCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.command');
     $container
         ->registerForAutoconfiguration(ExtbaseControllerCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.controller.extbase');
