@@ -28,8 +28,8 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ControllerInterface;
 class KickstartController implements ControllerInterface
 {
     public function __construct(
-        readonly private ModuleTemplateFactory $moduleTemplateFactory,
-        readonly private BuildExtensionService $buildExtensionService
+        private readonly ModuleTemplateFactory $moduleTemplateFactory,
+        private readonly BuildExtensionService $buildExtensionService
     ) {}
 
     public function processRequest(ServerRequestInterface $request): ResponseInterface
