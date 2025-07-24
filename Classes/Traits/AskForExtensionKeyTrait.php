@@ -11,19 +11,26 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Traits;
 
+use StefanFroemken\ExtKickstarter\Model\Dto\Settings;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 trait AskForExtensionKeyTrait
 {
-    private function askForExtensionKey(SymfonyStyle $io, ?string $defaultExtensionKey = null): string
+    private function askForExtensionKey(ExtensionConfiguration $extensionConfiguration, SymfonyStyle $io, ?string $defaultExtensionKey = null, bool $suggestFromSettings = true): string
     {
+        $extensionSettings = Settings::getSettings($extensionConfiguration);
         $io->text([
             'Building a new TYPO3 extension needs a unique identifier, the so called extension key. See:',
             'https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/BestPractises/ExtensionKey.html',
         ]);
 
         do {
-            $extensionKey = (string)$io->ask('Please provide the key for your extension', $defaultExtensionKey);
+            $default = $defaultExtensionKey;
+            if ($suggestFromSettings) {
+                $default = $default ?? $extensionSettings->preferredExtension;
+            }
+            $extensionKey = (string)$io->ask('Please provide the key for your extension', $default);
             $length = mb_strlen($extensionKey);
 
             if ($length < 3 || $length > 30) {

@@ -20,6 +20,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 class TestEnvCommand extends Command
 {
@@ -28,6 +29,7 @@ class TestEnvCommand extends Command
 
     public function __construct(
         private readonly TestEnvCreatorService $testEnvCreatorService,
+        private readonly ExtensionConfiguration $extensionConfiguration,
     ) {
         parent::__construct();
     }
@@ -60,7 +62,7 @@ class TestEnvCommand extends Command
     private function askForTestEnvInformation(SymfonyStyle $io, InputInterface $input): TestEnvInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->askForExtensionKey($this->extensionConfiguration, $io, $input->getArgument('extension_key')),
             $io
         );
 

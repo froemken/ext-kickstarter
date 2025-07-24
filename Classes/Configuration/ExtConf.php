@@ -11,9 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Configuration;
 
+use StefanFroemken\ExtKickstarter\Model\Dto\Settings;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 
@@ -25,35 +24,20 @@ final class ExtConf
 {
     private const EXT_KEY = 'ext_kickstarter';
 
-    private const DEFAULT_SETTINGS = [
-        // general
-        'exportDirectory' => '',
-        'activateModule' => false,
-    ];
-
     public function __construct(
         // general
-        private string $exportDirectory = self::DEFAULT_SETTINGS['exportDirectory'],
-        private bool $activateModule = self::DEFAULT_SETTINGS['activateModule'],
+        private string $exportDirectory = Settings::DEFAULT_SETTINGS['exportDirectory'],
+        private bool $activateModule = Settings::DEFAULT_SETTINGS['activateModule'],
     ) {}
 
     public static function create(ExtensionConfiguration $extensionConfiguration): self
     {
-        $extensionSettings = self::DEFAULT_SETTINGS;
-
-        // Overwrite default extension settings with values from EXT_CONF
-        try {
-            $extensionSettings = array_merge(
-                $extensionSettings,
-                $extensionConfiguration->get(self::EXT_KEY),
-            );
-        } catch (ExtensionConfigurationExtensionNotConfiguredException|ExtensionConfigurationPathDoesNotExistException) {
-        }
+        $extensionSettings = Settings::getSettings($extensionConfiguration);
 
         return new self(
             // general
-            exportDirectory: (string)$extensionSettings['exportDirectory'],
-            activateModule: (bool)$extensionSettings['activateModule'],
+            exportDirectory: $extensionSettings->exportDirectory,
+            activateModule: $extensionSettings->activateModule,
         );
     }
 

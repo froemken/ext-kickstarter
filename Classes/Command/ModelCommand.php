@@ -21,6 +21,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -42,6 +43,7 @@ class ModelCommand extends Command
 
     public function __construct(
         private readonly ModelCreatorService $modelCreatorService,
+        private readonly ExtensionConfiguration $extensionConfiguration,
     ) {
         parent::__construct();
     }
@@ -74,7 +76,7 @@ class ModelCommand extends Command
     private function askForModelInformation(SymfonyStyle $io, InputInterface $input): ModelInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->askForExtensionKey($this->extensionConfiguration, $io, $input->getArgument('extension_key')),
             $io
         );
 

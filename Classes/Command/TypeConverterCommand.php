@@ -20,6 +20,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 class TypeConverterCommand extends Command
 {
@@ -28,6 +29,7 @@ class TypeConverterCommand extends Command
 
     public function __construct(
         private readonly TypeConverterCreatorService $typeConverterCreatorService,
+        private readonly ExtensionConfiguration $extensionConfiguration,
     ) {
         parent::__construct();
     }
@@ -60,7 +62,7 @@ class TypeConverterCommand extends Command
     private function askForTypeConverterInformation(SymfonyStyle $io, InputInterface $input): TypeConverterInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->askForExtensionKey($this->extensionConfiguration, $io, $input->getArgument('extension_key')),
             $io
         );
 
