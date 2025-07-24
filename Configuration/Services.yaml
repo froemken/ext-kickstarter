@@ -16,7 +16,7 @@ services:
     tags:
       - name: console.command
         command: 'make:command'
-        description: 'Add a command to your TYPO3 extension.'
+        description: 'Add a console command to your TYPO3 extension.'
         schedulable: false
 
   StefanFroemken\ExtKickstarter\Command\ControllerCommand:

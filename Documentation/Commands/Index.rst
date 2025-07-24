@@ -107,7 +107,9 @@ table column for you.
 make:command
 ============
 
-This command will create a new Command class.
+This command will create a new  Console Command (CLI) class. 
+
+See the official documentation for more information on  `Console commands (CLI) <https://docs.typo3.org/permalink/t3coreapi:symfony-console-commands>`_.
 
 You will find the new file in directory ``Classes/Command/*``.
 
