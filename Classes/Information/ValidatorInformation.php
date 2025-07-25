@@ -8,11 +8,6 @@ readonly class ValidatorInformation
 {
     private const VALIDATOR_PATH = 'Classes/Domain/Validator/';
 
-    private const DATA_TYPES = [
-        'int',
-        'string',
-    ];
-
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private string $validatorName,
