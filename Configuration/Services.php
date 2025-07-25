@@ -8,6 +8,7 @@ use StefanFroemken\ExtKickstarter\Creator\Controller\Extbase\ExtbaseControllerCr
 use StefanFroemken\ExtKickstarter\Creator\Controller\Native\NativeControllerCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Domain\Model\DomainCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Domain\Repository\RepositoryCreatorInterface;
+use StefanFroemken\ExtKickstarter\Creator\Domain\Validator\ValidatorCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Event\EventCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\EventListener\EventListenerCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
@@ -33,6 +34,9 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
     $container
         ->registerForAutoconfiguration(RepositoryCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.domain.repository');
+    $container
+        ->registerForAutoconfiguration(ValidatorCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.domain.validator');
     $container
         ->registerForAutoconfiguration(EventCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.event');

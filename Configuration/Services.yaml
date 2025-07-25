@@ -75,6 +75,13 @@ services:
         description: 'Add test environment to your TYPO3 extension.'
         schedulable: false
 
+  StefanFroemken\ExtKickstarter\Command\ValidatorCommand:
+    tags:
+      - name: console.command
+        command: 'make:validator'
+        description: 'Create a new Validator for a property or model. See also https://docs.typo3.org/permalink/t3coreapi:extbase-domain-validator'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\TypeConverterCommand:
     tags:
       - name: console.command
@@ -131,3 +138,6 @@ services:
   StefanFroemken\ExtKickstarter\Service\Creator\UpgradeWizardCreatorService:
     arguments:
       $upgradeCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.upgrade-wizard' }
+  StefanFroemken\ExtKickstarter\Service\Creator\ValidatorCreatorService:
+    arguments:
+      $validatorCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.validator' }

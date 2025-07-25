@@ -34,6 +34,8 @@ readonly class ExtensionInformation
 
     private const CONTROLLER_PATH = 'Classes/Controller/';
 
+    private const MODEL_PATH = 'Classes/Domain/Model/';
+
     private const TCA_OVERRIDES_PATH = 'Configuration/TCA/Overrides/';
 
     public function __construct(
@@ -140,6 +142,11 @@ readonly class ExtensionInformation
         return $this->getExtensionPath() . self::CONTROLLER_PATH;
     }
 
+    public function getModelPath(): string
+    {
+        return $this->getExtensionPath() . self::MODEL_PATH;
+    }
+
     public function getTcaPath(): string
     {
         return $this->getExtensionPath() . self::TCA_PATH;
@@ -158,6 +165,11 @@ readonly class ExtensionInformation
     public function getFilePathForController(string $classname): string
     {
         return $this->getControllerPath() . $classname . '.php';
+    }
+
+    public function getFilePathForModel(string $classname): string
+    {
+        return $this->getModelPath() . $classname . '.php';
     }
 
     public function getControllerClassnames(): array
@@ -183,6 +195,29 @@ readonly class ExtensionInformation
         return $controllerClasses;
     }
 
+    public function getModelClassnames(): array
+    {
+        $modelPath = $this->getModelPath();
+        if (!is_dir($modelPath)) {
+            return [];
+        }
+
+        $modelClasses = [];
+        foreach (scandir($modelPath) as $file) {
+            if ($file === '.') {
+                continue;
+            }
+            if ($file === '..') {
+                continue;
+            }
+            $modelClasses[] = pathinfo($file, PATHINFO_FILENAME);
+        }
+
+        sort($modelClasses);
+
+        return $modelClasses;
+    }
+
     public function getExtbaseControllerClassnames(): array
     {
         $nodeFinder = new NodeFinder();
@@ -205,6 +240,30 @@ readonly class ExtensionInformation
         sort($extbaseControllerClassnames);
 
         return $extbaseControllerClassnames;
+    }
+
+    public function getExtbaseModelClassnames(): array
+    {
+        $nodeFinder = new NodeFinder();
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
+
+        $extbaseModelClassnames = [];
+        foreach ($this->getModelClassnames() as $modelClassname) {
+            $stmts = $parser->parse(file_get_contents($this->getFilePathForModel($modelClassname)));
+            $classNode = $nodeFinder->findFirst($stmts, static function (Node $node): bool {
+                return $node instanceof Class_
+                    && $node->extends instanceof Name
+                    && $node->extends->toString() === 'AbstractEntity';
+            });
+
+            if ($classNode instanceof Class_) {
+                $extbaseModelClassnames[] = $classNode->name->name;
+            }
+        }
+
+        sort($extbaseModelClassnames);
+
+        return $extbaseModelClassnames;
     }
 
     public function getExtbaseControllerActionNames(string $extbaseControllerClassname): array

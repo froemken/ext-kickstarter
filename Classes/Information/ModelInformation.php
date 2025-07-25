@@ -17,6 +17,8 @@ readonly class ModelInformation
 
     private const CLASSES_FILE_PATH = 'Configuration/Extbase/Persistence/Classes.php';
 
+    public const NAME_SPACE_PART = 'Domain\\Model';
+
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private string $modelClassName,
@@ -78,7 +80,7 @@ readonly class ModelInformation
 
     public function getNamespace(): string
     {
-        return $this->extensionInformation->getNamespacePrefix() . 'Domain\\Model';
+        return $this->extensionInformation->getNamespacePrefix() . self::NAME_SPACE_PART;
     }
 
     public function getProperties(): array
