@@ -40,7 +40,7 @@ readonly class ValidatorInformation
         return $this->modelName;
     }
 
-    public function getModelFullyQuallifiedName(): ?string
+    public function getModelFullyQualifiedName(): ?string
     {
         return $this->extensionInformation->getNamespacePrefix() . ModelInformation::NAME_SPACE_PART . '\\' . $this->modelName;
     }

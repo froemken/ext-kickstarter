@@ -113,6 +113,9 @@ services:
   StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService:
     arguments:
       $repositoryCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.repository' }
+  StefanFroemken\ExtKickstarter\Service\Creator\ValidatorCreatorService:
+    arguments:
+      $validatorCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.validator' }
   StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService:
     arguments:
       $eventCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.event' }
@@ -138,6 +141,3 @@ services:
   StefanFroemken\ExtKickstarter\Service\Creator\UpgradeWizardCreatorService:
     arguments:
       $upgradeCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.upgrade-wizard' }
-  StefanFroemken\ExtKickstarter\Service\Creator\ValidatorCreatorService:
-    arguments:
-      $validatorCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.validator' }

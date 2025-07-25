@@ -92,7 +92,7 @@ class ValidatorCreator implements ValidatorCreatorInterface
             ->setReturnType('void');
         if ($validatorInformation->getValidatorType() === ValidatorType::MODEL) {
             $fileStructure->addUseStructure(
-                new UseStructure($this->nodeFactory->createUseImport($validatorInformation->getModelFullyQuallifiedName()))
+                new UseStructure($this->nodeFactory->createUseImport($validatorInformation->getModelFullyQualifiedName()))
             );
             $condition = new BooleanNot(
                 new Instanceof_(
