@@ -139,7 +139,7 @@ class ValidatorCommand extends Command
         // Upper case first char
         $cleanedName = ucfirst($cleanedName);
 
-        // Remove ending "cOntroLLeR" with wrong case
+        // Remove ending "VaLIdaTOr" with wrong case
         if (str_ends_with(strtolower($cleanedName), 'validator')) {
             $cleanedName = substr($cleanedName, 0, -10);
         }
