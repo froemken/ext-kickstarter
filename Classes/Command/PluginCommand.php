@@ -82,7 +82,10 @@ class PluginCommand extends Command
         );
 
         $referencedControllerActions = [];
+        $isTypoScriptCreation = false;
+        $set = null;
         $isExtbasePlugin = $io->confirm('Do you prefer to create an extbase based plugin?');
+        $templatePath = '';
         if ($isExtbasePlugin) {
             $extbaseControllerClassnames = $extensionInformation->getExtbaseControllerClassnames();
             if ($extbaseControllerClassnames === []) {
@@ -98,6 +101,22 @@ class PluginCommand extends Command
                 $extbaseControllerClassnames,
                 $extensionInformation,
             );
+            $isTypoScriptCreation = $io->confirm('Do you want to create the default TypoScript for plugin.tx_myextension_myplugin?');
+            if ($isTypoScriptCreation) {
+                $setOptions = array_merge([$extensionInformation->getDefaultTypoScriptPath()], $extensionInformation->getSets());
+
+                // Ask user to choose one (no default)
+                $set = $io->choice(
+                    'To which set do you want to add the TypoScript?',
+                    $setOptions,
+                    null // ← No default choice
+                );
+
+                $templatePath = $io->ask(
+                    'To which path do you want to add the Fluid templates?',
+                    sprintf('EXT:%s/Resources/Private/', $extensionInformation->getExtensionKey())
+                );
+            }
         }
 
         return new PluginInformation(
@@ -107,6 +126,9 @@ class PluginCommand extends Command
             $pluginName,
             $pluginDescription,
             $referencedControllerActions,
+            $isTypoScriptCreation,
+            $set,
+            $templatePath,
         );
     }
 

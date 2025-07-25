@@ -30,11 +30,15 @@ readonly class ExtensionInformation
         'l10n_diffsource',
     ];
 
+    private const SET_PATH = 'Configuration/Sets/';
+
     private const TCA_PATH = 'Configuration/TCA/';
 
     private const CONTROLLER_PATH = 'Classes/Controller/';
 
     private const TCA_OVERRIDES_PATH = 'Configuration/TCA/Overrides/';
+
+    private const TYPOSCRIPT_DEFAULT_PATH = 'Configuration/TypoScript/';
 
     public function __construct(
         private string $extensionKey,
@@ -140,6 +144,16 @@ readonly class ExtensionInformation
         return $this->getExtensionPath() . self::CONTROLLER_PATH;
     }
 
+    public function getSetPath(): string
+    {
+        return $this->getExtensionPath() . self::SET_PATH;
+    }
+
+    public function getDefaultTypoScriptPath(): string
+    {
+        return $this->getExtensionPath() . self::TYPOSCRIPT_DEFAULT_PATH;
+    }
+
     public function getTcaPath(): string
     {
         return $this->getExtensionPath() . self::TCA_PATH;
@@ -230,6 +244,37 @@ readonly class ExtensionInformation
         sort($extbaseControllerActionNames);
 
         return $extbaseControllerActionNames;
+    }
+
+    /**
+     * @return string[] All directories in folder Configuration/Sets/ that contain a config.yaml
+     */
+    public function getSets(): array
+    {
+        $setPath = $this->getSetPath();
+
+        if (!is_dir($setPath)) {
+            return [];
+        }
+
+        $sets = [];
+
+        foreach (scandir($setPath) as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+
+            $fullDirPath = $setPath . DIRECTORY_SEPARATOR . $entry;
+            $configFilePath = $fullDirPath . DIRECTORY_SEPARATOR . 'config.yaml';
+
+            if (is_dir($fullDirPath) && is_file($configFilePath)) {
+                $sets[] = $entry;
+            }
+        }
+
+        sort($sets);
+
+        return $sets;
     }
 
     public function getConfiguredTcaTables(): array
