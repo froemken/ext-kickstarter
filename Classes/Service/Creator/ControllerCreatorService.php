@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Service\Creator;
 
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Information\FileModificationInformation;
 
 readonly class ControllerCreatorService
 {
@@ -20,16 +21,21 @@ readonly class ControllerCreatorService
         private iterable $nativeControllerCreators,
     ) {}
 
-    public function create(ControllerInformation $controllerInformation): void
+    /**
+     * @return FileModificationInformation[]
+     */
+    public function create(ControllerInformation $controllerInformation): array
     {
+        $fileModifications = [];
         if ($controllerInformation->isExtbaseController()) {
             foreach ($this->extbaseControllerCreators as $creator) {
-                $creator->create($controllerInformation);
+                $fileModifications[] = $creator->create($controllerInformation);
             }
         } else {
             foreach ($this->nativeControllerCreators as $creator) {
-                $creator->create($controllerInformation);
+                $fileModifications[] = $creator->create($controllerInformation);
             }
         }
+        return $fileModifications;
     }
 }
