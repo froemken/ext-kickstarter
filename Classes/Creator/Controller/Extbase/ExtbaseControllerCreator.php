@@ -13,7 +13,6 @@ namespace StefanFroemken\ExtKickstarter\Creator\Controller\Extbase;
 
 use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
-use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Information\FileModificationInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -36,7 +35,7 @@ class ExtbaseControllerCreator implements ExtbaseControllerCreatorInterface
         $this->nodeFactory = $nodeFactory;
     }
 
-    public function create(ControllerInformation $controllerInformation): CreatorInformation
+    public function create(ControllerInformation $controllerInformation): void
     {
         GeneralUtility::mkdir_deep($controllerInformation->getControllerPath());
 
@@ -57,7 +56,7 @@ class ExtbaseControllerCreator implements ExtbaseControllerCreatorInterface
         }
 
         file_put_contents($controllerFile, $fileStructure->getFileContents());
-        return new CreatorInformation([new FileModificationInformation($controllerFile, $fileModificationType)]);
+        $controllerInformation->getCreatorInformation()->fileModifications[] = new FileModificationInformation($controllerFile, $fileModificationType);
     }
 
     private function addClassNodes(FileStructure $fileStructure, ControllerInformation $controllerInformation): void
