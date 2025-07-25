@@ -14,7 +14,10 @@ namespace StefanFroemken\ExtKickstarter\Command;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\AskForValidClassNameTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Validator\ActionNameValidator;
+use StefanFroemken\ExtKickstarter\Validator\ClassNameValidator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,11 +28,15 @@ class ControllerCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use AskForValidClassNameTrait;
 
     public function __construct(
         private readonly ControllerCreatorService $controllerCreatorService,
+        ClassNameValidator $classNameValidator,
+        private readonly ActionNameValidator $actionNameValidator
     ) {
         parent::__construct();
+        $this->setClassNameValidator($classNameValidator);
     }
 
     protected function configure(): void
@@ -67,119 +74,34 @@ class ControllerCommand extends Command
         return new ControllerInformation(
             $extensionInformation,
             $io->confirm('Do you prefer to create an extbase based controller?'),
-            $this->askForControllerName($io),
-            $this->askForActionMethodNames($io),
+            $this->askForValidClassName(
+                $io,
+                'Please provide the name of your controller',
+                'Controller',
+                'Controller'
+            ),
+            $this->askForValidActionMethods($io),
         );
     }
 
-    private function askForActionMethodNames(SymfonyStyle $io): array
+    private function askForValidActionMethods(SymfonyStyle $io): array
     {
         $actionMethods = [];
-        $validActionName = false;
-        $defaultActionName = 'indexAction';
+        $default = 'indexAction';
 
         do {
-            $actionMethod = (string)$io->ask(
-                'Please provide the name of your action method',
-                $defaultActionName,
-            );
+            $input = (string)$io->ask('Please provide the name of your action method', $default);
+            $result = $this->actionNameValidator->validate($input);
 
-            if (preg_match('/^\d/', $actionMethod)) {
-                $io->error('Action name should not start with a number.');
-                $defaultActionName = $this->tryToCorrectActionname($actionMethod);
-                $validActionName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $actionMethod)) {
-                $io->error('Action name contains invalid chars. Please provide just letters and numbers.');
-                $defaultActionName = $this->tryToCorrectActionname($actionMethod);
-                $validActionName = false;
-            } elseif (preg_match('/^[a-z0-9]+$/', $actionMethod)) {
-                $io->error('Action must be written in LowerCamelCase like showAction.');
-                $defaultActionName = $this->tryToCorrectActionname($actionMethod);
-                $validActionName = false;
-            } elseif (!str_ends_with($actionMethod, 'Action')) {
-                $io->error('Action must end with "Action".');
-                $defaultActionName = $this->tryToCorrectActionname($actionMethod);
-                $validActionName = false;
+            if (!$result->isValid) {
+                $io->error($result->error);
+                $default = $result->suggestion;
             } else {
-                $actionMethods[] = $actionMethod;
-                if ($io->confirm('Do you want to add another action method?')) {
-                    continue;
-                }
-                $validActionName = true;
+                $actionMethods[] = $input;
+                $default = 'indexAction';
             }
-        } while (!$validActionName);
+        } while (!$result->isValid || $io->confirm('Do you want to add another action method?', false));
 
         return $actionMethods;
-    }
-
-    private function askForControllerName(SymfonyStyle $io): string
-    {
-        $defaultControllerName = null;
-        do {
-            $controllerName = (string)$io->ask(
-                'Please provide the name of your controller',
-                $defaultControllerName,
-            );
-
-            if (preg_match('/^\d/', $controllerName)) {
-                $io->error('Controller name should not start with a number.');
-                $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
-                $validControllerName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $controllerName)) {
-                $io->error('Controller name contains invalid chars. Please provide just letters and numbers.');
-                $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
-                $validControllerName = false;
-            } elseif (preg_match('/^[a-z0-9]+$/', $controllerName)) {
-                $io->error('Controller must be written in UpperCamelCase like BlogExampleController.');
-                $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
-                $validControllerName = false;
-            } elseif (!str_ends_with($controllerName, 'Controller')) {
-                $io->error('Controller must end with "Controller".');
-                $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
-                $validControllerName = false;
-            } else {
-                $validControllerName = true;
-            }
-        } while (!$validControllerName);
-
-        return $controllerName;
-    }
-
-    private function tryToCorrectControllerName(string $givenControllerName): string
-    {
-        // Remove invalid chars
-        $cleanedControllerName = preg_replace('/[^a-zA-Z0-9]/', '', $givenControllerName);
-
-        // Upper case first char
-        $cleanedControllerName = ucfirst($cleanedControllerName);
-
-        // Remove ending "cOntroLLeR" with wrong case
-        if (str_ends_with(strtolower($cleanedControllerName), 'controller')) {
-            $cleanedControllerName = substr($cleanedControllerName, 0, -10);
-        }
-
-        // Add "Controller" with correct case
-        $cleanedControllerName .= 'Controller';
-
-        return $cleanedControllerName;
-    }
-
-    private function tryToCorrectActionname(string $givenActionName): string
-    {
-        // Remove invalid chars
-        $cleanedActionName = preg_replace('/[^a-zA-Z0-9]/', '', $givenActionName);
-
-        // Lower case first char
-        $cleanedActionName = lcfirst($cleanedActionName);
-
-        // Remove ending "aCtioN" with wrong case
-        if (str_ends_with(strtolower($cleanedActionName), 'action')) {
-            $cleanedActionName = substr($cleanedActionName, 0, -6);
-        }
-
-        // Add "Controller" with correct case
-        $cleanedActionName .= 'Action';
-
-        return $cleanedActionName;
     }
 }
