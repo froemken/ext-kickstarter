@@ -27,6 +27,9 @@ use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Registers the Extbase plugin in the TCA/Overrides
+ */
 class ExtbaseRegisterPluginCreator implements ExtbasePluginCreatorInterface
 {
     use FileStructureBuilderTrait;
