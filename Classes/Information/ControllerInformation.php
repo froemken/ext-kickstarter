@@ -15,12 +15,17 @@ readonly class ControllerInformation
 {
     private const CONTROLLER_PATH = 'Classes/Controller/';
 
+    private CreatorInformation $creatorInformation;
+
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private bool $isExtbaseController,
         private string $controllerName,
         private array $actionMethodNames,
-    ) {}
+        ?CreatorInformation $creatorInformation = null
+    ) {
+        $this->creatorInformation = $creatorInformation ?? new CreatorInformation();
+    }
 
     public function getExtensionInformation(): ExtensionInformation
     {
@@ -60,5 +65,10 @@ readonly class ControllerInformation
     public function getActionMethodNames(): array
     {
         return $this->actionMethodNames;
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

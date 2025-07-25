@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
@@ -58,8 +59,9 @@ class ControllerCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $creatorInformation = $this->controllerCreatorService->create($this->askForControllerInformation($io, $input));
-        $this->printCreatorInformation($creatorInformation, $io);
+        $controllerInformation = $this->askForControllerInformation($io, $input);
+        $this->controllerCreatorService->create($controllerInformation);
+        $this->printCreatorInformation($controllerInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
@@ -76,6 +78,7 @@ class ControllerCommand extends Command
             $io->confirm('Do you prefer to create an extbase based controller?'),
             $this->askForControllerName($io),
             $this->askForActionMethodNames($io),
+            new CreatorInformation(),
         );
     }
 
