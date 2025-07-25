@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Creator\Controller\Native;
 
 use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Information\FileModificationInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -35,7 +36,7 @@ class NativeControllerCreator implements NativeControllerCreatorInterface
         $this->nodeFactory = $nodeFactory;
     }
 
-    public function create(ControllerInformation $controllerInformation): FileModificationInformation
+    public function create(ControllerInformation $controllerInformation): CreatorInformation
     {
         GeneralUtility::mkdir_deep($controllerInformation->getControllerPath());
 
@@ -56,7 +57,7 @@ class NativeControllerCreator implements NativeControllerCreatorInterface
         }
 
         file_put_contents($controllerFile, $fileStructure->getFileContents());
-        return new FileModificationInformation($controllerFile, $fileModificationType);
+        return new CreatorInformation([new FileModificationInformation($controllerFile, $fileModificationType)]);
     }
 
     private function addClassNodes(FileStructure $fileStructure, ControllerInformation $controllerInformation): void
