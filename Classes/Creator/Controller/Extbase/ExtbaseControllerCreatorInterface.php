@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Controller\Extbase;
 
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Information\FileModificationInformation;
 
 interface ExtbaseControllerCreatorInterface
 {
-    public function create(ControllerInformation $controllerInformation): void;
+    public function create(ControllerInformation $controllerInformation): FileModificationInformation;
 }

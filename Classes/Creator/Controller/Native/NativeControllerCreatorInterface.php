@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Controller\Native;
 
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Information\FileModificationInformation;
 
 interface NativeControllerCreatorInterface
 {
-    public function create(ControllerInformation $controllerInformation): void;
+    public function create(ControllerInformation $controllerInformation): FileModificationInformation;
 }

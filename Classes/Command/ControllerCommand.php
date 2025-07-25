@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\FileModificationInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ class ControllerCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use FileModificationInformationTrait;
 
     public function __construct(
         private readonly ControllerCreatorService $controllerCreatorService,
@@ -52,7 +54,8 @@ class ControllerCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->controllerCreatorService->create($this->askForControllerInformation($io, $input));
+        $fileModifications = $this->controllerCreatorService->create($this->askForControllerInformation($io, $input));
+        $this->printFileModificationInformation($fileModifications, $io);
 
         return Command::SUCCESS;
     }
