@@ -50,7 +50,7 @@ class ValidatorCommand extends Command
 
         $io->text([
             'We are here to assist you in creating a new TYPO3 validator. ',
-            'Now, we will ask you a few questions to customize the controller according to your needs.',
+            'Now, we will ask you a few questions to customize the validator according to your needs.',
             'Please take your time to answer them.',
             'See https://docs.typo3.org/permalink/t3coreapi:extbase-domain-validator on how implement its functionality.',
         ]);
