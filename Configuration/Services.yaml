@@ -12,6 +12,13 @@ services:
   StefanFroemken\ExtKickstarter\Configuration\ExtConf:
     public: true
 
+  StefanFroemken\ExtKickstarter\Command\CommandCommand:
+    tags:
+      - name: console.command
+        command: 'make:command'
+        description: 'Add a console command to your TYPO3 extension.'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\ControllerCommand:
     tags:
       - name: console.command
@@ -103,6 +110,9 @@ services:
         description: 'Create a new Upgrade Wizard to your TYPO3 extension.'
         schedulable: false
 
+  StefanFroemken\ExtKickstarter\Service\Creator\CommandCreatorService:
+    arguments:
+      $commandCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.command' }
   StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService:
     arguments:
       $extbaseControllerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.controller.extbase' }

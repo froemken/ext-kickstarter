@@ -104,6 +104,18 @@ table column for you.
 ..  code-block:: bash
     vendor/bin/typo3 make:model
 
+make:command
+============
+
+This command will create a new  Console Command (CLI) class. 
+
+See the official documentation for more information on  `Console commands (CLI) <https://docs.typo3.org/permalink/t3coreapi:symfony-console-commands>`_.
+
+You will find the new file in directory ``Classes/Command/*``.
+
+..  code-block:: bash
+    vendor/bin/typo3 make:command
+
 make:event
 ==========
 
