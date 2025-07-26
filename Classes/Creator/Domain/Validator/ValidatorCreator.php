@@ -107,6 +107,7 @@ class ValidatorCreator implements ValidatorCreatorInterface
                 'stmts' => [new Return_()],
             ]));
         }
+
         // Build the addError() call
         $methodBuilder->addStmt(new Expression($this->builderFactory->methodCall($this->builderFactory->var('this'), 'addError', [
             'Validator needs to be implemented. See https://docs.typo3.org/permalink/t3coreapi:extbase-domain-validator for details. ',
