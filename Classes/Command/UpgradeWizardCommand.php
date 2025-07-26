@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\UpgradeWizardInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\UpgradeWizardCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ class UpgradeWizardCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly UpgradeWizardCreatorService $upgradeWizardCreatorService,
@@ -82,19 +84,19 @@ class UpgradeWizardCommand extends Command
 
             if (preg_match('/^\d/', $upgradeWizardClassName)) {
                 $io->error('Class name should not start with a number.');
-                $defaultUpgradeWizardClassName = $this->tryToCorrectUpgradeWizardClassName($upgradeWizardClassName);
+                $defaultUpgradeWizardClassName = $this->tryToCorrectClassName($upgradeWizardClassName, 'Upgrade');
                 $validUpgradeWizardClassName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $upgradeWizardClassName)) {
                 $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultUpgradeWizardClassName = $this->tryToCorrectUpgradeWizardClassName($upgradeWizardClassName);
+                $defaultUpgradeWizardClassName = $this->tryToCorrectClassName($upgradeWizardClassName, 'Upgrade');
                 $validUpgradeWizardClassName = false;
             } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $upgradeWizardClassName) === 0) {
                 $io->error('Action must be written in UpperCamelCase like "CorrectPluginUpgrade".');
-                $defaultUpgradeWizardClassName = $this->tryToCorrectUpgradeWizardClassName($upgradeWizardClassName);
+                $defaultUpgradeWizardClassName = $this->tryToCorrectClassName($upgradeWizardClassName, 'Upgrade');
                 $validUpgradeWizardClassName = false;
             } elseif (!str_ends_with($upgradeWizardClassName, 'Upgrade')) {
                 $io->error('Class name must end with "Upgrade".');
-                $defaultUpgradeWizardClassName = $this->tryToCorrectUpgradeWizardClassName($upgradeWizardClassName);
+                $defaultUpgradeWizardClassName = $this->tryToCorrectClassName($upgradeWizardClassName, 'Upgrade');
                 $validUpgradeWizardClassName = false;
             } else {
                 $validUpgradeWizardClassName = true;
@@ -102,24 +104,5 @@ class UpgradeWizardCommand extends Command
         } while (!$validUpgradeWizardClassName);
 
         return $upgradeWizardClassName;
-    }
-
-    private function tryToCorrectUpgradeWizardClassName(string $givenUpgradeWizardClassName): string
-    {
-        // Remove invalid chars
-        $cleanedUpgradeWizardClassName = preg_replace('/[^a-zA-Z0-9]/', '', $givenUpgradeWizardClassName);
-
-        // Upper case first char
-        $cleanedUpgradeWizardClassName = ucfirst($cleanedUpgradeWizardClassName);
-
-        // Remove ending "uPgrADe" with wrong case
-        if (str_ends_with(strtolower($cleanedUpgradeWizardClassName), 'upgrade')) {
-            $cleanedUpgradeWizardClassName = substr($cleanedUpgradeWizardClassName, 0, -7);
-        }
-
-        // Add "Upgrade" with correct case
-        $cleanedUpgradeWizardClassName .= 'Upgrade';
-
-        return $cleanedUpgradeWizardClassName;
     }
 }

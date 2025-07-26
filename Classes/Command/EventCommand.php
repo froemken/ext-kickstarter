@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\EventInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ class EventCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly EventCreatorService $eventCreatorService,
@@ -82,19 +84,19 @@ class EventCommand extends Command
 
             if (preg_match('/^\d/', $eventClassName)) {
                 $io->error('Class name should not start with a number.');
-                $defaultEventClassName = $this->tryToCorrectEventClassName($eventClassName);
+                $defaultEventClassName = $this->tryToCorrectClassName($eventClassName, 'Event');
                 $validEventClassName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $eventClassName)) {
                 $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultEventClassName = $this->tryToCorrectEventClassName($eventClassName);
+                $defaultEventClassName = $this->tryToCorrectClassName($eventClassName, 'Event');
                 $validEventClassName = false;
             } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $eventClassName) === 0) {
                 $io->error('Action must be written in UpperCamelCase like "ProcessRequestEvent".');
-                $defaultEventClassName = $this->tryToCorrectEventClassName($eventClassName);
+                $defaultEventClassName = $this->tryToCorrectClassName($eventClassName, 'Event');
                 $validEventClassName = false;
             } elseif (!str_ends_with($eventClassName, 'Event')) {
                 $io->error('Class name must end with "Event".');
-                $defaultEventClassName = $this->tryToCorrectEventClassName($eventClassName);
+                $defaultEventClassName = $this->tryToCorrectClassName($eventClassName, 'Event');
                 $validEventClassName = false;
             } else {
                 $validEventClassName = true;
@@ -102,24 +104,5 @@ class EventCommand extends Command
         } while (!$validEventClassName);
 
         return $eventClassName;
-    }
-
-    private function tryToCorrectEventClassName(string $givenEventClassName): string
-    {
-        // Remove invalid chars
-        $cleanedEventClassName = preg_replace('/[^a-zA-Z0-9]/', '', $givenEventClassName);
-
-        // Upper case first char
-        $cleanedEventClassName = ucfirst($cleanedEventClassName);
-
-        // Remove ending "evENt" with wrong case
-        if (str_ends_with(strtolower($cleanedEventClassName), 'event')) {
-            $cleanedEventClassName = substr($cleanedEventClassName, 0, -13);
-        }
-
-        // Add "Event" with correct case
-        $cleanedEventClassName .= 'Event';
-
-        return $cleanedEventClassName;
     }
 }

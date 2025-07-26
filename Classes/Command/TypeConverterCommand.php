@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\TypeConverterInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\TypeConverterCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ class TypeConverterCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly TypeConverterCreatorService $typeConverterCreatorService,
@@ -85,19 +87,19 @@ class TypeConverterCommand extends Command
 
             if (preg_match('/^\d/', $typeConverterClassName)) {
                 $io->error('Class name should not start with a number.');
-                $defaultTypeConverterClassName = $this->tryToCorrectTypeConverterClassName($typeConverterClassName);
+                $defaultTypeConverterClassName = $this->tryToCorrectClassName($typeConverterClassName, 'TypeConverter');
                 $validTypeConverterClassName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $typeConverterClassName)) {
                 $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultTypeConverterClassName = $this->tryToCorrectTypeConverterClassName($typeConverterClassName);
+                $defaultTypeConverterClassName = $this->tryToCorrectClassName($typeConverterClassName, 'TypeConverter');
                 $validTypeConverterClassName = false;
             } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $typeConverterClassName) === 0) {
                 $io->error('Action must be written in UpperCamelCase like "FileUploadTypeConverter".');
-                $defaultTypeConverterClassName = $this->tryToCorrectTypeConverterClassName($typeConverterClassName);
+                $defaultTypeConverterClassName = $this->tryToCorrectClassName($typeConverterClassName, 'TypeConverter');
                 $validTypeConverterClassName = false;
             } elseif (!str_ends_with($typeConverterClassName, 'TypeConverter')) {
                 $io->error('Class name must end with "TypeConverter".');
-                $defaultTypeConverterClassName = $this->tryToCorrectTypeConverterClassName($typeConverterClassName);
+                $defaultTypeConverterClassName = $this->tryToCorrectClassName($typeConverterClassName, 'TypeConverter');
                 $validTypeConverterClassName = false;
             } else {
                 $validTypeConverterClassName = true;
@@ -105,24 +107,5 @@ class TypeConverterCommand extends Command
         } while (!$validTypeConverterClassName);
 
         return $typeConverterClassName;
-    }
-
-    private function tryToCorrectTypeConverterClassName(string $givenTypeConverterClassName): string
-    {
-        // Remove invalid chars
-        $cleanedTypeConverterClassName = preg_replace('/[^a-zA-Z0-9]/', '', $givenTypeConverterClassName);
-
-        // Upper case first char
-        $cleanedTypeConverterClassName = ucfirst($cleanedTypeConverterClassName);
-
-        // Remove ending "tyPEconVerTEr" with wrong case
-        if (str_ends_with(strtolower($cleanedTypeConverterClassName), 'typeconverter')) {
-            $cleanedTypeConverterClassName = substr($cleanedTypeConverterClassName, 0, -13);
-        }
-
-        // Add "TypeConverter" with correct case
-        $cleanedTypeConverterClassName .= 'TypeConverter';
-
-        return $cleanedTypeConverterClassName;
     }
 }
