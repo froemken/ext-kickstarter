@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\EventListenerInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\EventListenerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ class EventListenerCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly EventListenerCreatorService $eventListenerCreatorService,
@@ -82,19 +84,19 @@ class EventListenerCommand extends Command
 
             if (preg_match('/^\d/', $eventListenerClassName)) {
                 $io->error('Class name should not start with a number.');
-                $defaultEventListenerClassName = $this->tryToCorrectEventListenerClassName($eventListenerClassName);
+                $defaultEventListenerClassName = $this->tryToCorrectClassName($eventListenerClassName, 'EventListener');
                 $validEventListenerClassName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $eventListenerClassName)) {
                 $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultEventListenerClassName = $this->tryToCorrectEventListenerClassName($eventListenerClassName);
+                $defaultEventListenerClassName = $this->tryToCorrectClassName($eventListenerClassName, 'EventListener');
                 $validEventListenerClassName = false;
             } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $eventListenerClassName) === 0) {
                 $io->error('Action must be written in UpperCamelCase like "HandleRequestEventListener".');
-                $defaultEventListenerClassName = $this->tryToCorrectEventListenerClassName($eventListenerClassName);
+                $defaultEventListenerClassName = $this->tryToCorrectClassName($eventListenerClassName, 'EventListener');
                 $validEventListenerClassName = false;
             } elseif (!str_ends_with($eventListenerClassName, 'EventListener')) {
                 $io->error('Class name must end with "EventListener".');
-                $defaultEventListenerClassName = $this->tryToCorrectEventListenerClassName($eventListenerClassName);
+                $defaultEventListenerClassName = $this->tryToCorrectClassName($eventListenerClassName, 'EventListener');
                 $validEventListenerClassName = false;
             } else {
                 $validEventListenerClassName = true;
@@ -102,24 +104,5 @@ class EventListenerCommand extends Command
         } while (!$validEventListenerClassName);
 
         return $eventListenerClassName;
-    }
-
-    private function tryToCorrectEventListenerClassName(string $givenEventListenerClassName): string
-    {
-        // Remove invalid chars
-        $cleanedEventListenerClassName = preg_replace('/[^a-zA-Z0-9]/', '', $givenEventListenerClassName);
-
-        // Upper case first char
-        $cleanedEventListenerClassName = ucfirst($cleanedEventListenerClassName);
-
-        // Remove ending "eveNTliSteNer" with wrong case
-        if (str_ends_with(strtolower($cleanedEventListenerClassName), 'eventlistener')) {
-            $cleanedEventListenerClassName = substr($cleanedEventListenerClassName, 0, -13);
-        }
-
-        // Add "EventListener" with correct case
-        $cleanedEventListenerClassName .= 'EventListener';
-
-        return $cleanedEventListenerClassName;
     }
 }

@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\CommandInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\CommandCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ class CommandCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly CommandCreatorService $commandCreatorService,
@@ -88,19 +90,19 @@ class CommandCommand extends Command
                 $validCommandClassName = false;
             } elseif (preg_match('/^\d/', $commandClassName)) {
                 $io->error('Class name should not start with a number.');
-                $defaultCommandClassName = $this->tryToCorrectCommandClassName($commandClassName);
+                $defaultCommandClassName = $this->tryToCorrectClassName($commandClassName, 'Command');
                 $validCommandClassName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $commandClassName)) {
                 $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultCommandClassName = $this->tryToCorrectCommandClassName($commandClassName);
+                $defaultCommandClassName = $this->tryToCorrectClassName($commandClassName, 'Command');
                 $validCommandClassName = false;
             } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $commandClassName) === 0) {
                 $io->error('Action must be written in UpperCamelCase like "DoSomethingCommand".');
-                $defaultCommandClassName = $this->tryToCorrectCommandClassName($commandClassName);
+                $defaultCommandClassName = $this->tryToCorrectClassName($commandClassName, 'Command');
                 $validCommandClassName = false;
             } elseif (!str_ends_with($commandClassName, 'Command')) {
                 $io->error('Class name must end with "Command".');
-                $defaultCommandClassName = $this->tryToCorrectCommandClassName($commandClassName);
+                $defaultCommandClassName = $this->tryToCorrectClassName($commandClassName, 'Command');
                 $validCommandClassName = false;
             } else {
                 $validCommandClassName = true;
@@ -145,24 +147,5 @@ class CommandCommand extends Command
         }
 
         return [$commandAliases];
-    }
-
-    private function tryToCorrectCommandClassName(string $givenCommandClassName): string
-    {
-        // Remove invalid chars
-        $cleanedCommandClassName = preg_replace('/[^a-zA-Z0-9]/', '', $givenCommandClassName);
-
-        // Upper case first char
-        $cleanedCommandClassName = ucfirst($cleanedCommandClassName);
-
-        // Remove ending "coMmaND" with wrong case
-        if (str_ends_with(strtolower($cleanedCommandClassName), 'command')) {
-            $cleanedCommandClassName = substr($cleanedCommandClassName, 0, -10);
-        }
-
-        // Add "Command" with correct case
-        $cleanedCommandClassName .= 'Command';
-
-        return $cleanedCommandClassName;
     }
 }

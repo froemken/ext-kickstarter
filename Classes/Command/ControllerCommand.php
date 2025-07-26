@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,6 +26,7 @@ class ControllerCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly ControllerCreatorService $controllerCreatorService,
@@ -86,19 +88,19 @@ class ControllerCommand extends Command
 
             if (preg_match('/^\d/', $actionMethod)) {
                 $io->error('Action name should not start with a number.');
-                $defaultActionName = $this->tryToCorrectActionname($actionMethod);
+                $defaultActionName = $this->tryToCorrectClassName($actionMethod, 'Action');
                 $validActionName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $actionMethod)) {
                 $io->error('Action name contains invalid chars. Please provide just letters and numbers.');
-                $defaultActionName = $this->tryToCorrectActionname($actionMethod);
+                $defaultActionName = $this->tryToCorrectClassName($actionMethod, 'Action');
                 $validActionName = false;
             } elseif (preg_match('/^[a-z0-9]+$/', $actionMethod)) {
                 $io->error('Action must be written in LowerCamelCase like showAction.');
-                $defaultActionName = $this->tryToCorrectActionname($actionMethod);
+                $defaultActionName = $this->tryToCorrectClassName($actionMethod, 'Action');
                 $validActionName = false;
             } elseif (!str_ends_with($actionMethod, 'Action')) {
                 $io->error('Action must end with "Action".');
-                $defaultActionName = $this->tryToCorrectActionname($actionMethod);
+                $defaultActionName = $this->tryToCorrectClassName($actionMethod, 'Action');
                 $validActionName = false;
             } else {
                 $actionMethods[] = $actionMethod;
@@ -123,19 +125,19 @@ class ControllerCommand extends Command
 
             if (preg_match('/^\d/', $controllerName)) {
                 $io->error('Controller name should not start with a number.');
-                $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
+                $defaultControllerName = $this->tryToCorrectClassName($controllerName, 'Controller');
                 $validControllerName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $controllerName)) {
                 $io->error('Controller name contains invalid chars. Please provide just letters and numbers.');
-                $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
+                $defaultControllerName = $this->tryToCorrectClassName($controllerName, 'Controller');
                 $validControllerName = false;
             } elseif (preg_match('/^[a-z0-9]+$/', $controllerName)) {
                 $io->error('Controller must be written in UpperCamelCase like BlogExampleController.');
-                $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
+                $defaultControllerName = $this->tryToCorrectClassName($controllerName, 'Controller');
                 $validControllerName = false;
             } elseif (!str_ends_with($controllerName, 'Controller')) {
                 $io->error('Controller must end with "Controller".');
-                $defaultControllerName = $this->tryToCorrectControllerName($controllerName);
+                $defaultControllerName = $this->tryToCorrectClassName($controllerName, 'Controller');
                 $validControllerName = false;
             } else {
                 $validControllerName = true;
@@ -143,43 +145,5 @@ class ControllerCommand extends Command
         } while (!$validControllerName);
 
         return $controllerName;
-    }
-
-    private function tryToCorrectControllerName(string $givenControllerName): string
-    {
-        // Remove invalid chars
-        $cleanedControllerName = preg_replace('/[^a-zA-Z0-9]/', '', $givenControllerName);
-
-        // Upper case first char
-        $cleanedControllerName = ucfirst($cleanedControllerName);
-
-        // Remove ending "cOntroLLeR" with wrong case
-        if (str_ends_with(strtolower($cleanedControllerName), 'controller')) {
-            $cleanedControllerName = substr($cleanedControllerName, 0, -10);
-        }
-
-        // Add "Controller" with correct case
-        $cleanedControllerName .= 'Controller';
-
-        return $cleanedControllerName;
-    }
-
-    private function tryToCorrectActionname(string $givenActionName): string
-    {
-        // Remove invalid chars
-        $cleanedActionName = preg_replace('/[^a-zA-Z0-9]/', '', $givenActionName);
-
-        // Lower case first char
-        $cleanedActionName = lcfirst($cleanedActionName);
-
-        // Remove ending "aCtioN" with wrong case
-        if (str_ends_with(strtolower($cleanedActionName), 'action')) {
-            $cleanedActionName = substr($cleanedActionName, 0, -6);
-        }
-
-        // Add "Controller" with correct case
-        $cleanedActionName .= 'Action';
-
-        return $cleanedActionName;
     }
 }

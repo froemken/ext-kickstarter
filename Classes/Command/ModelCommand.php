@@ -16,6 +16,7 @@ use StefanFroemken\ExtKickstarter\Information\ModelInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,6 +29,7 @@ class ModelCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use TryToCorrectClassNameTrait;
 
     private const DATA_TYPES = [
         'array',
@@ -102,15 +104,15 @@ class ModelCommand extends Command
 
             if (preg_match('/^\d/', $modelClassName)) {
                 $io->error('Class name should not start with a number.');
-                $defaultModelClassName = $this->tryToCorrectModelClassName($modelClassName);
+                $defaultModelClassName = $this->tryToCorrectClassName($modelClassName);
                 $validModelClassName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $modelClassName)) {
                 $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultModelClassName = $this->tryToCorrectModelClassName($modelClassName);
+                $defaultModelClassName = $this->tryToCorrectClassName($modelClassName);
                 $validModelClassName = false;
             } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $modelClassName) === 0) {
                 $io->error('Action must be written in UpperCamelCase like "Blog".');
-                $defaultModelClassName = $this->tryToCorrectModelClassName($modelClassName);
+                $defaultModelClassName = $this->tryToCorrectClassName($modelClassName);
                 $validModelClassName = false;
             } else {
                 $validModelClassName = true;
@@ -257,14 +259,5 @@ class ModelCommand extends Command
             ),
             default => null,
         };
-    }
-
-    private function tryToCorrectModelClassName(string $givenModelClassName): string
-    {
-        // Remove invalid chars
-        $cleanedModelClassName = preg_replace('/[^a-zA-Z0-9]/', '', $givenModelClassName);
-
-        // Upper case first char
-        return ucfirst($cleanedModelClassName);
     }
 }

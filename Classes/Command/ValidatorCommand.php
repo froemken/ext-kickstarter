@@ -17,6 +17,7 @@ use StefanFroemken\ExtKickstarter\Information\ValidatorInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ValidatorCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,6 +28,7 @@ class ValidatorCommand extends Command
 {
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
+    use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly ValidatorCreatorService $validatorCreatorService,
@@ -109,19 +111,19 @@ class ValidatorCommand extends Command
 
             if (preg_match('/^\d/', $name)) {
                 $io->error('Validator name should not start with a number.');
-                $defaultName = $this->tryToCorrectValidatorName($name);
+                $defaultName = $this->tryToCorrectClassName($name, 'Validator');
                 $validValidatorName = false;
             } elseif (preg_match('/[^a-zA-Z0-9]/', $name)) {
                 $io->error('Validator name contains invalid chars. Please provide just letters and numbers.');
-                $defaultName = $this->tryToCorrectValidatorName($name);
+                $defaultName = $this->tryToCorrectClassName($name, 'Validator');
                 $validValidatorName = false;
             } elseif (preg_match('/^[a-z0-9]+$/', $name)) {
                 $io->error('Validator must be written in UpperCamelCase like BlogExampleValidator.');
-                $defaultName = $this->tryToCorrectValidatorName($name);
+                $defaultName = $this->tryToCorrectClassName($name, 'Validator');
                 $validValidatorName = false;
             } elseif (!str_ends_with($name, 'Validator')) {
                 $io->error('Validator must end with "Validator".');
-                $defaultName = $this->tryToCorrectValidatorName($name);
+                $defaultName = $this->tryToCorrectClassName($name, 'Validator');
                 $validValidatorName = false;
             } else {
                 $validValidatorName = true;
@@ -129,25 +131,6 @@ class ValidatorCommand extends Command
         } while (!$validValidatorName);
 
         return $name;
-    }
-
-    private function tryToCorrectValidatorName(string $givenName): string
-    {
-        // Remove invalid chars
-        $cleanedName = preg_replace('/[^a-zA-Z0-9]/', '', $givenName);
-
-        // Upper case first char
-        $cleanedName = ucfirst($cleanedName);
-
-        // Remove ending "VaLIdaTOr" with wrong case
-        if (str_ends_with(strtolower($cleanedName), 'validator')) {
-            $cleanedName = substr($cleanedName, 0, -10);
-        }
-
-        // Add "Validator" with correct case
-        $cleanedName .= 'Validator';
-
-        return $cleanedName;
     }
 
     private function askForValidatorModel(SymfonyStyle $io, ExtensionInformation $extensionInformation): string
