@@ -13,6 +13,8 @@ use StefanFroemken\ExtKickstarter\Creator\Domain\Validator\ValidatorCreatorInter
 use StefanFroemken\ExtKickstarter\Creator\Event\EventCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\EventListener\EventListenerCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
+use StefanFroemken\ExtKickstarter\Creator\Module\Extbase\ExtbaseModuleCreatorInterface;
+use StefanFroemken\ExtKickstarter\Creator\Module\Native\NativeModuleCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase\ExtbasePluginCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\Native\NativePluginCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Property\TypeConverter\TypeConverterCreatorInterface;
@@ -56,6 +58,12 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
     $container
         ->registerForAutoconfiguration(NativePluginCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.plugin.native');
+    $container
+        ->registerForAutoconfiguration(ExtbaseModuleCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.module.extbase');
+    $container
+        ->registerForAutoconfiguration(NativeModuleCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.module.native');
     $container
         ->registerForAutoconfiguration(TypeConverterCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.property.type-converter');
