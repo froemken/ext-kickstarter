@@ -319,10 +319,12 @@ readonly class ExtensionInformation
         $sets = [];
 
         foreach (scandir($setPath) as $entry) {
-            if ($entry === '.' || $entry === '..') {
+            if ($entry === '.') {
                 continue;
             }
-
+            if ($entry === '..') {
+                continue;
+            }
             $fullDirPath = $setPath . DIRECTORY_SEPARATOR . $entry;
             $configFilePath = $fullDirPath . DIRECTORY_SEPARATOR . 'config.yaml';
 
