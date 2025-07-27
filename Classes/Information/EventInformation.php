@@ -18,6 +18,7 @@ readonly class EventInformation
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private string $eventClassName,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -48,5 +49,10 @@ readonly class EventInformation
     public function getNamespace(): string
     {
         return $this->extensionInformation->getNamespacePrefix() . 'Event';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

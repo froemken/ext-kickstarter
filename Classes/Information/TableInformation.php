@@ -21,6 +21,7 @@ readonly class TableInformation
         private string $title,
         private string $label,
         private array $columns,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -56,5 +57,10 @@ readonly class TableInformation
     public function getFullTableConfigurationFilePath(): string
     {
         return $this->getTableConfigurationPath() . $this->getTableName() . '.php';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

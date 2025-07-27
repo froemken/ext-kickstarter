@@ -11,19 +11,25 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Extension;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ExtIconCreator implements ExtensionCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(ExtensionInformation $extensionInformation): void
     {
         $extIconPath = $extensionInformation->getExtensionPath() . 'Resources/Public/Icons/';
         GeneralUtility::mkdir_deep($extIconPath);
 
-        file_put_contents(
+        $this->fileManager->createOrModifyFile(
             $extIconPath . 'Extension.svg',
             $this->getTemplate(),
+            $extensionInformation->getCreatorInformation()
         );
     }
 

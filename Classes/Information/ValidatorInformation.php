@@ -13,6 +13,7 @@ readonly class ValidatorInformation
         private string $validatorName,
         private ValidatorType $validatorType,
         private ?string $modelName = null,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -58,5 +59,10 @@ readonly class ValidatorInformation
     public function getNamespace(): string
     {
         return $this->extensionInformation->getNamespacePrefix() . 'Domain\\Validator';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

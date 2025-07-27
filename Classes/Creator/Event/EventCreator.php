@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Event;
 
 use PhpParser\BuilderFactory;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\EventInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -29,8 +30,10 @@ class EventCreator implements EventCreatorInterface
 
     private BuilderFactory $builderFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
     }
@@ -42,10 +45,18 @@ class EventCreator implements EventCreatorInterface
         $eventFilePath = $eventInformation->getEventFilePath();
         $fileStructure = $this->buildFileStructure($eventFilePath);
 
-        if (!is_file($eventFilePath)) {
-            $this->addClassNodes($fileStructure, $eventInformation);
-            file_put_contents($eventFilePath, $fileStructure->getFileContents());
+        if (is_file($eventFilePath)) {
+            $eventInformation->getCreatorInformation()->fileExists(
+                $eventFilePath,
+                sprintf(
+                    'Events can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    $eventInformation->getEventFilename()
+                )
+            );
+            return;
         }
+        $this->addClassNodes($fileStructure, $eventInformation);
+        $this->fileManager->createFile($eventFilePath, $fileStructure->getFileContents(), $eventInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, EventInformation $eventInformation): void

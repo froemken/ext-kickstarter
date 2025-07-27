@@ -18,6 +18,7 @@ use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeFinder;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
@@ -36,8 +37,10 @@ class RegisterPluginIconIdentifierCreator implements ExtbasePluginCreatorInterfa
 
     private NodeFactory $nodeFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->builderFactory = new BuilderFactory();
         $this->nodeFactory = $nodeFactory;
     }
@@ -64,7 +67,7 @@ class RegisterPluginIconIdentifierCreator implements ExtbasePluginCreatorInterfa
             }
         }
 
-        file_put_contents($targetFile, $fileStructure->getFileContents());
+        $this->fileManager->createOrModifyFile($targetFile, $fileStructure->getFileContents(), $pluginInformation->getCreatorInformation());
     }
 
     private function getNewPluginIcons(Array_ $existingIcons, PluginInformation $pluginInformation): Array_

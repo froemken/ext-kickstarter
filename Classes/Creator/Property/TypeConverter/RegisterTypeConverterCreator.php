@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Property\TypeConverter;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TypeConverterInformation;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
@@ -19,6 +20,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RegisterTypeConverterCreator implements TypeConverterCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(TypeConverterInformation $typeConverterInformation): void
     {
         $configurationPath = $typeConverterInformation->getExtensionInformation()->getExtensionPath() . 'Configuration/';
@@ -31,14 +36,21 @@ class RegisterTypeConverterCreator implements TypeConverterCreatorInterface
             $servicesYamlData = $this->addTypeConverterRegistration($servicesYamlData, $typeConverterInformation);
         }
 
-        file_put_contents(
+        $fileContent = Yaml::dump(
+            $servicesYamlData,
+            99,
+            2,
+            Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_OBJECT_AS_MAP
+        );
+        if (is_file($servicesYamlPath)) {
+            $this->fileManager->modifyFile($servicesYamlPath, $fileContent, $typeConverterInformation->getCreatorInformation());
+            return;
+        }
+
+        $this->fileManager->createFile(
             $servicesYamlPath,
-            Yaml::dump(
-                $servicesYamlData,
-                99,
-                2,
-                Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_OBJECT_AS_MAP
-            )
+            $fileContent,
+            $typeConverterInformation->getCreatorInformation()
         );
     }
 

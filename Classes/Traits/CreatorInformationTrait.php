@@ -10,7 +10,7 @@ trait CreatorInformationTrait
 {
     private function printCreatorInformation(CreatorInformation $creatorInformation, SymfonyStyle $io): void
     {
-        foreach ($creatorInformation->fileModifications as $fileModification) {
+        foreach ($creatorInformation->getFileModifications() as $fileModification) {
             switch ($fileModification->getFileModificationType()) {
                 case FileModificationType::CREATED:
                     $io->success('File ' . $fileModification->getPath() . ' was created. ');

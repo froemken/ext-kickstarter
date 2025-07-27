@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
@@ -28,6 +29,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 class ModelCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
 
@@ -68,7 +70,9 @@ class ModelCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->modelCreatorService->create($this->askForModelInformation($io, $input));
+        $modelInformation = $this->askForModelInformation($io, $input);
+        $this->modelCreatorService->create($modelInformation);
+        $this->printCreatorInformation($modelInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

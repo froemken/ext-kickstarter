@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -19,14 +20,30 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class PluginIconCreator implements ExtbasePluginCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(PluginInformation $pluginInformation): void
     {
         $pluginIconPath = $pluginInformation->getExtensionInformation()->getExtensionPath() . 'Resources/Public/Icons/';
         GeneralUtility::mkdir_deep($pluginIconPath);
+        $pluginIconFilePath = $pluginIconPath . 'Plugin.svg';
 
-        file_put_contents(
-            $pluginIconPath . 'Plugin.svg',
+        if (is_file($pluginIconFilePath)) {
+            $pluginInformation->getCreatorInformation()->fileExists(
+                $pluginIconPath,
+                sprintf(
+                    'The file %s already exists and will not be overridden. ',
+                    $pluginIconFilePath
+                )
+            );
+            return;
+        }
+        $this->fileManager->createFile(
+            $pluginIconFilePath,
             $this->getTemplate(),
+            $pluginInformation->getCreatorInformation()
         );
     }
 

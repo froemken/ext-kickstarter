@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Command;
 use StefanFroemken\ExtKickstarter\Information\RepositoryInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class RepositoryCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
 
@@ -54,7 +56,9 @@ class RepositoryCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->repositoryCreatorService->create($this->askForRepositoryInformation($io, $input));
+        $repositoryInformation = $this->askForRepositoryInformation($io, $input);
+        $this->repositoryCreatorService->create($repositoryInformation);
+        $this->printCreatorInformation($repositoryInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

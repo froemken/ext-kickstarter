@@ -22,6 +22,7 @@ readonly class ExtTablesSqlInformation
         private ?int $length = null,
         private ?int $precision = null,
         private ?int $scale = null,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     private function getQuotedColumnName(): string
@@ -67,5 +68,10 @@ readonly class ExtTablesSqlInformation
         }
 
         return $definitionSql . ',';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

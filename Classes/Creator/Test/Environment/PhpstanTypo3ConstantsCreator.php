@@ -11,22 +11,32 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Test\Environment;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TestEnvInformation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PhpstanTypo3ConstantsCreator implements TestEnvCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(TestEnvInformation $testEnvInformation): void
     {
         $phpstanPath = $testEnvInformation->getBuildPath() . 'phpstan/';
         GeneralUtility::mkdir_deep($phpstanPath);
-
-        if (!is_file($phpstanPath . 'phpstan-typo3-constants.php')) {
-            file_put_contents(
-                $phpstanPath . 'phpstan-typo3-constants.php',
-                $this->getTemplate(),
+        $targetFile = $phpstanPath . 'phpstan-typo3-constants.php';
+        if (!is_file($targetFile)) {
+            $testEnvInformation->getCreatorInformation()->fileExists(
+                $targetFile
             );
+            return;
         }
+        $this->fileManager->createFile(
+            $targetFile,
+            $this->getTemplate(),
+            $testEnvInformation->getCreatorInformation(),
+        );
     }
 
     private function getTemplate(): string

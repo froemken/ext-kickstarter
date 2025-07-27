@@ -20,6 +20,7 @@ readonly class EventListenerInformation
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private string $eventListenerClassName,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -61,5 +62,10 @@ readonly class EventListenerInformation
     public function getNamespace(): string
     {
         return $this->extensionInformation->getNamespacePrefix() . 'EventListener';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

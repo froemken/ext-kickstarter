@@ -17,6 +17,7 @@ readonly class TestEnvInformation
 
     public function __construct(
         private ExtensionInformation $extensionInformation,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -27,5 +28,10 @@ readonly class TestEnvInformation
     public function getBuildPath(): string
     {
         return $this->extensionInformation->getExtensionPath() . self::BUILD_PATH;
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

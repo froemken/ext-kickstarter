@@ -11,22 +11,32 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Test\Environment;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TestEnvInformation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PhpCsFixerConfigCreator implements TestEnvCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(TestEnvInformation $testEnvInformation): void
     {
         $cglPath = $testEnvInformation->getBuildPath() . 'cgl/';
         GeneralUtility::mkdir_deep($cglPath);
-
-        if (!is_file($cglPath . '.php-cs-fixer.dist.php')) {
-            file_put_contents(
-                $cglPath . '.php-cs-fixer.dist.php',
-                $this->getTemplate(),
+        $targetFile = $cglPath . '.php-cs-fixer.dist.php';
+        if (is_file($targetFile)) {
+            $testEnvInformation->getCreatorInformation()->fileExists(
+                $targetFile
             );
+            return;
         }
+        $this->fileManager->createFile(
+            $targetFile,
+            $this->getTemplate(),
+            $testEnvInformation->getCreatorInformation(),
+        );
     }
 
     private function getTemplate(): string

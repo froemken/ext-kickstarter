@@ -11,18 +11,30 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Test\Environment;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TestEnvInformation;
 
 class ComposerJsonCreator implements TestEnvCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(TestEnvInformation $testEnvInformation): void
     {
         $composerJsonFilepath = $testEnvInformation->getExtensionInformation()->getExtensionPath() . 'composer.json';
         $composerConfig = json_decode(file_get_contents($composerJsonFilepath), true);
 
-        file_put_contents(
+        if (is_file($composerJsonFilepath)) {
+            $testEnvInformation->getCreatorInformation()->fileExists(
+                $composerJsonFilepath
+            );
+            return;
+        }
+        $this->fileManager->createFile(
             $composerJsonFilepath,
             $this->updateComposerJson($composerConfig),
+            $testEnvInformation->getCreatorInformation(),
         );
     }
 

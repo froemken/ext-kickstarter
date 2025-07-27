@@ -21,6 +21,7 @@ readonly class CommandInformation
         private string $name,
         private string $description,
         private array $aliases,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -66,5 +67,10 @@ readonly class CommandInformation
     public function getNamespace(): string
     {
         return $this->extensionInformation->getNamespacePrefix() . 'Command';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

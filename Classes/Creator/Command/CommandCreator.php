@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Creator\Command;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Stmt\Return_;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\CommandInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -32,8 +33,10 @@ class CommandCreator implements CommandCreatorInterface
 
     private BuilderFactory $builderFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
     }
@@ -45,10 +48,18 @@ class CommandCreator implements CommandCreatorInterface
         $commandFilePath = $commandInformation->getCommandFilePath();
         $fileStructure = $this->buildFileStructure($commandFilePath);
 
-        if (!is_file($commandFilePath)) {
-            $this->addClassNodes($fileStructure, $commandInformation);
-            file_put_contents($commandFilePath, $fileStructure->getFileContents());
+        if (is_file($commandFilePath)) {
+            $commandInformation->getCreatorInformation()->fileExists(
+                $commandFilePath,
+                sprintf(
+                    'Commands can only be  created, not modified. The file %s already exists and cannot be overridden. ',
+                    $commandInformation->getCommandClassName()
+                )
+            );
+            return;
         }
+        $this->addClassNodes($fileStructure, $commandInformation);
+        $this->fileManager->createFile($commandFilePath, $fileStructure->getFileContents(), $commandInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, CommandInformation $commandInformation): void

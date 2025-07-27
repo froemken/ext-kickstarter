@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use Symfony\Component\Console\Command\Command;
@@ -27,6 +28,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class PluginCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use FileStructureBuilderTrait;
 
@@ -56,7 +58,9 @@ class PluginCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->pluginCreatorService->create($this->askForPluginInformation($io, $input));
+        $pluginInformation = $this->askForPluginInformation($io, $input);
+        $this->pluginCreatorService->create($pluginInformation);
+        $this->printCreatorInformation($pluginInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

@@ -17,6 +17,7 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Return_;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TableInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ReturnStructure;
@@ -31,8 +32,9 @@ class TcaTableCreator implements TcaTableCreatorInterface
 
     private BuilderFactory $factory;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {
         $this->factory = new BuilderFactory();
     }
 
@@ -57,7 +59,7 @@ class TcaTableCreator implements TcaTableCreatorInterface
             $this->addNewTcaTypeItems($typesItem->value->items, $tableInformation);
         }
 
-        file_put_contents($tableFile, $fileStructure->getFileContents());
+        $this->fileManager->createOrModifyFile($tableFile, $fileStructure->getFileContents(), $tableInformation->getCreatorInformation());
     }
 
     private function getExistingTcaSection(FileStructure $fileStructure, string $section): ?ArrayItem
@@ -127,7 +129,7 @@ class TcaTableCreator implements TcaTableCreatorInterface
 
         // Collect fields to add
         $newFields = [];
-        foreach ($tableInformation->getColumns() as $columnName => $columnConfiguration) {
+        foreach (array_keys($tableInformation->getColumns()) as $columnName) {
             if (!in_array($columnName, $existingFieldNames, true)) {
                 $newFields[] = $columnName;
             }
@@ -148,7 +150,8 @@ class TcaTableCreator implements TcaTableCreatorInterface
         $tabs = preg_split('/(\s*--div--;[^,]+,\s*)/', $showItemsString, -1, PREG_SPLIT_DELIM_CAPTURE);
 
         $inserted = false;
-        for ($i = 0; $i < count($tabs); $i++) {
+        $counter = count($tabs);
+        for ($i = 0; $i < $counter; $i++) {
             if (!$inserted && str_starts_with(trim($tabs[$i]), '--div--')   && isset($tabs[$i + 1])) {
                 $existingFields = GeneralUtility::trimExplode(',', $tabs[$i + 1], true);
 
@@ -187,8 +190,8 @@ class TcaTableCreator implements TcaTableCreatorInterface
                 new Return_(
                     new Array_([
                         new ArrayItem($this->getCtrlArrayItems($tableInformation), new String_('ctrl')),
-                        new ArrayItem($this->getTypesArrayItems($tableInformation), new String_('types')),
-                        new ArrayItem($this->getPalettesArrayItems($tableInformation), new String_('palettes')),
+                        new ArrayItem($this->getTypesArrayItems(), new String_('types')),
+                        new ArrayItem($this->getPalettesArrayItems(), new String_('palettes')),
                         new ArrayItem($this->getColumnsArrayItems($tableInformation), new String_('columns')),
                     ])
                 )
@@ -217,7 +220,7 @@ class TcaTableCreator implements TcaTableCreatorInterface
         ]);
     }
 
-    private function getTypesArrayItems(TableInformation $tableInformation): Expr
+    private function getTypesArrayItems(): Expr
     {
         return $this->factory->val([
             '0' => [
@@ -234,7 +237,7 @@ class TcaTableCreator implements TcaTableCreatorInterface
         ]);
     }
 
-    private function getPalettesArrayItems(TableInformation $tableInformation): Expr
+    private function getPalettesArrayItems(): Expr
     {
         return $this->factory->val([
             'access' => [

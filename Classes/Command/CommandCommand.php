@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Command;
 use StefanFroemken\ExtKickstarter\Information\CommandInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\CommandCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CommandCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
 
@@ -54,7 +56,9 @@ class CommandCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->commandCreatorService->create($this->askForCommandInformation($io, $input));
+        $commandInformation = $this->askForCommandInformation($io, $input);
+        $this->commandCreatorService->create($commandInformation);
+        $this->printCreatorInformation($commandInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

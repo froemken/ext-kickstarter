@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Command;
 use StefanFroemken\ExtKickstarter\Information\UpgradeWizardInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\UpgradeWizardCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class UpgradeWizardCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
 
@@ -54,7 +56,9 @@ class UpgradeWizardCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->upgradeWizardCreatorService->create($this->askForUpgradeWizardInformation($io, $input));
+        $upgradeWizardInformation = $this->askForUpgradeWizardInformation($io, $input);
+        $this->upgradeWizardCreatorService->create($upgradeWizardInformation);
+        $this->printCreatorInformation($upgradeWizardInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

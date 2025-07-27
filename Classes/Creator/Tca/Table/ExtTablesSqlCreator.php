@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Tca\Table;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TableInformation;
 use StefanFroemken\ExtKickstarter\Service\TcaSchemaService;
 
@@ -18,8 +19,10 @@ class ExtTablesSqlCreator implements TcaTableCreatorInterface
 {
     private TcaSchemaService $tcaSchemaService;
 
-    public function __construct(TcaSchemaService $tcaSchemaService)
-    {
+    public function __construct(
+        TcaSchemaService $tcaSchemaService,
+        private readonly FileManager $fileManager,
+    ) {
         $this->tcaSchemaService = $tcaSchemaService;
     }
 
@@ -76,7 +79,13 @@ class ExtTablesSqlCreator implements TcaTableCreatorInterface
             $updatedLines[] = $extTablesSqlLine;
         }
 
-        file_put_contents($targetFile, implode("\n", $updatedLines));
+        $fileContent = implode("\n", $updatedLines);
+        if (is_file($targetFile)) {
+            $this->fileManager->modifyFile($targetFile, $fileContent, $tableInformation->getCreatorInformation());
+            return;
+        }
+
+        $this->fileManager->createFile($targetFile, $fileContent, $tableInformation->getCreatorInformation());
     }
 
     private function addTableHeaderIfNotExists(string $tableName, array &$extTablesSqlLines): void

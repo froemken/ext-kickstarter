@@ -18,6 +18,7 @@ readonly class RepositoryInformation
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private string $repositoryClassName,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -48,5 +49,10 @@ readonly class RepositoryInformation
     public function getNamespace(): string
     {
         return $this->extensionInformation->getNamespacePrefix() . 'Domain\\Repository';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

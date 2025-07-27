@@ -28,8 +28,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ControllerCommand extends Command
 {
     use AskForExtensionKeyTrait;
-    use ExtensionInformationTrait;
     use CreatorInformationTrait;
+    use ExtensionInformationTrait;
     use FileStructureBuilderTrait;
     use TryToCorrectClassNameTrait;
 

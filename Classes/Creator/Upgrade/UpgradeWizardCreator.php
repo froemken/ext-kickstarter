@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Creator\Upgrade;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Stmt\Return_;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\UpgradeWizardInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -32,8 +33,10 @@ class UpgradeWizardCreator implements UpgradeWizardCreatorInterface
 
     private BuilderFactory $builderFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
     }
@@ -45,10 +48,18 @@ class UpgradeWizardCreator implements UpgradeWizardCreatorInterface
         $upgradeWizardFilePath = $upgradeWizardInformation->getUpgradeWizardFilePath();
         $fileStructure = $this->buildFileStructure($upgradeWizardFilePath);
 
-        if (!is_file($upgradeWizardFilePath)) {
-            $this->addClassNodes($fileStructure, $upgradeWizardInformation);
-            file_put_contents($upgradeWizardFilePath, $fileStructure->getFileContents());
+        if (is_file($upgradeWizardFilePath)) {
+            $upgradeWizardInformation->getCreatorInformation()->fileExists(
+                $upgradeWizardFilePath,
+                sprintf(
+                    'Events can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    $upgradeWizardInformation->getUpgradeWizardFilename()
+                )
+            );
+            return;
         }
+        $this->addClassNodes($fileStructure, $upgradeWizardInformation);
+        $this->fileManager->createFile($upgradeWizardFilePath, $fileStructure->getFileContents(), $upgradeWizardInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, UpgradeWizardInformation $upgradeWizardInformation): void

@@ -11,15 +11,21 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Extension;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 
 class ComposerJsonCreator implements ExtensionCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(ExtensionInformation $extensionInformation): void
     {
-        file_put_contents(
+        $this->fileManager->createOrModifyFile(
             $extensionInformation->getExtensionPath() . 'composer.json',
             $this->getFileContent($extensionInformation),
+            $extensionInformation->getCreatorInformation()
         );
     }
 

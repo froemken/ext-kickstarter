@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,6 +31,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ExtensionCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
 
     public function __construct(
@@ -71,6 +73,8 @@ class ExtensionCommand extends Command
 
         $io->success(sprintf('The extension was saved to path %s', $path));
         $this->printInstallationInstructions($io, $path, $extensionInformation);
+
+        $this->printCreatorInformation($extensionInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
