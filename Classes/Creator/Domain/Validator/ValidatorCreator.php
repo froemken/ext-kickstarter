@@ -60,7 +60,7 @@ class ValidatorCreator implements ValidatorCreatorInterface
             $validatorInformation->getCreatorInformation()->fileExists(
                 $validatorFilePath,
                 sprintf(
-                    'Models can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    'Validators can only be created, not modified. The file %s already exists and cannot be overridden. ',
                     $validatorInformation->getValidatorFilename()
                 )
             );

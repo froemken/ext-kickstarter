@@ -52,7 +52,7 @@ class UpgradeWizardCreator implements UpgradeWizardCreatorInterface
             $upgradeWizardInformation->getCreatorInformation()->fileExists(
                 $upgradeWizardFilePath,
                 sprintf(
-                    'Events can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    'UpgradeWizards can only be created, not modified. The file %s already exists and cannot be overridden. ',
                     $upgradeWizardInformation->getUpgradeWizardFilename()
                 )
             );

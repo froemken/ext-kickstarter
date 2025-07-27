@@ -51,7 +51,7 @@ class EventListenerCreator implements EventListenerCreatorInterface
             $eventListenerInformation->getCreatorInformation()->fileExists(
                 $eventListenerFilePath,
                 sprintf(
-                    'Events can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    'EventListeners can only be created, not modified. The file %s already exists and cannot be overridden. ',
                     $eventListenerInformation->getEventListenerFilename()
                 )
             );
