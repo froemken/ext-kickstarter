@@ -11,9 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 
-use PhpParser\BuilderFactory;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
-use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -23,16 +21,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ExtbaseTypoScriptPluginCreator implements ExtbasePluginCreatorInterface
 {
     use FileStructureBuilderTrait;
-
-    private BuilderFactory $builderFactory;
-
-    private NodeFactory $nodeFactory;
-
-    public function __construct(NodeFactory $nodeFactory)
-    {
-        $this->builderFactory = new BuilderFactory();
-        $this->nodeFactory = $nodeFactory;
-    }
 
     public function create(PluginInformation $pluginInformation): void
     {

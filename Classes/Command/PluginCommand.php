@@ -83,7 +83,7 @@ class PluginCommand extends Command
 
         $referencedControllerActions = [];
         $isTypoScriptCreation = false;
-        $set = null;
+        $typoScriptSet = null;
         $isExtbasePlugin = $io->confirm('Do you prefer to create an extbase based plugin?');
         $templatePath = '';
         if ($isExtbasePlugin) {
@@ -106,10 +106,9 @@ class PluginCommand extends Command
                 $setOptions = array_merge([$extensionInformation->getDefaultTypoScriptPath()], $extensionInformation->getSets());
 
                 // Ask user to choose one (no default)
-                $set = $io->choice(
-                    'To which set do you want to add the TypoScript?',
+                $typoScriptSet = $io->choice(
+                    'To which set (site set or default path) do you want to add the TypoScript?',
                     $setOptions,
-                    null // ← No default choice
                 );
 
                 $templatePath = $io->ask(
@@ -127,7 +126,7 @@ class PluginCommand extends Command
             $pluginDescription,
             $referencedControllerActions,
             $isTypoScriptCreation,
-            $set,
+            $typoScriptSet,
             $templatePath,
         );
     }

@@ -30,7 +30,7 @@ readonly class ExtensionInformation
         'l10n_diffsource',
     ];
 
-    private const SET_PATH = 'Configuration/Sets/';
+    private const SITE_SET_PATH = 'Configuration/Sets/';
 
     private const TCA_PATH = 'Configuration/TCA/';
 
@@ -153,7 +153,7 @@ readonly class ExtensionInformation
 
     public function getSetPath(): string
     {
-        return $this->getExtensionPath() . self::SET_PATH;
+        return $this->getExtensionPath() . self::SITE_SET_PATH;
     }
 
     public function getDefaultTypoScriptPath(): string
