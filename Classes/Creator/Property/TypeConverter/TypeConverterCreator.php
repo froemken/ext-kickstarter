@@ -51,7 +51,7 @@ class TypeConverterCreator implements TypeConverterCreatorInterface
             $typeConverterInformation->getCreatorInformation()->fileExists(
                 $typeConverterFilePath,
                 sprintf(
-                    'Type converters can only be  created, not modified. The file %s already exists and cannot be overridden. ',
+                    'Type converters can only be created, not modified. The file %s already exists and cannot be overridden. ',
                     $typeConverterInformation->getTypeConverterFilename()
                 )
             );
