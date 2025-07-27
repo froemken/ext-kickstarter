@@ -17,7 +17,7 @@ use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
-use StefanFroemken\ExtKickstarter\Traits\FileModificationInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,7 +30,7 @@ class ControllerCommand extends Command
     use AskForExtensionKeyTrait;
     use ExtensionInformationTrait;
     use CreatorInformationTrait;
-    use FileModificationInformationTrait;
+    use FileStructureBuilderTrait;
     use TryToCorrectClassNameTrait;
 
     public function __construct(
