@@ -11,21 +11,21 @@ trait CreatorInformationTrait
     private function printCreatorInformation(CreatorInformation $creatorInformation, SymfonyStyle $io): void
     {
         foreach ($creatorInformation->fileModifications as $fileModification) {
-            switch ($fileModification->fileModificationType) {
+            switch ($fileModification->getFileModificationType()) {
                 case FileModificationType::CREATED:
-                    $io->success('File ' . $fileModification->path . ' was created. ');
+                    $io->success('File ' . $fileModification->getPath() . ' was created. ');
                     break;
                 case FileModificationType::MODIFIED:
-                    $io->success('File ' . $fileModification->path . ' was modified. ');
+                    $io->success('File ' . $fileModification->getPath() . ' was modified. ');
                     break;
                 case FileModificationType::CREATION_FAILED:
-                    $io->warning('File ' . $fileModification->path . ' could not be created: ' . $fileModification->message);
+                    $io->warning('File ' . $fileModification->getPath() . ' could not be created: ' . $fileModification->getMessage());
                     break;
                 case FileModificationType::MODIFICATION_FAILED:
-                    $io->warning('File ' . $fileModification->path . ' could not be modified: ' . $fileModification->message);
+                    $io->warning('File ' . $fileModification->getPath() . ' could not be modified: ' . $fileModification->getMessage());
                     break;
                 default:
-                    $io->warning('Something went wrong: ' . $fileModification->message);
+                    $io->warning('Something went wrong: ' . $fileModification->getMessage());
             }
         }
     }
