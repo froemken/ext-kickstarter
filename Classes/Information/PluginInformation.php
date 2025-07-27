@@ -22,6 +22,9 @@ readonly class PluginInformation
         private string $pluginName,
         private string $pluginDescription,
         private array $referencedControllerActions,
+        private bool $typoScriptCreation = false,
+        private string $set = '',
+        private string $templatePath = '',
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -104,5 +107,32 @@ readonly class PluginInformation
             str_replace('_', '', $this->extensionInformation->getExtensionKey()),
             strtolower($this->pluginName),
         );
+    }
+
+    /**
+     * Needed for core native plugins
+     */
+    public function getTypoScriptPluginNamespace(): string
+    {
+        return sprintf(
+            'tx_%s_%s',
+            str_replace('_', '', $this->extensionInformation->getExtensionKey()),
+            strtolower($this->pluginName),
+        );
+    }
+
+    public function isTypoScriptCreation(): bool
+    {
+        return $this->typoScriptCreation;
+    }
+
+    public function getSet(): string
+    {
+        return $this->set;
+    }
+
+    public function getTemplatePath(): string
+    {
+        return $this->templatePath;
     }
 }

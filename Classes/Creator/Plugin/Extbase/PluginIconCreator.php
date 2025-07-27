@@ -14,6 +14,9 @@ namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Creates an icon for the plugin
+ */
 class PluginIconCreator implements ExtbasePluginCreatorInterface
 {
     public function create(PluginInformation $pluginInformation): void

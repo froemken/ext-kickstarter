@@ -25,6 +25,9 @@ use StefanFroemken\ExtKickstarter\PhpParser\Structure\ReturnStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 
+/**
+ * Registers the plugin icon into Icons.php
+ */
 class RegisterPluginIconIdentifierCreator implements ExtbasePluginCreatorInterface
 {
     use FileStructureBuilderTrait;
