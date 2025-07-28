@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Command;
 use StefanFroemken\ExtKickstarter\Information\TypeConverterInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\TypeConverterCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class TypeConverterCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
 
@@ -54,7 +56,9 @@ class TypeConverterCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->typeConverterCreatorService->create($this->askForTypeConverterInformation($io, $input));
+        $typeConverterInformation = $this->askForTypeConverterInformation($io, $input);
+        $this->typeConverterCreatorService->create($typeConverterInformation);
+        $this->printCreatorInformation($typeConverterInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

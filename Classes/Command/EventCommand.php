@@ -14,6 +14,7 @@ namespace StefanFroemken\ExtKickstarter\Command;
 use StefanFroemken\ExtKickstarter\Information\EventInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
@@ -25,6 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class EventCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
 
@@ -54,7 +56,9 @@ class EventCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->eventCreatorService->create($this->askForEventInformation($io, $input));
+        $eventInformation = $this->askForEventInformation($io, $input);
+        $this->eventCreatorService->create($eventInformation);
+        $this->printCreatorInformation($eventInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

@@ -1,0 +1,57 @@
+<?php
+
+namespace StefanFroemken\ExtKickstarter\Information;
+
+use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
+
+class CreatorInformation
+{
+    /**
+     * @param FileModificationInformation[] $fileModifications
+     */
+    public function __construct(
+        private array $fileModifications = [],
+    ) {}
+
+    public function getFileModifications(): array
+    {
+        return $this->fileModifications;
+    }
+
+    public function fileAdded(string $path): void
+    {
+        $this->fileModifications[] = new FileModificationInformation($path, FileModificationType::CREATED);
+    }
+
+    public function fileModified(string $path): void
+    {
+        $this->fileModifications[] = new FileModificationInformation($path, FileModificationType::MODIFIED);
+    }
+
+    public function writingFileFailed(string $path, ?string $message = null): void
+    {
+        $this->fileModifications[] = new FileModificationInformation(
+            $path,
+            FileModificationType::ABORTED,
+            $message ?? 'The file cannot be written. Check file permissions etc. '
+        );
+    }
+
+    public function fileExists(string $path, ?string $message = null): void
+    {
+        $this->fileModifications[] = new FileModificationInformation(
+            $path,
+            FileModificationType::CREATION_FAILED,
+            $message ?? 'The file cannot be modified. '
+        );
+    }
+
+    public function fileModificationFailed(string $path, ?string $message = null): void
+    {
+        $this->fileModifications[] = new FileModificationInformation(
+            $path,
+            FileModificationType::CREATION_FAILED,
+            $message ?? 'The file cannot be modified. '
+        );
+    }
+}

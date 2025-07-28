@@ -12,9 +12,12 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,7 +28,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ControllerCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
+    use FileStructureBuilderTrait;
     use TryToCorrectClassNameTrait;
 
     public function __construct(
@@ -54,7 +59,9 @@ class ControllerCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->controllerCreatorService->create($this->askForControllerInformation($io, $input));
+        $controllerInformation = $this->askForControllerInformation($io, $input);
+        $this->controllerCreatorService->create($controllerInformation);
+        $this->printCreatorInformation($controllerInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
@@ -71,6 +78,7 @@ class ControllerCommand extends Command
             $io->confirm('Do you prefer to create an extbase based controller?'),
             $this->askForControllerName($io),
             $this->askForActionMethodNames($io),
+            new CreatorInformation(),
         );
     }
 

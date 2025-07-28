@@ -20,6 +20,7 @@ use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Enums\ValidatorType;
 use StefanFroemken\ExtKickstarter\Information\ValidatorInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
@@ -40,8 +41,10 @@ class ValidatorCreator implements ValidatorCreatorInterface
 
     private BuilderFactory $builderFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
     }
@@ -53,10 +56,18 @@ class ValidatorCreator implements ValidatorCreatorInterface
         $validatorFilePath = $validatorInformation->getValidatorFilePath();
         $fileStructure = $this->buildFileStructure($validatorFilePath);
 
-        if (!is_file($validatorFilePath)) {
-            $this->addClassNodes($fileStructure, $validatorInformation);
-            file_put_contents($validatorFilePath, $fileStructure->getFileContents());
+        if (is_file($validatorFilePath)) {
+            $validatorInformation->getCreatorInformation()->fileExists(
+                $validatorFilePath,
+                sprintf(
+                    'Validators can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    $validatorInformation->getValidatorFilename()
+                )
+            );
+            return;
         }
+        $this->addClassNodes($fileStructure, $validatorInformation);
+        $this->fileManager->createFile($validatorFilePath, $fileStructure->getFileContents(), $validatorInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, ValidatorInformation $validatorInformation): void

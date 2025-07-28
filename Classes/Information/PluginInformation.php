@@ -22,6 +22,7 @@ readonly class PluginInformation
         private string $pluginName,
         private string $pluginDescription,
         private array $referencedControllerActions,
+        private CreatorInformation $creatorInformation = new CreatorInformation(),
         private bool $typoScriptCreation = false,
         private string $set = '',
         private string $templatePath = '',
@@ -107,6 +108,11 @@ readonly class PluginInformation
             str_replace('_', '', $this->extensionInformation->getExtensionKey()),
             strtolower($this->pluginName),
         );
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 
     /**

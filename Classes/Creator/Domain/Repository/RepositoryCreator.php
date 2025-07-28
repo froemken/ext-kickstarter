@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Domain\Repository;
 
 use PhpParser\BuilderFactory;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\RepositoryInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -30,8 +31,10 @@ class RepositoryCreator implements RepositoryCreatorInterface
 
     private BuilderFactory $builderFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
     }
@@ -43,10 +46,18 @@ class RepositoryCreator implements RepositoryCreatorInterface
         $repositoryFilePath = $repositoryInformation->getRepositoryFilePath();
         $fileStructure = $this->buildFileStructure($repositoryFilePath);
 
-        if (!is_file($repositoryFilePath)) {
-            $this->addClassNodes($fileStructure, $repositoryInformation);
-            file_put_contents($repositoryFilePath, $fileStructure->getFileContents());
+        if (is_file($repositoryFilePath)) {
+            $repositoryInformation->getCreatorInformation()->fileExists(
+                $repositoryFilePath,
+                sprintf(
+                    'Repositories can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    $repositoryInformation->getRepositoryFilename()
+                )
+            );
+            return;
         }
+        $this->addClassNodes($fileStructure, $repositoryInformation);
+        $this->fileManager->createFile($repositoryFilePath, $fileStructure->getFileContents(), $repositoryInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, RepositoryInformation $repositoryInformation): void

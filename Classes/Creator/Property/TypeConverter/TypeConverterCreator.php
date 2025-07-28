@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\Property\TypeConverter;
 
 use PhpParser\BuilderFactory;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TypeConverterInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -31,8 +32,10 @@ class TypeConverterCreator implements TypeConverterCreatorInterface
 
     private BuilderFactory $builderFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
     }
@@ -44,10 +47,18 @@ class TypeConverterCreator implements TypeConverterCreatorInterface
         $typeConverterFilePath = $typeConverterInformation->getTypeConverterFilePath();
         $fileStructure = $this->buildFileStructure($typeConverterFilePath);
 
-        if (!is_file($typeConverterFilePath)) {
-            $this->addClassNodes($fileStructure, $typeConverterInformation);
-            file_put_contents($typeConverterFilePath, $fileStructure->getFileContents());
+        if (is_file($typeConverterFilePath)) {
+            $typeConverterInformation->getCreatorInformation()->fileExists(
+                $typeConverterFilePath,
+                sprintf(
+                    'Type converters can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    $typeConverterInformation->getTypeConverterFilename()
+                )
+            );
+            return;
         }
+        $this->addClassNodes($fileStructure, $typeConverterInformation);
+        $this->fileManager->createFile($typeConverterFilePath, $fileStructure->getFileContents(), $typeConverterInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, TypeConverterInformation $typeConverterInformation): void

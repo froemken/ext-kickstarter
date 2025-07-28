@@ -21,6 +21,7 @@ readonly class TypeConverterInformation
         private int $priority,
         private string $source,
         private string $target,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -66,5 +67,10 @@ readonly class TypeConverterInformation
     public function getNamespace(): string
     {
         return $this->extensionInformation->getNamespacePrefix() . 'Property\\TypeConverter';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

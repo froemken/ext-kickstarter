@@ -20,6 +20,7 @@ readonly class ControllerInformation
         private bool $isExtbaseController,
         private string $controllerName,
         private array $actionMethodNames,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -60,5 +61,10 @@ readonly class ControllerInformation
     public function getActionMethodNames(): array
     {
         return $this->actionMethodNames;
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

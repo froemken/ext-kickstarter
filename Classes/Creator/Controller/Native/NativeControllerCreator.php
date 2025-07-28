@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Controller\Native;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -28,8 +29,10 @@ class NativeControllerCreator implements NativeControllerCreatorInterface
 
     private NodeFactory $nodeFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
     }
 
@@ -47,11 +50,13 @@ class NativeControllerCreator implements NativeControllerCreatorInterface
             );
         }
 
-        if (!is_file($controllerFile)) {
-            $this->addClassNodes($fileStructure, $controllerInformation);
+        if (is_file($controllerFile)) {
+            $this->fileManager->modifyFile($controllerFile, $fileStructure->getFileContents(), $controllerInformation->getCreatorInformation());
+            return;
         }
+        $this->addClassNodes($fileStructure, $controllerInformation);
+        $this->fileManager->createFile($controllerFile, $fileStructure->getFileContents(), $controllerInformation->getCreatorInformation());
 
-        file_put_contents($controllerFile, $fileStructure->getFileContents());
     }
 
     private function addClassNodes(FileStructure $fileStructure, ControllerInformation $controllerInformation): void

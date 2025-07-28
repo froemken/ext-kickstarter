@@ -20,6 +20,7 @@ readonly class UpgradeWizardInformation
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private string $upgradeWizardClassName,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -61,5 +62,10 @@ readonly class UpgradeWizardInformation
     public function getNamespace(): string
     {
         return $this->extensionInformation->getNamespacePrefix() . 'Upgrade';
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

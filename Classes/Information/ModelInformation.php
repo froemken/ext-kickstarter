@@ -25,6 +25,7 @@ readonly class ModelInformation
         private string $mappedTableName,
         private bool $abstractEntity,
         private array $properties,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionInformation(): ExtensionInformation
@@ -86,5 +87,10 @@ readonly class ModelInformation
     public function getProperties(): array
     {
         return $this->properties;
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

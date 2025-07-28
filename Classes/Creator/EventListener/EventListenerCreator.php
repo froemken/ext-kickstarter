@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Creator\EventListener;
 
 use PhpParser\BuilderFactory;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\EventListenerInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
@@ -31,8 +32,10 @@ class EventListenerCreator implements EventListenerCreatorInterface
 
     private BuilderFactory $builderFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
     }
@@ -44,11 +47,19 @@ class EventListenerCreator implements EventListenerCreatorInterface
         $eventListenerFilePath = $eventListenerInformation->getEventListenerFilePath();
         $fileStructure = $this->buildFileStructure($eventListenerFilePath);
 
-        if (!is_file($eventListenerFilePath)) {
-            $this->addClassNodes($fileStructure, $eventListenerInformation);
-
-            file_put_contents($eventListenerFilePath, $fileStructure->getFileContents());
+        if (is_file($eventListenerFilePath)) {
+            $eventListenerInformation->getCreatorInformation()->fileExists(
+                $eventListenerFilePath,
+                sprintf(
+                    'EventListeners can only be created, not modified. The file %s already exists and cannot be overridden. ',
+                    $eventListenerInformation->getEventListenerFilename()
+                )
+            );
+            return;
         }
+        $this->addClassNodes($fileStructure, $eventListenerInformation);
+
+        $this->fileManager->createFile($eventListenerFilePath, $fileStructure->getFileContents(), $eventListenerInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, EventListenerInformation $eventListenerInformation): void

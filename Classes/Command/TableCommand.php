@@ -15,6 +15,7 @@ use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\TableInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -26,6 +27,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TableCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
 
     public function __construct(
@@ -54,7 +56,9 @@ class TableCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $this->tableCreatorService->create($this->askForTableInformation($io, $input));
+        $tableInformation = $this->askForTableInformation($io, $input);
+        $this->tableCreatorService->create($tableInformation);
+        $this->printCreatorInformation($tableInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

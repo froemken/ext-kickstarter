@@ -16,6 +16,7 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt\Return_;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
@@ -33,8 +34,10 @@ class ClassMapCreator implements DomainCreatorInterface
 
     private BuilderFactory $builderFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
     }
@@ -59,20 +62,11 @@ class ClassMapCreator implements DomainCreatorInterface
         /** @var Array_ $arrayNode */
         $arrayNode = $returnStructure->getNode()->expr;
 
-        if (!$this->classMapExists($arrayNode, $modelInformation)) {
-            $fileStructure->addUseStructure(
-                new UseStructure($this->nodeFactory->createUseImport(
-                    $modelInformation->getNamespace() . '\\' . $modelInformation->getModelClassName()
-                ))
-            );
-
-            $arrayNode->items[] = new ArrayItem(
-                $this->builderFactory->val(['tableName' => $modelInformation->getMappedTableName()]),
-                $this->builderFactory->classConstFetch($modelInformation->getModelClassName(), 'class'),
-            );
+        if ($this->classMapExists($arrayNode, $modelInformation)) {
+            $this->fileManager->modifyFile($classesFilePath, $fileStructure->getFileContents(), $modelInformation->getCreatorInformation());
+            return;
         }
-
-        file_put_contents($classesFilePath, $fileStructure->getFileContents());
+        $this->createNewClassMap($fileStructure, $modelInformation, $arrayNode, $classesFilePath);
     }
 
     private function classMapExists(Array_ $arrayNode, ModelInformation $modelInformation): bool
@@ -100,5 +94,20 @@ class ClassMapCreator implements DomainCreatorInterface
                 )
             )
         );
+    }
+
+    private function createNewClassMap(FileStructure $fileStructure, ModelInformation $modelInformation, Array_ $arrayNode, string $classesFilePath): void
+    {
+        $fileStructure->addUseStructure(
+            new UseStructure($this->nodeFactory->createUseImport(
+                $modelInformation->getNamespace() . '\\' . $modelInformation->getModelClassName()
+            ))
+        );
+
+        $arrayNode->items[] = new ArrayItem(
+            $this->builderFactory->val(['tableName' => $modelInformation->getMappedTableName()]),
+            $this->builderFactory->classConstFetch($modelInformation->getModelClassName(), 'class'),
+        );
+        $this->fileManager->createFile($classesFilePath, $fileStructure->getFileContents(), $modelInformation->getCreatorInformation());
     }
 }

@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Native;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Stmt\Expression;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
@@ -28,8 +29,10 @@ class NativeAddPluginCreator implements NativePluginCreatorInterface
 
     private NodeFactory $nodeFactory;
 
-    public function __construct(NodeFactory $nodeFactory)
-    {
+    public function __construct(
+        NodeFactory $nodeFactory,
+        private readonly FileManager $fileManager,
+    ) {
         $this->builderFactory = new BuilderFactory();
         $this->nodeFactory = $nodeFactory;
     }
@@ -50,7 +53,7 @@ class NativeAddPluginCreator implements NativePluginCreatorInterface
             $this->getExpressionForAddPlugin($pluginInformation)
         ));
 
-        file_put_contents($targetFile, $fileStructure->getFileContents());
+        $this->fileManager->createOrModifyFile($targetFile, $fileStructure->getFileContents(), $pluginInformation->getCreatorInformation());
     }
 
     private function getExpressionForAddPlugin(PluginInformation $pluginInformation): Expression

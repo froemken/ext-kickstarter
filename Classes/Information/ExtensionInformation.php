@@ -55,6 +55,7 @@ readonly class ExtensionInformation
         private string $authorCompany,
         private string $namespaceForAutoload,
         private string $extensionPath,
+        private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
     public function getExtensionKey(): string
@@ -402,5 +403,10 @@ readonly class ExtensionInformation
             $isSystem = in_array($column, self::SYSTEM_COLUMNS, true);
             return $systemColumns ? $isSystem : !$isSystem;
         }));
+    }
+
+    public function getCreatorInformation(): CreatorInformation
+    {
+        return $this->creatorInformation;
     }
 }

@@ -11,22 +11,33 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Test\Environment;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TestEnvInformation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FunctionalTestsCreator implements TestEnvCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(TestEnvInformation $testEnvInformation): void
     {
         $phpunitPath = $testEnvInformation->getBuildPath() . 'phpunit/';
         GeneralUtility::mkdir_deep($phpunitPath);
 
-        if (!is_file($phpunitPath . 'FunctionalTests.xml')) {
-            file_put_contents(
-                $phpunitPath . 'FunctionalTests.xml',
-                $this->getTemplate(),
+        $targetFile = $phpunitPath . 'FunctionalTests.xml';
+        if (is_file($targetFile)) {
+            $testEnvInformation->getCreatorInformation()->fileExists(
+                $targetFile
             );
+            return;
         }
+        $this->fileManager->createFile(
+            $targetFile,
+            $this->getTemplate(),
+            $testEnvInformation->getCreatorInformation(),
+        );
     }
 
     private function getTemplate(): string

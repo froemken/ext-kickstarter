@@ -15,6 +15,7 @@ use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Stmt\Expression;
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\ExpressionStructure;
 use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
@@ -26,8 +27,9 @@ class ExtEmconfCreator implements ExtensionCreatorInterface
 
     private BuilderFactory $factory;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {
         $this->factory = new BuilderFactory();
     }
 
@@ -36,10 +38,14 @@ class ExtEmconfCreator implements ExtensionCreatorInterface
         $extEmconfFilePath = $extensionInformation->getExtensionPath() . 'ext_emconf.php';
         $fileStructure = $this->buildFileStructure($extEmconfFilePath);
 
-        if (!is_file($extEmconfFilePath)) {
-            $this->setExtEmconfConfiguration($fileStructure, $extensionInformation);
-            file_put_contents($extEmconfFilePath, $fileStructure->getFileContents());
+        if (is_file($extEmconfFilePath)) {
+            $extensionInformation->getCreatorInformation()->fileExists(
+                $extEmconfFilePath
+            );
+            return;
         }
+        $this->setExtEmconfConfiguration($fileStructure, $extensionInformation);
+        $this->fileManager->createFile($extEmconfFilePath, $fileStructure->getFileContents(), $extensionInformation->getCreatorInformation());
     }
 
     private function setExtEmconfConfiguration(FileStructure $fileStructure, ExtensionInformation $configurator): void

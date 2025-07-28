@@ -16,6 +16,7 @@ use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\ValidatorInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ValidatorCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
@@ -27,6 +28,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ValidatorCommand extends Command
 {
     use AskForExtensionKeyTrait;
+    use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
 
@@ -57,7 +59,9 @@ class ValidatorCommand extends Command
             'See https://docs.typo3.org/permalink/t3coreapi:extbase-domain-validator on how implement its functionality.',
         ]);
 
-        $this->validatorCreatorService->create($this->askForValidatorInformation($io, $input));
+        $validatorInformation = $this->askForValidatorInformation($io, $input);
+        $this->validatorCreatorService->create($validatorInformation);
+        $this->printCreatorInformation($validatorInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }

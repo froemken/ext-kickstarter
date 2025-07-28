@@ -11,25 +11,35 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Test\Environment;
 
+use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TestEnvInformation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RunScriptsCreator implements TestEnvCreatorInterface
 {
+    public function __construct(
+        private readonly FileManager $fileManager,
+    ) {}
+
     public function create(TestEnvInformation $testEnvInformation): void
     {
         $scriptsPath = $testEnvInformation->getBuildPath() . 'Scripts/';
         GeneralUtility::mkdir_deep($scriptsPath);
-
-        if (!is_file($scriptsPath . 'runTests.sh')) {
-            file_put_contents(
-                $scriptsPath . 'runTests.sh',
-                $this->getTemplate(),
+        $targetFile = $scriptsPath . 'runTests.sh';
+        if (is_file($scriptsPath)) {
+            $testEnvInformation->getCreatorInformation()->fileExists(
+                $targetFile
             );
-
-            // runTests.sh must be executable
-            chmod($scriptsPath . 'runTests.sh', 0755);
+            return;
         }
+        $this->fileManager->createFile(
+            $scriptsPath,
+            $this->getTemplate(),
+            $testEnvInformation->getCreatorInformation(),
+        );
+
+        // runTests.sh must be executable
+        chmod($scriptsPath . 'runTests.sh', 0755);
     }
 
     private function getTemplate(): string
