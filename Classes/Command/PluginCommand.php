@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService;
@@ -129,6 +130,7 @@ class PluginCommand extends Command
             $pluginName,
             $pluginDescription,
             $referencedControllerActions,
+            new CreatorInformation(),
             $isTypoScriptCreation,
             $typoScriptSet,
             $templatePath,
