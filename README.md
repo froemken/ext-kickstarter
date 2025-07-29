@@ -28,12 +28,12 @@
 
 Install the extension using Composer:
 ```bash
-composer req stefanfroemken/ext-kickstarter
+composer req --dev stefanfroemken/ext-kickstarter
 ```
 
 For DDEV:
 ```bash
-ddev composer req stefanfroemken/ext-kickstarter
+ddev composer req --dev stefanfroemken/ext-kickstarter
 ```
 
 ## Configuration
