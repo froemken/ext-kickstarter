@@ -3,20 +3,21 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Creator\Extension\ExtensionCreatorInterface;
-use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\ExtensionCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\AskForExtensionKeyTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory;
+use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
+use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,12 +32,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ExtensionCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
 
     public function __construct(
         private readonly ExtensionCreatorService $extensionCreatorService,
+        private readonly QuestionFactory $questionFactory,
         private readonly Registry $registry,
     ) {
         parent::__construct();
@@ -64,6 +65,11 @@ class ExtensionCommand extends Command
 
         $io->title('Questions to build a new TYPO3 Extension');
 
+        $extensionKey = (string)$this->questionFactory
+            ->getQuestion('extension_key', $input, $output)
+            ->ask(default: (string)$input->getArgument('extension_key'));
+
+        $extensionInformation = $this->askForExtensionInformation($io, $extensionKey);
         $extensionInformation = $this->askForExtensionInformation(
             $io,
             $this->askForExtensionKey($this->registry, $io, $input->getArgument('extension_key'))
