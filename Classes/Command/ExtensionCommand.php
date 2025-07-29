@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
@@ -31,12 +32,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ExtensionCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
 
     public function __construct(
         private readonly ExtensionCreatorService $extensionCreatorService,
+        private readonly QuestionFactory $questionFactory,
         private readonly Registry $registry,
     ) {
         parent::__construct();
@@ -64,6 +65,11 @@ class ExtensionCommand extends Command
 
         $io->title('Questions to build a new TYPO3 Extension');
 
+        $extensionKey = (string)$this->questionFactory
+            ->getQuestion('extension_key', $input, $output)
+            ->ask(default: (string)$input->getArgument('extension_key'));
+
+        $extensionInformation = $this->askForExtensionInformation($io, $extensionKey);
         $extensionInformation = $this->askForExtensionInformation(
             $io,
             $this->askForExtensionKey($this->registry, $io, $input->getArgument('extension_key'))
