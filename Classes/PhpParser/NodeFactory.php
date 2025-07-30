@@ -196,6 +196,14 @@ EOT;
             ->getNode();
     }
 
+    public function createMiddlewareClass(string $className): Class_
+    {
+        return $this->factory
+            ->class($className)
+            ->implement('MiddlewareInterface')
+            ->getNode();
+    }
+
     /**
      * Creates a non extbase based controller action method node which will be rendered as:
      *
@@ -242,6 +250,26 @@ EOT;
                     new MethodCall(
                         new Variable('this'),
                         'htmlResponse'
+                    )
+                ),
+            ])
+            ->getNode();
+    }
+
+    public function createMiddlewareProcessMethod(): ClassMethod
+    {
+        return $this->factory
+            ->method('process')
+            ->makePublic()
+            ->addParam($this->factory->param('request')->setType('ServerRequestInterface'))
+            ->addParam($this->factory->param('handler')->setType('RequestHandlerInterface'))
+            ->setReturnType('ResponseInterface')
+            ->addStmts([
+                new Return_(
+                    new MethodCall(
+                        new Variable('handler'),
+                        'handle',
+                        [new Arg(new Variable('request'))]
                     )
                 ),
             ])

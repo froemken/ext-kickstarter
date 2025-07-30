@@ -10,9 +10,9 @@ use StefanFroemken\ExtKickstarter\Creator\Controller\Native\NativeControllerCrea
 use StefanFroemken\ExtKickstarter\Creator\Domain\Model\DomainCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Domain\Repository\RepositoryCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Domain\Validator\ValidatorCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Event\EventCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\EventListener\EventListenerCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
+use StefanFroemken\ExtKickstarter\Creator\Middleware\MiddlewareCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase\ExtbasePluginCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\Native\NativePluginCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Property\TypeConverter\TypeConverterCreatorInterface;
@@ -42,8 +42,8 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
         ->registerForAutoconfiguration(ValidatorCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.domain.validator');
     $container
-        ->registerForAutoconfiguration(EventCreatorInterface::class)
-        ->addTag('ext-kickstarter.creator.event');
+        ->registerForAutoconfiguration(MiddlewareCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.middleware');
     $container
         ->registerForAutoconfiguration(EventListenerCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.event-listener');

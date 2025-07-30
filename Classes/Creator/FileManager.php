@@ -29,7 +29,7 @@ class FileManager
         if ($result === false) {
             $creatorInformation->writingFileFailed($targetFile);
         } else {
-            $creatorInformation->fileAdded($targetFile);
+            $creatorInformation->fileModified($targetFile);
         }
         return $result;
     }
