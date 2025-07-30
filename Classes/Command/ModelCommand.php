@@ -77,16 +77,22 @@ class ModelCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function askForModelInformation(SymfonyStyle $io, InputInterface $input): ModelInformation
+    private function askForModelInformation(SymfonyStyle $io, InputInterface $input): ?ModelInformation
     {
         $extensionInformation = $this->getExtensionInformation(
             $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
             $io
         );
 
-        $modelClassName = $this->askForModelClassName($io);
-        $mappedTableName = $this->askForMappedTableName($io, $modelClassName, $extensionInformation);
+        do {
+            $modelClassName = $this->askForModelClassName($io);
+            $modelInformation = new ModelInformation(
+                $extensionInformation,
+                $modelClassName,
+            );
+        } while (file_exists($modelInformation->getModelFilePath()) && !$io->confirm('Model ' . $modelClassName . ' already exists. Do you want to extend it?'));
 
+        $mappedTableName = $this->askForMappedTableName($io, $modelClassName, $extensionInformation);
         return new ModelInformation(
             $extensionInformation,
             $modelClassName,
@@ -223,11 +229,7 @@ class ModelCommand extends Command
             // Basic meta
             $properties[$columnName] = [
                 'propertyName' => $propertyName,
-                'dataType' => $io->choice(
-                    'Which data type do you prefer for the property "' . $propertyName . '"',
-                    self::DATA_TYPES,
-                    'string'
-                ),
+                'dataType' => $dataType,
             ];
 
             // handle object-initializable types

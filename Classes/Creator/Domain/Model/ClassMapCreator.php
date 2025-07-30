@@ -14,7 +14,10 @@ namespace StefanFroemken\ExtKickstarter\Creator\Domain\Model;
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
-use PhpParser\Node\Scalar;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Return_;
 use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
@@ -62,24 +65,45 @@ class ClassMapCreator implements DomainCreatorInterface
         /** @var Array_ $arrayNode */
         $arrayNode = $returnStructure->getNode()->expr;
 
-        if ($this->classMapExists($arrayNode, $modelInformation)) {
-            $this->fileManager->modifyFile($classesFilePath, $fileStructure->getFileContents(), $modelInformation->getCreatorInformation());
+        $classMapEntry = $this->getClassMapEntry($arrayNode, $modelInformation);
+        if ($classMapEntry !== null) {
+            $modelInformation->getCreatorInformation()->fileModificationFailed(
+                $classesFilePath,
+                sprintf('A class map entry for class %s already exists. ', $modelInformation->getModelClassName())
+            );
             return;
         }
         $this->createNewClassMap($fileStructure, $modelInformation, $arrayNode, $classesFilePath);
     }
 
-    private function classMapExists(Array_ $arrayNode, ModelInformation $modelInformation): bool
+    private function getClassMapEntry(Array_ $arrayNode, ModelInformation $modelInformation): ?ArrayItem
     {
+        $expectedFqn = ltrim($modelInformation->getNamespace() . '\\' . $modelInformation->getModelClassName(), '\\');
+        $expectedShort = $modelInformation->getModelClassName();
+
         foreach ($arrayNode->items as $arrayItem) {
-            if ($arrayItem->key instanceof Scalar\String_
-                && $arrayItem->key->value === $modelInformation->getModelClassName()
-            ) {
-                return true;
+            $key = $arrayItem->key;
+
+            // Case 1: ClassConstFetch (e.g. Test::class or \Vendor\Test::class)
+            if ($key instanceof ClassConstFetch && $key->name->toString() === 'class') {
+                $nodeClass = $key->class;
+
+                if ($nodeClass instanceof FullyQualified && $nodeClass->toString() === $expectedFqn) {
+                    return $arrayItem;
+                }
+
+                if ($nodeClass instanceof Name && $nodeClass->toString() === $expectedShort) {
+                    return $arrayItem;
+                }
+            }
+
+            // Case 2: String_ key containing FQN (e.g. 'Test\Test\Domain\Model\Abc')
+            if ($key instanceof String_ && trim($key->value, '\\') === $expectedFqn) {
+                return $arrayItem;
             }
         }
 
-        return false;
+        return null;
     }
 
     private function addClassNodes(FileStructure $fileStructure): void
@@ -108,6 +132,6 @@ class ClassMapCreator implements DomainCreatorInterface
             $this->builderFactory->val(['tableName' => $modelInformation->getMappedTableName()]),
             $this->builderFactory->classConstFetch($modelInformation->getModelClassName(), 'class'),
         );
-        $this->fileManager->createFile($classesFilePath, $fileStructure->getFileContents(), $modelInformation->getCreatorInformation());
+        $this->fileManager->createOrModifyFile($classesFilePath, $fileStructure->getFileContents(), $modelInformation->getCreatorInformation());
     }
 }
