@@ -130,7 +130,7 @@ class MiddlewareCommand extends Command
             );
 
             // Simple check for empty input
-            if (trim($identifier) === '') {
+            if ($identifier === '') {
                 $io->warning('Middleware identifier cannot be empty.');
                 continue;
             }
@@ -166,9 +166,9 @@ class MiddlewareCommand extends Command
         return $identifier;
     }
 
-    private function tryToCorrectIdentifier(string $input): string
+    private function tryToCorrectIdentifier(string $identifier): string
     {
-        $corrected = strtolower($input);
+        $corrected = strtolower($identifier);
         $corrected = preg_replace('/[^a-z0-9]+/', '-', $corrected);
         $corrected = trim($corrected, '-');
 

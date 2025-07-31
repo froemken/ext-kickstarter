@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Creator\Middleware;
 
-use PhpParser\BuilderFactory;
 use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\MiddleWareInformation;
 use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
@@ -30,26 +29,23 @@ class MiddlewareCreator implements MiddlewareCreatorInterface
 
     private NodeFactory $nodeFactory;
 
-    private BuilderFactory $builderFactory;
-
     public function __construct(
         NodeFactory $nodeFactory,
         private readonly FileManager $fileManager,
     ) {
         $this->nodeFactory = $nodeFactory;
-        $this->builderFactory = new BuilderFactory();
     }
 
     public function create(MiddlewareInformation $middlewareInformation): void
     {
         GeneralUtility::mkdir_deep($middlewareInformation->getPath());
 
-        $eventFilePath = $middlewareInformation->getFilePath();
-        $fileStructure = $this->buildFileStructure($eventFilePath);
+        $filePath = $middlewareInformation->getFilePath();
+        $fileStructure = $this->buildFileStructure($filePath);
 
-        if (is_file($eventFilePath)) {
+        if (is_file($filePath)) {
             $middlewareInformation->getCreatorInformation()->fileExists(
-                $eventFilePath,
+                $filePath,
                 sprintf(
                     'Middleware classes can only be created, not modified. The file %s already exists and cannot be overridden. ',
                     $middlewareInformation->getFilename()
@@ -58,7 +54,7 @@ class MiddlewareCreator implements MiddlewareCreatorInterface
             return;
         }
         $this->addClassNodes($fileStructure, $middlewareInformation);
-        $this->fileManager->createFile($eventFilePath, $fileStructure->getFileContents(), $middlewareInformation->getCreatorInformation());
+        $this->fileManager->createFile($filePath, $fileStructure->getFileContents(), $middlewareInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, MiddlewareInformation $middlewareInformation): void

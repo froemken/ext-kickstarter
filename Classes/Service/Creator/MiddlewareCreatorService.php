@@ -25,7 +25,6 @@ readonly class MiddlewareCreatorService
 
     public function create(MiddlewareInformation $middlewareInformation): void
     {
-        /** @var MiddlewareCreatorInterface $creator */
         foreach ($this->middlewareCreators as $creator) {
             $creator->create($middlewareInformation);
         }
