@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
@@ -73,6 +74,7 @@ class ExtensionCommand extends Command
             $io,
             $this->askForExtensionKey($this->registry, $io, $input->getArgument('extension_key'))
         );
+        $extensionInformation = $this->askForExtensionInformation($input, $output, $io, $extensionKey);
 
         $this->extensionCreatorService->create($extensionInformation);
 
@@ -132,7 +134,7 @@ class ExtensionCommand extends Command
         ]);
     }
 
-    private function askForExtensionInformation(SymfonyStyle $io, string $extensionKey): ExtensionInformation
+    private function askForExtensionInformation(InputInterface $input, OutputInterface $output, SymfonyStyle $io, string $extensionKey): ExtensionInformation
     {
         $io->info([
             'The extension will be exported to directory: ' . $this->getExtensionPath($extensionKey),
@@ -154,7 +156,9 @@ class ExtensionCommand extends Command
             }
         }
 
-        $composerPackageName = $this->askForComposerPackageName($io);
+        $composerPackageName = (string)$this->questionFactory
+            ->getQuestion(ComposerNameQuestion::ARGUMENT_NAME, $input, $output)
+            ->ask();
 
         $io->text([
             'The title of the extension will be used to identify the extension much easier',
@@ -254,36 +258,6 @@ class ExtensionCommand extends Command
             $namespacePrefix,
             $this->createExtensionPath($extensionKey, true),
         );
-    }
-
-    private function askForComposerPackageName(SymfonyStyle $io): string
-    {
-        $io->text([
-            'To build a new TYPO3 extension, we need to use Composer to manage dependencies.',
-            'Composer is like a package manager for PHP projects.',
-            'For more information about Composer, visit https://getcomposer.org/',
-            'Example: my-vendor/my-extension',
-        ]);
-
-        $defaultComposerPackageName = null;
-
-        do {
-            $composerPackageName = (string)$io->ask('Composer package name', $defaultComposerPackageName);
-
-            if (in_array(preg_match('#^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*$#', $composerPackageName), [0, false], true)) {
-                $io->error('Invalid composer package name. Package name must follow a specific pattern (see: https://getcomposer.org/doc/04-schema.md#name)');
-                $defaultComposerPackageName = preg_replace(
-                    '/[^0-9a-z-\/_]/',
-                    '',
-                    strtolower($composerPackageName)
-                );
-                $validComposerPackageName = false;
-            } else {
-                $validComposerPackageName = true;
-            }
-        } while (!$validComposerPackageName);
-
-        return $composerPackageName;
     }
 
     private function askForVersion(SymfonyStyle $io): string
