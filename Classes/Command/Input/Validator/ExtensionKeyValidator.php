@@ -29,17 +29,20 @@ class ExtensionKeyValidator implements ValidatorInterface
                 'Extension key length must be between 3 and 30 characters',
                 1753821969,
             );
-        } elseif (in_array(preg_match('/^[a-z][a-z0-9_]*$/', $answer), [0, false], true)) {
+        }
+        if (in_array(preg_match('/^[a-z][a-z0-9_]*$/', $answer), [0, false], true)) {
             throw new \RuntimeException(
                 'Extension key can only start with a lowercase letter and contain lowercase letters, numbers, or underscores',
                 1753821971,
             );
-        } elseif (preg_match('/^[_]|[_]$/', $answer)) {
+        }
+        if (preg_match('/^[_]|[_]$/', $answer)) {
             throw new \RuntimeException(
                 'Extension key cannot start or end with an underscore',
                 1753821973,
             );
-        } elseif (preg_match('/^(tx|user_|pages|tt_|sys_|ts_language|csh_)/', $answer)) {
+        }
+        if (preg_match('/^(tx|user_|pages|tt_|sys_|ts_language|csh_)/', $answer)) {
             throw new \RuntimeException(
                 'Extension key cannot start with reserved prefixes such as tx, user_, pages, tt_, sys_, ts_language, or csh_',
                 1753821975,
