@@ -49,7 +49,7 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
 
         // ✅ Check all expected files dynamically
         foreach ($expectedFiles as $file) {
-            self::assertFileExists($generatedPath . '/' . $file, "Missing expected file: $file");
+            self::assertFileExists($generatedPath . '/' . $file, 'Missing expected file: ' . $file);
         }
 
         // ✅ Compare generated files with fixtures
