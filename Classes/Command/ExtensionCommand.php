@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\VersionQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
@@ -176,7 +177,9 @@ class ExtensionCommand extends Command
         ]);
         $description = (string)$io->ask('Description');
 
-        $version = $this->askForVersion($io);
+        $version = (string)$this->questionFactory
+            ->getQuestion(VersionQuestion::ARGUMENT_NAME, $input, $output)
+            ->ask();
 
         $io->text([
             'The category is used to group your extension in the TYPO3 ExtensionManager.',
@@ -257,30 +260,6 @@ class ExtensionCommand extends Command
             $namespacePrefix,
             $this->createExtensionPath($extensionKey, true),
         );
-    }
-
-    private function askForVersion(SymfonyStyle $io): string
-    {
-        $io->text([
-            'The version is needed to differ between the releases of your extension.',
-            'Please use semantic version (https://semver.org/)',
-            'Use 0.0.* versions for bugfix releases.',
-            'Use 0.*.0 versions, if there are any new features.',
-            'Use *.0.0 versions, if something huge has changed like supported TYPO3 version or contained API.',
-        ]);
-
-        do {
-            $version = (string)$io->ask('Version', '0.0.1');
-
-            if (in_array(preg_match('#^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$#', $version), [0, false], true)) {
-                $io->error('Invalid version string. The version must match a specific pattern (see: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)');
-                $validVersion = false;
-            } else {
-                $validVersion = true;
-            }
-        } while (!$validVersion);
-
-        return $version;
     }
 
     private function convertComposerPackageNameToNamespacePrefix(string $composerPackageName): string
