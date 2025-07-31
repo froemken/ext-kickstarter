@@ -220,6 +220,7 @@ class MiddlewareCommand extends Command
             $configurationArray[$stackName] = array_reverse((array)$this->container->get($stackName . '.middlewares'));
         }
         $configurationArray['raw'] = $this->container->get('middlewares');
+
         return $configurationArray;
     }
 }
