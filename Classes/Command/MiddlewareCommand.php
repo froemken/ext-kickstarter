@@ -120,7 +120,7 @@ class MiddlewareCommand extends Command
     {
         $default = null;
 
-        $configuration = $this->getConfiguration();
+        $configuration = $this->getConfigurationOfExistingMiddlewareIdentifiers();
 
         do {
             $valid = false;
@@ -193,7 +193,7 @@ class MiddlewareCommand extends Command
      */
     private function askForBeforeAfter(SymfonyStyle $io, string $stack, string $location): array
     {
-        $entries  = array_keys($this->getConfiguration()[$stack] ?? []);
+        $entries  = array_keys($this->getConfigurationOfExistingMiddlewareIdentifiers()[$stack] ?? []);
 
         array_unshift($entries, 'none');
 
@@ -212,11 +212,15 @@ class MiddlewareCommand extends Command
         return $answer;
     }
 
-    public function getConfiguration(): array
+    /**
+     * Inspired by EXT:lowlevel,
+     * @see https://github.com/TYPO3/typo3/blob/adac182339ed3e0045c1947183fca4abd15edd62/typo3/sysext/lowlevel/Classes/ConfigurationModuleProvider/HttpMiddlewareStackProvider.php#L26
+     */
+    private function getConfigurationOfExistingMiddlewareIdentifiers(): array
     {
         $configurationArray = [];
         foreach (['frontend', 'backend'] as $stackName) {
-            // reversing the array allows the admin to read the stack from top to bottom
+            // reversing the array so Midddleware identifiers are displayed from top to bottom
             $configurationArray[$stackName] = array_reverse((array)$this->container->get($stackName . '.middlewares'));
         }
         $configurationArray['raw'] = $this->container->get('middlewares');
