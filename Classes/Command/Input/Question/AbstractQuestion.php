@@ -52,11 +52,16 @@ abstract class AbstractQuestion implements QuestionInterface
 
     abstract protected function getQuestion(): array;
 
+    protected function getDefault(): ?string
+    {
+        return null;
+    }
+
     public function ask(?string $default = null): mixed
     {
         $this->io->text($this->getDescription());
 
-        $question = new Question(implode(' ', $this->getQuestion()), $default);
+        $question = new Question(implode(' ', $this->getQuestion()), $default ?? $this->getDefault());
 
         if ($this->autoComplete instanceof AutoCompleteInterface) {
             $question->setAutocompleterCallback($this->autoComplete);
