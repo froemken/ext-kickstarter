@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
@@ -222,11 +223,9 @@ class ExtensionCommand extends Command
         ]);
         $author = (string)$io->ask('Author name');
 
-        $io->text([
-            'Please enter the email of the author (see above)',
-            'It must be a valid email address.',
-        ]);
-        $authorEmail = $this->askForEmail($io);
+        $authorEmail = (string)$this->questionFactory
+            ->getQuestion(EmailQuestion::ARGUMENT_NAME, $input, $output)
+            ->ask();
 
         $io->text([
             'Enter the company name of the author (see above)',
@@ -282,21 +281,6 @@ class ExtensionCommand extends Command
         } while (!$validVersion);
 
         return $version;
-    }
-
-    private function askForEmail(SymfonyStyle $io): string
-    {
-        do {
-            $email = (string)$io->ask('Email address');
-            if ($email !== '' && !GeneralUtility::validEmail($email)) {
-                $io->error('You have entered an invalid email address.');
-                $validEmail = false;
-            } else {
-                $validEmail = true;
-            }
-        } while (!$validEmail);
-
-        return $email;
     }
 
     private function convertComposerPackageNameToNamespacePrefix(string $composerPackageName): string
