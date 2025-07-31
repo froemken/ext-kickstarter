@@ -90,6 +90,7 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
         if (!is_dir($dir)) {
             return;
         }
+
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::CHILD_FIRST
