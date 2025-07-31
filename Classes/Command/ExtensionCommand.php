@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\NamespaceQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\VersionQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
@@ -236,15 +237,9 @@ class ExtensionCommand extends Command
         ]);
         $authorCompany = (string)$io->ask('Company name');
 
-        $io->text([
-            'To find PHP classes much faster in your extension TYPO3 uses the auto-loading',
-            'mechanism of composer (https://getcomposer.org/doc/01-basic-usage.md#autoloading)',
-            'Please enter the PSR-4 autoload namespace for your extension',
-        ]);
-        $namespacePrefix = (string)$io->ask(
-            'PSR-4 AutoLoading Namespace',
-            $this->convertComposerPackageNameToNamespacePrefix($composerPackageName),
-        );
+        $namespacePrefix = (string)$this->questionFactory
+            ->getQuestion(NamespaceQuestion::ARGUMENT_NAME, $input, $output)
+            ->ask($this->convertComposerPackageNameToNamespacePrefix($composerPackageName));
 
         return new ExtensionInformation(
             $extensionKey,
@@ -265,7 +260,7 @@ class ExtensionCommand extends Command
     private function convertComposerPackageNameToNamespacePrefix(string $composerPackageName): string
     {
         return implode(
-            '\\\\',
+            '\\',
             array_map(
                 fn($part): string|array => str_replace(
                     [
@@ -278,6 +273,6 @@ class ExtensionCommand extends Command
                 ),
                 explode('/', $composerPackageName)
             )
-        ) . '\\\\';
+        ) . '\\';
     }
 }
