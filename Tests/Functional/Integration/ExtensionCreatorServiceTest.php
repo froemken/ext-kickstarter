@@ -38,7 +38,7 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
         ExtensionInformation $extensionInfo,
         string $generatedPath,
         string $expectedDir,
-        array $expectedFiles
+        array $expectedFiles,
     ): void {
         mkdir($extensionInfo->getExtensionPath(), 0777, true);
 
