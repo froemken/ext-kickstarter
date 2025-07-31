@@ -42,6 +42,6 @@ readonly class QuestionFactory
             }
         }
 
-        throw new \RuntimeException('Question not found.', 1753826433);
+        throw new \RuntimeException(sprintf('Question for property %s not found.', $propertyName), 1753826433);
     }
 }
