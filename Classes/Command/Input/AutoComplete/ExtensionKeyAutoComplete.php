@@ -22,6 +22,6 @@ class ExtensionKeyAutoComplete implements AutoCompleteInterface
 
     public function __invoke(string $userInput): array
     {
-        return ['TYPO3', 'WordPress', 'Plone'];
+        return ['sitepackage', 'my_extension', 'demo'];
     }
 }
