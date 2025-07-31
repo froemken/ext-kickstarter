@@ -132,6 +132,7 @@ class RequestMiddlewaresCreator implements MiddlewareCreatorInterface
     {
         $beforeArray = $this->getBeforeAfterArray($middlewareInformation->getBefore());
         $afterArray = $this->getBeforeAfterArray($middlewareInformation->getAfter());
+
         return new ArrayItem(
             new Array_([
                 new ArrayItem(
