@@ -32,6 +32,7 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
         parent::tearDown();
     }
 
+    #[Test]
     #[DataProvider('extensionCreationProvider')]
     public function testItCreatesExpectedExtensionFiles(
         ExtensionInformation $extensionInfo,
