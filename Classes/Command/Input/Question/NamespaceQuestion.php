@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
 
+use StefanFroemken\ExtKickstarter\Command\Input\Validator\NamespaceValidator;
+
 class NamespaceQuestion extends AbstractQuestion
 {
     public const ARGUMENT_NAME = 'namespace';
@@ -24,6 +26,12 @@ class NamespaceQuestion extends AbstractQuestion
         'mechanism of composer (https://getcomposer.org/doc/01-basic-usage.md#autoloading)',
         'Please enter the PSR-4 autoload namespace for your extension',
     ];
+
+    public function __construct(
+        NamespaceValidator $validator
+    ) {
+        $this->validator = $validator;
+    }
 
     public function getArgumentName(): string
     {

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
 
+use StefanFroemken\ExtKickstarter\Command\Input\Validator\EmailValidator;
+
 class EmailQuestion extends AbstractQuestion
 {
     public const ARGUMENT_NAME = 'email';
@@ -23,6 +25,12 @@ class EmailQuestion extends AbstractQuestion
         'Please enter the email of the author (see above)',
         'It must be a valid email address.',
     ];
+
+    public function __construct(
+        EmailValidator $validator
+    ) {
+        $this->validator = $validator;
+    }
 
     public function getArgumentName(): string
     {

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
 
+use StefanFroemken\ExtKickstarter\Command\Input\Validator\VersionValidator;
+
 class VersionQuestion extends AbstractQuestion
 {
     public const ARGUMENT_NAME = 'version';
@@ -26,6 +28,12 @@ class VersionQuestion extends AbstractQuestion
         'Use 0.*.0 versions, if there are any new features.',
         'Use *.0.0 versions, if something huge has changed like supported TYPO3 version or contained API.',
     ];
+
+    public function __construct(
+        VersionValidator $validator
+    ) {
+        $this->validator = $validator;
+    }
 
     public function getArgumentName(): string
     {
