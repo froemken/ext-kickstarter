@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\TableInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -26,12 +26,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TableCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
 
     public function __construct(
         private readonly TableCreatorService $tableCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -66,7 +66,7 @@ class TableCommand extends Command
     private function askForTableInformation(SymfonyStyle $io, InputInterface $input): TableInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
             $io
         );
 

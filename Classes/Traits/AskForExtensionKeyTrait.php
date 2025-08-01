@@ -11,11 +11,13 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Traits;
 
+use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Registry;
 
 trait AskForExtensionKeyTrait
 {
-    private function askForExtensionKey(SymfonyStyle $io, ?string $defaultExtensionKey = null): string
+    private function askForExtensionKey(Registry $registry, SymfonyStyle $io, ?string $defaultExtensionKey = null): string
     {
         $io->text([
             'Building a new TYPO3 extension needs a unique identifier, the so called extension key. See:',
@@ -23,7 +25,8 @@ trait AskForExtensionKeyTrait
         ]);
 
         do {
-            $extensionKey = (string)$io->ask('Please provide the key for your extension', $defaultExtensionKey);
+            $default = $defaultExtensionKey;
+            $extensionKey = (string)$io->ask('Please provide the key for your extension', $default);
             $length = mb_strlen($extensionKey);
 
             if ($length < 3 || $length > 30) {
@@ -46,7 +49,7 @@ trait AskForExtensionKeyTrait
                 $validExtensionKey = true;
             }
         } while (!$validExtensionKey);
-
+        $registry->set(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY, $extensionKey);
         return $extensionKey;
     }
 

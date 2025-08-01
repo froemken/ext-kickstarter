@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Information\EventInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
@@ -25,13 +25,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class EventCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly EventCreatorService $eventCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -66,7 +66,7 @@ class EventCommand extends Command
     private function askForEventInformation(SymfonyStyle $io, InputInterface $input): EventInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
             $io
         );
 

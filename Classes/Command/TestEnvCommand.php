@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Information\TestEnvInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\TestEnvCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -24,12 +24,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class TestEnvCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
 
     public function __construct(
         private readonly TestEnvCreatorService $testEnvCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -64,7 +64,7 @@ class TestEnvCommand extends Command
     private function askForTestEnvInformation(SymfonyStyle $io, InputInterface $input): TestEnvInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
             $io
         );
 

@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
@@ -27,7 +27,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ControllerCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use FileStructureBuilderTrait;
@@ -35,6 +34,7 @@ class ControllerCommand extends Command
 
     public function __construct(
         private readonly ControllerCreatorService $controllerCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -69,7 +69,7 @@ class ControllerCommand extends Command
     private function askForControllerInformation(SymfonyStyle $io, InputInterface $input): ControllerInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
             $io
         );
 

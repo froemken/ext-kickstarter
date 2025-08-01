@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
@@ -28,13 +28,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PluginCommand extends Command
 {
-    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
     use FileStructureBuilderTrait;
 
     public function __construct(
         private readonly PluginCreatorService $pluginCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -69,7 +69,7 @@ class PluginCommand extends Command
     private function askForPluginInformation(SymfonyStyle $io, InputInterface $input): PluginInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
             $io
         );
 
