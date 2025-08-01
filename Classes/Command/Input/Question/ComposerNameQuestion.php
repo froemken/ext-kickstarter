@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
 
+use StefanFroemken\ExtKickstarter\Command\Input\Validator\ComposerNameValidator;
+
 class ComposerNameQuestion extends AbstractQuestion
 {
     public const ARGUMENT_NAME = 'composer_name';
@@ -25,6 +27,12 @@ class ComposerNameQuestion extends AbstractQuestion
         'For more information about Composer, visit https://getcomposer.org/',
         'Example: my-vendor/my-extension',
     ];
+
+    public function __construct(
+        ComposerNameValidator $validator
+    ) {
+        $this->validator = $validator;
+    }
 
     public function getArgumentName(): string
     {
