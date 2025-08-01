@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use Psr\Container\ContainerInterface;
 use StefanFroemken\ExtKickstarter\Information\MiddleWareInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\MiddlewareCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
@@ -23,6 +22,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use TYPO3\CMS\Core\Http\MiddlewareStackResolver;
 
 class MiddlewareCommand extends Command
 {
@@ -33,7 +33,7 @@ class MiddlewareCommand extends Command
 
     public function __construct(
         private readonly MiddlewareCreatorService $middlewareCreatorService,
-        protected readonly ContainerInterface $container,
+        private readonly MiddlewareStackResolver $middlewareStackResolver,
     ) {
         parent::__construct();
     }
@@ -120,8 +120,6 @@ class MiddlewareCommand extends Command
     {
         $default = null;
 
-        $configuration = $this->getConfigurationOfExistingMiddlewareIdentifiers();
-
         do {
             $valid = false;
             $identifier = (string)$io->ask(
@@ -153,7 +151,7 @@ class MiddlewareCommand extends Command
                 $default = $identifier;
                 continue;
             }
-            if (in_array($identifier, $configuration[$stack] ?? [], true)) {
+            if (in_array($identifier, $this->middlewareStackResolver->resolve($stack), true)) {
                 $io->warning(sprintf('The identifier "%s" already exists in the configuration!', $identifier));
                 // you might still allow it, or force user to change:
                 $default = $identifier;
@@ -193,7 +191,7 @@ class MiddlewareCommand extends Command
      */
     private function askForBeforeAfter(SymfonyStyle $io, string $stack, string $location): array
     {
-        $entries  = array_keys($this->getConfigurationOfExistingMiddlewareIdentifiers()[$stack] ?? []);
+        $entries  = array_keys($this->middlewareStackResolver->resolve($stack) ?? []);
 
         array_unshift($entries, 'none');
 
@@ -210,21 +208,5 @@ class MiddlewareCommand extends Command
         }
 
         return $answer;
-    }
-
-    /**
-     * Inspired by EXT:lowlevel,
-     * @see https://github.com/TYPO3/typo3/blob/adac182339ed3e0045c1947183fca4abd15edd62/typo3/sysext/lowlevel/Classes/ConfigurationModuleProvider/HttpMiddlewareStackProvider.php#L26
-     */
-    private function getConfigurationOfExistingMiddlewareIdentifiers(): array
-    {
-        $configurationArray = [];
-        foreach (['frontend', 'backend'] as $stackName) {
-            // reversing the array so Midddleware identifiers are displayed from top to bottom
-            $configurationArray[$stackName] = array_reverse((array)$this->container->get($stackName . '.middlewares'));
-        }
-        $configurationArray['raw'] = $this->container->get('middlewares');
-
-        return $configurationArray;
     }
 }
