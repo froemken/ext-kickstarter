@@ -45,6 +45,7 @@ class ExtEmconfCreator implements ExtensionCreatorInterface
             return;
         }
         $this->setExtEmconfConfiguration($fileStructure, $extensionInformation);
+
         $this->fileManager->createFile($extEmconfFilePath, $fileStructure->getFileContents(), $extensionInformation->getCreatorInformation());
     }
 

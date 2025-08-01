@@ -142,6 +142,7 @@ Options:
             - composerUpdateRector: "composer update", for rector subdirectory
             - composerValidate: "composer validate"
             - functional: PHP functional tests
+            - functionalUpdateBaseline: functional tests with UPDATE_BASELINE=1
             - lint: PHP linting
             - phpstan: PHPStan static analysis
             - phpstanBaseline: Generate PHPStan baseline
