@@ -12,5 +12,11 @@ parameters:
   paths:
     - ../../Classes
     - ../../Configuration
+    - ../../Tests
+
+  excludePaths:
+    analyse:
+      - ../../**/ext_emconf.php
+      - ../../**/.Build
 
   tmpDir: ../../.Build/.cache/phpstan/

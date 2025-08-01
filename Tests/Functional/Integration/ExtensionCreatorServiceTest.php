@@ -3,6 +3,7 @@
 namespace Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
@@ -17,29 +18,62 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
         'install',
     ];
 
-    private string $tempDir;
+    private function getTrimmedFileContent(string $actualFile): string
+    {
+        $content = file_get_contents($actualFile);
+        if ($content === false) {
+            return '';
+        }
+        return trim($content);
+    }
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tempDir = sys_get_temp_dir() . '/extkickstarter_service_' . uniqid();
-        mkdir($this->tempDir, 0777, true);
     }
 
     protected function tearDown(): void
     {
-        $this->deleteDirectory($this->tempDir);
         parent::tearDown();
     }
 
     #[Test]
     #[DataProvider('extensionCreationProvider')]
     public function testItCreatesExpectedExtensionFiles(
-        ExtensionInformation $extensionInfo,
-        string $generatedPath,
+        string $extensionKey,
+        string $composerPackageName,
+        string $title,
+        string $description,
+        string $version,
+        string $category,
+        string $state,
+        string $author,
+        string $authorEmail,
+        string $authorCompany,
+        string $namespaceForAutoload,
         string $expectedDir,
         array $expectedFiles,
     ): void {
+        // Build paths based on $this->instancePath
+        $extensionPath = $this->instancePath . '/' . $extensionKey . '/';
+        $generatedPath = $this->instancePath . '/' . $extensionKey . '/';
+
+        // Build the ExtensionInformation object here
+        $extensionInfo = new ExtensionInformation(
+            $extensionKey,
+            $composerPackageName,
+            $title,
+            $description,
+            $version,
+            $category,
+            $state,
+            $author,
+            $authorEmail,
+            $authorCompany,
+            $namespaceForAutoload,
+            $extensionPath
+        );
+
         mkdir($extensionInfo->getExtensionPath(), 0777, true);
 
         $creatorService = $this->get(ExtensionCreatorService::class);
@@ -58,57 +92,29 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
 
     public static function extensionCreationProvider(): array
     {
-        $tempDir = sys_get_temp_dir() . '/extkickstarter_service_test';
-        $generatedPath = $tempDir . '/my_extension';
-        $extensionInfo = new ExtensionInformation(
-            'my_extension',
-            'my-vendor/my-extension',
-            'My Extension',
-            'This is a test extension',
-            '1.0.0',
-            'plugin',
-            'stable',
-            'John Doe',
-            'john@example.com',
-            'MyCompany',
-            'Vendor\\MyExtension\\',
-            $generatedPath . '/'
-        );
-
         return [
             'default extension' => [
-                $extensionInfo,
-                $generatedPath,
-                __DIR__ . '/Fixtures/expected_extension',
-                ['ext_emconf.php', 'README.md'], // expected files are now part of provider
+                'extensionKey' => 'my_extension',
+                'composerPackageName' => 'my-vendor/my-extension',
+                'title' => 'My Extension',
+                'description' => 'This is a test extension',
+                'version' => '1.0.0',
+                'category' => 'plugin',
+                'state' => 'stable',
+                'author' => 'John Doe',
+                'authorEmail' => 'john@example.com',
+                'authorCompany' => 'MyCompany',
+                'namespaceForAutoload' => 'Vendor\\MyExtension\\',
+                'expectedDir' => __DIR__ . '/Fixtures/expected_extension',
+                'expectedFiles' => ['ext_emconf.php', 'README.md'],
             ],
         ];
-    }
-
-    private function deleteDirectory(string $dir): void
-    {
-        if (!is_dir($dir)) {
-            return;
-        }
-
-        $files = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
-        );
-        foreach ($files as $file) {
-            $file->isDir() ? rmdir($file) : unlink($file);
-        }
-        rmdir($dir);
     }
 
     private function shouldUpdateBaseline(): bool
     {
         // Environment variable support
-        if (getenv('UPDATE_BASELINE') === '1') {
-            return true;
-        }
-
-        return false;
+        return getenv('UPDATE_BASELINE') === '1';
     }
 
     private function assertDirectoryEquals(string $expectedDir, string $actualDir): void
@@ -129,8 +135,8 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
 
             self::assertFileExists($actualFile, sprintf('Missing file: %s', $relativePath));
             self::assertSame(
-                trim(file_get_contents($file->getPathname())),
-                trim(file_get_contents($actualFile)),
+                $this->getTrimmedFileContent($file->getPathname()),
+                $this->getTrimmedFileContent($actualFile),
                 sprintf('File contents differ for: %s', $relativePath)
             );
         }
@@ -147,8 +153,8 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
             \RecursiveIteratorIterator::SELF_FIRST
         );
 
+        /** @var \SplFileInfo $file */
         foreach ($iterator as $file) {
-            /** @var \SplFileInfo $file */
             $target = $destination . '/' . $file->getBasename();
 
             if ($file->isDir()) {
