@@ -50,8 +50,17 @@ class CreatorInformation
     {
         $this->fileModifications[] = new FileModificationInformation(
             $path,
-            FileModificationType::CREATION_FAILED,
+            FileModificationType::MODIFICATION_FAILED,
             $message ?? 'The file cannot be modified. '
+        );
+    }
+
+    public function fileNotModified(string $path, ?string $message = null): void
+    {
+        $this->fileModifications[] = new FileModificationInformation(
+            $path,
+            FileModificationType::NOT_MODIFIED,
+            $message ?? 'The file does not need to be modified. '
         );
     }
 }

@@ -18,14 +18,17 @@ trait CreatorInformationTrait
                 case FileModificationType::MODIFIED:
                     $io->success('File ' . $fileModification->getPath() . ' was modified. ');
                     break;
+                case FileModificationType::NOT_MODIFIED:
+                    $io->warning('File ' . $fileModification->getPath() . ' does not need to be modified:  ' . $fileModification->getMessage());
+                    break;
                 case FileModificationType::CREATION_FAILED:
-                    $io->warning('File ' . $fileModification->getPath() . ' could not be created: ' . $fileModification->getMessage());
+                    $io->error('File ' . $fileModification->getPath() . ' could not be created: ' . $fileModification->getMessage());
                     break;
                 case FileModificationType::MODIFICATION_FAILED:
-                    $io->warning('File ' . $fileModification->getPath() . ' could not be modified: ' . $fileModification->getMessage());
+                    $io->error('File ' . $fileModification->getPath() . ' could not be modified: ' . $fileModification->getMessage());
                     break;
                 default:
-                    $io->warning('Something went wrong: ' . $fileModification->getMessage());
+                    $io->error('Something went wrong: ' . $fileModification->getMessage());
             }
         }
     }

@@ -47,6 +47,13 @@ services:
         description: 'Create basic files for a new TYPO3 extension.'
         schedulable: false
 
+  StefanFroemken\ExtKickstarter\Command\MiddlewareCommand:
+    tags:
+      - name: console.command
+        command: 'make:middleware'
+        description: 'Add a middleware handler to your TYPO3 extension.'
+        schedulable: false
+
   StefanFroemken\ExtKickstarter\Command\ModelCommand:
     tags:
       - name: console.command
@@ -117,6 +124,9 @@ services:
     arguments:
       $extbaseControllerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.controller.extbase' }
       $nativeControllerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.controller.native' }
+  StefanFroemken\ExtKickstarter\Service\Creator\MiddlewareCreatorService:
+    arguments:
+      $middlewareCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.middleware' }
   StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService:
     arguments:
       $modelCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.model' }
