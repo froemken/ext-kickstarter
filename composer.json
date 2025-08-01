@@ -49,6 +49,11 @@
 			"StefanFroemken\\ExtKickstarter\\": "Classes"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"StefanFroemken\\ExtKickstarter\\Tests\\": "Tests"
+		}
+	},
 	"config": {
 		"allow-plugins": {
 			"ergebnis/composer-normalize": true,

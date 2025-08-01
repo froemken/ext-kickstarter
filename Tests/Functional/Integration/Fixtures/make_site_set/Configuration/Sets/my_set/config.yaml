@@ -1,0 +1,5 @@
+name: my-vendor/my-set
+label: 'My Set'
+dependencies:
+  - my-vendor/my-other-set
+  - other-namespace/fancy-carousel
