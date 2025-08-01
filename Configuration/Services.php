@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter;
 
-use StefanFroemken\ExtKickstarter\Command\Input\AutoComplete\AutoCompleteInterface;
-use StefanFroemken\ExtKickstarter\Command\Input\Normalizer\NormalizerInterface;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\QuestionInterface;
-use StefanFroemken\ExtKickstarter\Command\Input\Validator\ValidatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Command\CommandCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Controller\Extbase\ExtbaseControllerCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Controller\Native\NativeControllerCreatorInterface;
@@ -90,15 +87,6 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
         ->addTag('ext-kickstarter.creator.upgrade-wizard');
 
     $container
-        ->registerForAutoconfiguration(AutoCompleteInterface::class)
-        ->addTag('ext-kickstarter.input.autoComplete');
-    $container
-        ->registerForAutoconfiguration(NormalizerInterface::class)
-        ->addTag('ext-kickstarter.input.normalizer');
-    $container
         ->registerForAutoconfiguration(QuestionInterface::class)
         ->addTag('ext-kickstarter.input.question');
-    $container
-        ->registerForAutoconfiguration(ValidatorInterface::class)
-        ->addTag('ext-kickstarter.input.validator');
 };

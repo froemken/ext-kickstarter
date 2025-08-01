@@ -5,48 +5,17 @@ namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
 use StefanFroemken\ExtKickstarter\Command\Input\AutoComplete\AutoCompleteInterface;
 use StefanFroemken\ExtKickstarter\Command\Input\Normalizer\NormalizerInterface;
 use StefanFroemken\ExtKickstarter\Command\Input\Validator\ValidatorInterface;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class AbstractQuestion implements QuestionInterface
 {
-    private InputInterface $consoleInput;
+    protected ?AutoCompleteInterface $autoComplete = null;
 
-    private OutputInterface $consoleOutput;
+    protected ?NormalizerInterface $normalizer = null;
 
-    private SymfonyStyle $io;
-
-    private ?AutoCompleteInterface $autoComplete;
-
-    private ?NormalizerInterface $normalizer;
-
-    private ?ValidatorInterface $validator;
-
-    public function initializeIO(InputInterface $consoleInput, OutputInterface $consoleOutput): void
-    {
-        $this->consoleInput = $consoleInput;
-        $this->consoleOutput = $consoleOutput;
-
-        $this->io = new SymfonyStyle($consoleInput, $consoleOutput);
-    }
-
-    public function setAutoComplete(?AutoCompleteInterface $autoComplete): void
-    {
-        $this->autoComplete = $autoComplete;
-    }
-
-    public function setNormalizer(?NormalizerInterface $normalizer): void
-    {
-        $this->normalizer = $normalizer;
-    }
-
-    public function setValidator(?ValidatorInterface $validator): void
-    {
-        $this->validator = $validator;
-    }
+    protected ?ValidatorInterface $validator = null;
 
     abstract protected function getDescription(): array;
 
@@ -57,9 +26,9 @@ abstract class AbstractQuestion implements QuestionInterface
         return null;
     }
 
-    public function ask(?string $default = null): mixed
+    public function ask(CommandContext $commandContext, ?string $default = null): mixed
     {
-        $this->io->text($this->getDescription());
+        $commandContext->getIo()->text($this->getDescription());
 
         $question = new Question(implode(' ', $this->getQuestion()), $default ?? $this->getDefault());
 
@@ -75,6 +44,6 @@ abstract class AbstractQuestion implements QuestionInterface
             $question->setValidator($this->validator);
         }
 
-        return (new SymfonyQuestionHelper())->ask($this->consoleInput, $this->consoleOutput, $question);
+        return (new SymfonyQuestionHelper())->ask($commandContext->getInput(), $commandContext->getOutput(), $question);
     }
 }

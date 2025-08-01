@@ -16,6 +16,8 @@ use StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\NamespaceQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\VersionQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory;
+use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
@@ -25,10 +27,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Registry;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * @param iterable<ExtensionCreatorInterface> $creators
@@ -57,7 +57,8 @@ class ExtensionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -69,30 +70,28 @@ class ExtensionCommand extends Command
         $io->title('Questions to build a new TYPO3 Extension');
 
         $extensionKey = (string)$this->questionFactory
-            ->getQuestion('extension_key', $input, $output)
-            ->ask(default: (string)$input->getArgument('extension_key'));
+            ->getQuestion('extension_key')
+            ->ask($commandContext, default: (string)$input->getArgument('extension_key'));
 
-        $extensionInformation = $this->askForExtensionInformation($io, $extensionKey);
-        $extensionInformation = $this->askForExtensionInformation(
-            $io,
-            $this->askForExtensionKey($this->registry, $io, $input->getArgument('extension_key'))
-        );
-        $extensionInformation = $this->askForExtensionInformation($input, $output, $io, $extensionKey);
+        $this->registry->set(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY, $extensionKey);
+
+        $extensionInformation = $this->askForExtensionInformation($commandContext, $extensionKey);
 
         $this->extensionCreatorService->create($extensionInformation);
 
         $path = $extensionInformation->getExtensionPath();
 
         $io->success(sprintf('The extension was saved to path %s', $path));
-        $this->printInstallationInstructions($io, $path, $extensionInformation);
+        $this->printInstallationInstructions($commandContext, $path, $extensionInformation);
 
         $this->printCreatorInformation($extensionInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
 
-    public function printInstallationInstructions(SymfonyStyle $io, string $path, ExtensionInformation $extensionInformation): void
+    public function printInstallationInstructions(CommandContext $commandContext, string $path, ExtensionInformation $extensionInformation): void
     {
+        $io = $commandContext->getIo();
         if (Environment::isComposerMode()) {
             if (str_contains($path, 'typo3temp')) {
                 $io->writeln([
@@ -137,8 +136,9 @@ class ExtensionCommand extends Command
         ]);
     }
 
-    private function askForExtensionInformation(InputInterface $input, OutputInterface $output, SymfonyStyle $io, string $extensionKey): ExtensionInformation
+    private function askForExtensionInformation(CommandContext $commandContext, string $extensionKey): ExtensionInformation
     {
+        $io = $commandContext->getIo();
         $io->info([
             'The extension will be exported to directory: ' . $this->getExtensionPath($extensionKey),
             'You can configure the export directory in extension settings (available in InstallTool)',
@@ -160,8 +160,8 @@ class ExtensionCommand extends Command
         }
 
         $composerPackageName = (string)$this->questionFactory
-            ->getQuestion(ComposerNameQuestion::ARGUMENT_NAME, $input, $output)
-            ->ask();
+            ->getQuestion(ComposerNameQuestion::ARGUMENT_NAME)
+            ->ask($commandContext);
 
         $io->text([
             'The title of the extension will be used to identify the extension much easier',
@@ -179,8 +179,8 @@ class ExtensionCommand extends Command
         $description = (string)$io->ask('Description');
 
         $version = (string)$this->questionFactory
-            ->getQuestion(VersionQuestion::ARGUMENT_NAME, $input, $output)
-            ->ask();
+            ->getQuestion(VersionQuestion::ARGUMENT_NAME)
+            ->ask($commandContext);
 
         $io->text([
             'The category is used to group your extension in the TYPO3 ExtensionManager.',
@@ -228,8 +228,8 @@ class ExtensionCommand extends Command
         $author = (string)$io->ask('Author name');
 
         $authorEmail = (string)$this->questionFactory
-            ->getQuestion(EmailQuestion::ARGUMENT_NAME, $input, $output)
-            ->ask();
+            ->getQuestion(EmailQuestion::ARGUMENT_NAME)
+            ->ask($commandContext);
 
         $io->text([
             'Enter the company name of the author (see above)',
@@ -238,8 +238,8 @@ class ExtensionCommand extends Command
         $authorCompany = (string)$io->ask('Company name');
 
         $namespacePrefix = (string)$this->questionFactory
-            ->getQuestion(NamespaceQuestion::ARGUMENT_NAME, $input, $output)
-            ->ask($this->convertComposerPackageNameToNamespacePrefix($composerPackageName));
+            ->getQuestion(NamespaceQuestion::ARGUMENT_NAME)
+            ->ask($commandContext, $this->convertComposerPackageNameToNamespacePrefix($composerPackageName));
 
         return new ExtensionInformation(
             $extensionKey,

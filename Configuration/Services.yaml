@@ -192,15 +192,6 @@ services:
     arguments:
       $upgradeCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.upgrade-wizard' }
 
-  StefanFroemken\ExtKickstarter\Command\Input\AutoCompleteFactory:
-    arguments:
-      $autoCompletes: !tagged_iterator { tag: 'ext-kickstarter.input.autoComplete' }
-  StefanFroemken\ExtKickstarter\Command\Input\NormalizerFactory:
-    arguments:
-      $normalizers: !tagged_iterator { tag: 'ext-kickstarter.input.normalizer' }
   StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory:
     arguments:
       $questions: !tagged_iterator { tag: 'ext-kickstarter.input.question' }
-  StefanFroemken\ExtKickstarter\Command\Input\ValidatorFactory:
-    arguments:
-      $validators: !tagged_iterator { tag: 'ext-kickstarter.input.validator' }
