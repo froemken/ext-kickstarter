@@ -1,0 +1,13 @@
+categories:
+  MyExample:
+    label: 'My Example'
+settings:
+  MyExample:
+    label: 'My Example'
+    type: string
+    default: ''
+    enum:
+      - Winter
+      - Spring
+      - Summer
+      - Fall

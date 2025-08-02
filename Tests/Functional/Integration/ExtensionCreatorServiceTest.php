@@ -1,42 +1,14 @@
 <?php
 
-namespace Integration;
+namespace StefanFroemken\ExtKickstarter\Tests\Functional\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
-class ExtensionCreatorServiceTest extends FunctionalTestCase
+class ExtensionCreatorServiceTest extends AbstractServiceCreatorTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'ext_kickstarter',
-    ];
-
-    protected array $coreExtensionsToLoad = [
-        'install',
-    ];
-
-    private function getTrimmedFileContent(string $actualFile): string
-    {
-        $content = file_get_contents($actualFile);
-        if ($content === false) {
-            return '';
-        }
-        return trim($content);
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-    }
-
     #[Test]
     #[DataProvider('extensionCreationProvider')]
     public function testItCreatesExpectedExtensionFiles(
@@ -109,61 +81,5 @@ class ExtensionCreatorServiceTest extends FunctionalTestCase
                 'expectedFiles' => ['ext_emconf.php', 'README.md'],
             ],
         ];
-    }
-
-    private function shouldUpdateBaseline(): bool
-    {
-        // Environment variable support
-        return getenv('UPDATE_BASELINE') === '1';
-    }
-
-    private function assertDirectoryEquals(string $expectedDir, string $actualDir): void
-    {
-        if ($this->shouldUpdateBaseline()) {
-            $this->copyDirectory($actualDir, $expectedDir);
-            self::markTestSkipped('Baseline updated: expected fixtures were overwritten with new output.');
-        }
-
-        // Normal comparison when not updating baseline
-        $expectedFiles = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($expectedDir));
-        foreach ($expectedFiles as $file) {
-            if ($file->isDir()) {
-                continue;
-            }
-            $relativePath = str_replace($expectedDir, '', $file->getPathname());
-            $actualFile = $actualDir . $relativePath;
-
-            self::assertFileExists($actualFile, sprintf('Missing file: %s', $relativePath));
-            self::assertSame(
-                $this->getTrimmedFileContent($file->getPathname()),
-                $this->getTrimmedFileContent($actualFile),
-                sprintf('File contents differ for: %s', $relativePath)
-            );
-        }
-    }
-
-    private function copyDirectory(string $source, string $destination): void
-    {
-        if (!is_dir($destination)) {
-            mkdir($destination, 0777, true);
-        }
-
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
-
-        /** @var \SplFileInfo $file */
-        foreach ($iterator as $file) {
-            $target = $destination . '/' . $file->getBasename();
-
-            if ($file->isDir()) {
-                if (!is_dir($target)) {
-                    mkdir($target, 0777, true);
-                }
-            } else {
-                copy($file->getPathname(), $target);
-            }
-        }
     }
 }

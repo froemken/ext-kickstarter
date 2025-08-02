@@ -215,7 +215,7 @@ class ModelCommand extends Command
             $propertyName = GeneralUtility::underscoredToLowerCamelCase($columnName);
 
             $dataType = $io->choice(
-                "Which data type you prefer for your property: \"{$propertyName}\"",
+                sprintf('Which data type you prefer for your property: "%s"', $propertyName),
                 self::DATA_TYPES,
                 'string'
             );
@@ -253,12 +253,12 @@ class ModelCommand extends Command
         ?string $suggestedDefault = null
     ): mixed {
         return match ($dataType) {
-            'int' => (int)$io->ask("Default value for '$propertyName' (int)", $suggestedDefault ?? '0'),
-            'float' => (float)$io->ask("Default value for '$propertyName' (float)", $suggestedDefault ?? '0.0'),
-            'bool' => $io->confirm("Default value for '$propertyName' (bool)?", (bool)$suggestedDefault),
-            'string' => (string)$io->ask("Default value for '$propertyName' (string)", $suggestedDefault ?? ''),
+            'int' => (int)$io->ask(sprintf("Default value for '%s' (int)", $propertyName), $suggestedDefault ?? '0'),
+            'float' => (float)$io->ask(sprintf("Default value for '%s' (float)", $propertyName), $suggestedDefault ?? '0.0'),
+            'bool' => $io->confirm(sprintf("Default value for '%s' (bool)?", $propertyName), (bool)$suggestedDefault),
+            'string' => (string)$io->ask(sprintf("Default value for '%s' (string)", $propertyName), $suggestedDefault ?? ''),
             'array' => json_decode(
-                (string)$io->ask("Default value for '$propertyName' (array, JSON format)", $suggestedDefault !== null && $suggestedDefault !== '' && $suggestedDefault !== '0' ? json_encode($suggestedDefault) : '[]'),
+                (string)$io->ask(sprintf("Default value for '%s' (array, JSON format)", $propertyName), $suggestedDefault !== null && $suggestedDefault !== '' && $suggestedDefault !== '0' ? json_encode($suggestedDefault) : '[]'),
                 true
             ),
             default => null,

@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector;
+use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPrivateMethodParameterRector;
 use Rector\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector;
 use Rector\ValueObject\PhpVersion;
@@ -35,12 +38,20 @@ return RectorConfig::configure()
     ->withConfiguredRule(ExtEmConfRector::class, [
         ExtEmConfRector::ADDITIONAL_VALUES_TO_BE_REMOVED => [],
     ])
+    ->withConfiguredRule(EncapsedStringsToSprintfRector::class, [
+        'always' => true,
+        // force sprintf even for simple cases
+    ])
     ->withImportNames(importShortClasses: false, removeUnusedImports: true)
     // If you use importNames(), you should consider excluding some TYPO3 files.
     ->withSkip([
+        RemoveUnusedPrivateMethodParameterRector::class,
         RemoveParentCallWithoutParentRector::class,
-        '*Build/*', // Exclude any "Build" subdirectory
-        '*Resources/*', // Exclude any "Build" subdirectory
+        CompleteDynamicPropertiesRector::class,
+        '*Build/*',
+        // Exclude any "Build" subdirectory
+        '*Resources/*',
+        // Exclude any "Build" subdirectory
         '*Model/*',
     ])
     ->withPreparedSets(
@@ -52,5 +63,4 @@ return RectorConfig::configure()
         earlyReturn: true,
         strictBooleans: true,
     )
-    ->withSkip([])
-;
+    ->withSkip([]);
