@@ -10,7 +10,7 @@ use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Question\Question;
 
-readonly abstract class AbstractQuestion implements QuestionInterface
+abstract readonly class AbstractQuestion implements QuestionInterface
 {
     abstract protected function getDescription(): array;
 
