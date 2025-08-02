@@ -11,9 +11,11 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Validator\EmailValidator;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-class EmailQuestion extends AbstractQuestion
+#[AutoconfigureTag('ext-kickstarter.command.extension.question')]
+readonly class EmailQuestion extends AbstractQuestion
 {
     public const ARGUMENT_NAME = 'email';
 
@@ -27,10 +29,8 @@ class EmailQuestion extends AbstractQuestion
     ];
 
     public function __construct(
-        EmailValidator $validator
-    ) {
-        $this->validator = $validator;
-    }
+        private iterable $inputHandlers,
+    ) {}
 
     public function getArgumentName(): string
     {
@@ -45,5 +45,15 @@ class EmailQuestion extends AbstractQuestion
     protected function getQuestion(): array
     {
         return self::QUESTION;
+    }
+
+    public function ask(CommandContext $commandContext, ?string $default = null): mixed
+    {
+        $commandContext->getIo()->text($this->getDescription());
+
+        return $this->askQuestion(
+            $this->createSymfonyQuestion($this->inputHandlers, $default),
+            $commandContext
+        );
     }
 }

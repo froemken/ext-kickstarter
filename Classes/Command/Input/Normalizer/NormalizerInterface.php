@@ -13,7 +13,5 @@ namespace StefanFroemken\ExtKickstarter\Command\Input\Normalizer;
 
 interface NormalizerInterface
 {
-    public function getArgumentName(): string;
-
     public function __invoke(string $userInput): string;
 }

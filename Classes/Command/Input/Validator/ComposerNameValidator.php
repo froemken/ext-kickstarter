@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command\Input\Validator;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('ext-kickstarter.inputHandler.composer_name')]
 class ComposerNameValidator implements ValidatorInterface
 {
     private const COMPOSER_NAME_REGEX = '#^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*$#';
