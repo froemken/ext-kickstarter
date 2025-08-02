@@ -11,15 +11,11 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\Normalizer;
 
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag('ext-kickstarter.inputHandler.extension_key')]
 class ExtensionKeyNormalizer implements NormalizerInterface
 {
-    private const ARGUMENT_NAME = 'extension_key';
-
-    public function getArgumentName(): string
-    {
-        return self::ARGUMENT_NAME;
-    }
-
     public function __invoke(string $userInput): string
     {
         // Lower case the given extension key

@@ -11,15 +11,11 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\AutoComplete;
 
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag('ext-kickstarter.inputHandler.extension_key')]
 class ExtensionKeyAutoComplete implements AutoCompleteInterface
 {
-    private const ARGUMENT_NAME = 'extension_key';
-
-    public function getArgumentName(): string
-    {
-        return self::ARGUMENT_NAME;
-    }
-
     public function __invoke(string $userInput): array
     {
         return ['sitepackage', 'my_extension', 'demo'];

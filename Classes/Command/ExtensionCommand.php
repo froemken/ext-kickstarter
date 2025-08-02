@@ -13,9 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\NamespaceQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\VersionQuestion;
-use StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
@@ -40,7 +41,7 @@ class ExtensionCommand extends Command
 
     public function __construct(
         private readonly ExtensionCreatorService $extensionCreatorService,
-        private readonly QuestionFactory $questionFactory,
+        private readonly QuestionCollection $questionCollection,
         private readonly Registry $registry,
     ) {
         parent::__construct();
@@ -69,9 +70,10 @@ class ExtensionCommand extends Command
 
         $io->title('Questions to build a new TYPO3 Extension');
 
-        $extensionKey = (string)$this->questionFactory
-            ->getQuestion('extension_key')
-            ->ask($commandContext, default: (string)$input->getArgument('extension_key'));
+        $extensionKey = (string)$this->questionCollection->askQuestion(
+            ExtensionKeyQuestion::ARGUMENT_NAME,
+            $commandContext
+        );
 
         $this->registry->set(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY, $extensionKey);
 
@@ -159,9 +161,10 @@ class ExtensionCommand extends Command
             }
         }
 
-        $composerPackageName = (string)$this->questionFactory
-            ->getQuestion(ComposerNameQuestion::ARGUMENT_NAME)
-            ->ask($commandContext);
+        $composerPackageName = (string)$this->questionCollection->askQuestion(
+            ComposerNameQuestion::ARGUMENT_NAME,
+            $commandContext,
+        );
 
         $io->text([
             'The title of the extension will be used to identify the extension much easier',
@@ -178,9 +181,10 @@ class ExtensionCommand extends Command
         ]);
         $description = (string)$io->ask('Description');
 
-        $version = (string)$this->questionFactory
-            ->getQuestion(VersionQuestion::ARGUMENT_NAME)
-            ->ask($commandContext);
+        $version = (string)$this->questionCollection->askQuestion(
+            VersionQuestion::ARGUMENT_NAME,
+            $commandContext,
+        );
 
         $io->text([
             'The category is used to group your extension in the TYPO3 ExtensionManager.',
@@ -227,9 +231,10 @@ class ExtensionCommand extends Command
         ]);
         $author = (string)$io->ask('Author name');
 
-        $authorEmail = (string)$this->questionFactory
-            ->getQuestion(EmailQuestion::ARGUMENT_NAME)
-            ->ask($commandContext);
+        $authorEmail = (string)$this->questionCollection->askQuestion(
+            EmailQuestion::ARGUMENT_NAME,
+            $commandContext,
+        );
 
         $io->text([
             'Enter the company name of the author (see above)',
@@ -237,9 +242,11 @@ class ExtensionCommand extends Command
         ]);
         $authorCompany = (string)$io->ask('Company name');
 
-        $namespacePrefix = (string)$this->questionFactory
-            ->getQuestion(NamespaceQuestion::ARGUMENT_NAME)
-            ->ask($commandContext, $this->convertComposerPackageNameToNamespacePrefix($composerPackageName));
+        $namespacePrefix = (string)$this->questionCollection->askQuestion(
+            NamespaceQuestion::ARGUMENT_NAME,
+            $commandContext,
+            $composerPackageName,
+        );
 
         return new ExtensionInformation(
             $extensionKey,
@@ -255,24 +262,5 @@ class ExtensionCommand extends Command
             $namespacePrefix,
             $this->createExtensionPath($extensionKey, true),
         );
-    }
-
-    private function convertComposerPackageNameToNamespacePrefix(string $composerPackageName): string
-    {
-        return implode(
-            '\\',
-            array_map(
-                fn($part): string|array => str_replace(
-                    [
-                        '-',
-                        '_',
-                        '.',
-                    ],
-                    '',
-                    ucwords($part, '-_ .')
-                ),
-                explode('/', $composerPackageName)
-            )
-        ) . '\\';
     }
 }

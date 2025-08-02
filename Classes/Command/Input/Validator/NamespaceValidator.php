@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command\Input\Validator;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\NamespaceQuestion;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('ext-kickstarter.inputHandler.namespace')]
 class NamespaceValidator implements ValidatorInterface
 {
     /** @see https://regex101.com/r/oNvIYg/1 */

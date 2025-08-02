@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
 
-use StefanFroemken\ExtKickstarter\Command\Input\AutoComplete\ExtensionKeyAutoComplete;
-use StefanFroemken\ExtKickstarter\Command\Input\Normalizer\ExtensionKeyNormalizer;
-use StefanFroemken\ExtKickstarter\Command\Input\Validator\ExtensionKeyValidator;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-class ExtensionKeyQuestion extends AbstractQuestion
+#[AutoconfigureTag('ext-kickstarter.command.extension.question')]
+readonly class ExtensionKeyQuestion extends AbstractQuestion
 {
-    private const ARGUMENT_NAME = 'extension_key';
+    public const ARGUMENT_NAME = 'extension_key';
 
     private const QUESTION = [
         'Please provide the key for your extension',
@@ -29,19 +29,8 @@ class ExtensionKeyQuestion extends AbstractQuestion
     ];
 
     public function __construct(
-        ExtensionKeyValidator $validator,
-        ExtensionKeyNormalizer $normalizer,
-        ExtensionKeyAutoComplete $autoComplete,
-    ) {
-        $this->validator = $validator;
-        $this->normalizer = $normalizer;
-        $this->autoComplete = $autoComplete;
-    }
-
-    public function getArgumentName(): string
-    {
-        return self::ARGUMENT_NAME;
-    }
+        private iterable $inputHandlers,
+    ) {}
 
     protected function getDescription(): array
     {
@@ -51,5 +40,15 @@ class ExtensionKeyQuestion extends AbstractQuestion
     protected function getQuestion(): array
     {
         return self::QUESTION;
+    }
+
+    public function ask(CommandContext $commandContext, ?string $default = null): mixed
+    {
+        $commandContext->getIo()->text($this->getDescription());
+
+        return $this->askQuestion(
+            $this->createSymfonyQuestion($this->inputHandlers, $default),
+            $commandContext
+        );
     }
 }

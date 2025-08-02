@@ -11,9 +11,11 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Validator\NamespaceValidator;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-class NamespaceQuestion extends AbstractQuestion
+#[AutoconfigureTag('ext-kickstarter.command.extension.question')]
+readonly class NamespaceQuestion extends AbstractQuestion
 {
     public const ARGUMENT_NAME = 'namespace';
 
@@ -28,10 +30,8 @@ class NamespaceQuestion extends AbstractQuestion
     ];
 
     public function __construct(
-        NamespaceValidator $validator
-    ) {
-        $this->validator = $validator;
-    }
+        private iterable $inputHandlers,
+    ) {}
 
     public function getArgumentName(): string
     {
@@ -46,5 +46,15 @@ class NamespaceQuestion extends AbstractQuestion
     protected function getQuestion(): array
     {
         return self::QUESTION;
+    }
+
+    public function ask(CommandContext $commandContext, ?string $default = null): mixed
+    {
+        $commandContext->getIo()->text($this->getDescription());
+
+        return $this->askQuestion(
+            $this->createSymfonyQuestion($this->inputHandlers, $default),
+            $commandContext
+        );
     }
 }
