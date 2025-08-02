@@ -9,9 +9,9 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Command\Input\AutoComplete;
+namespace StefanFroemken\ExtKickstarter\Command\Input\Decorator;
 
-interface AutoCompleteInterface
+interface DecoratorInterface
 {
-    public function __invoke(string $userInput): array;
+    public function __invoke(?string $defaultValue = null): string;
 }

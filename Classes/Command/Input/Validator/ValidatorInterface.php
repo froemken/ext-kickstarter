@@ -13,5 +13,5 @@ namespace StefanFroemken\ExtKickstarter\Command\Input\Validator;
 
 interface ValidatorInterface
 {
-    public function getArgumentName(): string;
+    public function __invoke(mixed $answer): string;
 }

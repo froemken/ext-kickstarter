@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command\Input\Validator;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\VersionQuestion;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('ext-kickstarter.inputHandler.version')]
 class VersionValidator implements ValidatorInterface
 {
     private const VERSION_REGEX = '#^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$#';

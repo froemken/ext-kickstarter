@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command\Input\Validator;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+#[AutoconfigureTag('ext-kickstarter.inputHandler.email')]
 class EmailValidator implements ValidatorInterface
 {
     public function getArgumentName(): string
