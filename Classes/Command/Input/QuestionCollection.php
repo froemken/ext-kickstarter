@@ -17,7 +17,7 @@ use StefanFroemken\ExtKickstarter\Context\CommandContext;
 readonly class QuestionCollection
 {
     /**
-     * @var array<QuestionInterface> $questions
+     * @param iterable<QuestionInterface> $questions
      */
     public function __construct(
         private iterable $questions,
@@ -40,6 +40,6 @@ readonly class QuestionCollection
             }
         }
 
-        throw new \InvalidArgumentException('No question for argument ' . $argumentName . ' found.');
+        throw new \InvalidArgumentException('No question for argument ' . $argumentName . ' found.', 5078287218);
     }
 }

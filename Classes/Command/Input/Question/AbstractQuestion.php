@@ -18,7 +18,16 @@ abstract readonly class AbstractQuestion implements QuestionInterface
 
     public function getArgumentName(): string
     {
-        return static::ARGUMENT_NAME;
+        $calledClass = static::class;
+
+        if (!defined($calledClass . '::ARGUMENT_NAME')) {
+            throw new \RuntimeException(
+                sprintf('Class %s must define the constant ARGUMENT_NAME.', $calledClass),
+                3362475211
+            );
+        }
+
+        return $calledClass::ARGUMENT_NAME;
     }
 
     protected function getDefault(): ?string
