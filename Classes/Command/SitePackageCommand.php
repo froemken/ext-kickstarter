@@ -37,11 +37,6 @@ class SitePackageCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * @param SymfonyStyle $io
-     * @param mixed $extConf
-     * @return string
-     */
     public function getTitle(SymfonyStyle $io, mixed $extConf): string
     {
         $io->text([

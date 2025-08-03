@@ -25,16 +25,15 @@ trait ExtensionInformationTrait
     private function getExtensionInformation(string $extensionKey, SymfonyStyle $io): ExtensionInformation
     {
         $extensionPath = $this->getExtensionPath($extensionKey);
-        $composerManifestPath = $extensionPath . 'composer.json';
-
         if (!is_dir($extensionPath)) {
             $io->error([
-                'Extension path does not exists: ' . $extensionPath,
+                'No extension found at: ' . $extensionPath,
                 'Please use command "make:extension" to create a new extension.',
             ]);
             die();
         }
 
+        $composerManifestPath = $extensionPath . 'composer.json';
         if (!is_file($composerManifestPath)) {
             $io->error([
                 'Extension "' . $extensionKey . '" does not have a composer.json file.',

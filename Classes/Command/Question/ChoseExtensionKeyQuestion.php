@@ -5,7 +5,6 @@ namespace StefanFroemken\ExtKickstarter\Command\Question;
 use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Registry;
 
 readonly class ChoseExtensionKeyQuestion
@@ -15,28 +14,34 @@ readonly class ChoseExtensionKeyQuestion
         private ExtensionConfiguration $extensionConfiguration,
     ) {}
 
-    public function ask(SymfonyStyle $io, ?string $defaultExtensionKey = null): string
+    public function ask(SymfonyStyle $io, ?string $defaultExtensionKey = null): ?string
     {
+        $path = ExtConf::create($this->extensionConfiguration)->getExportDirectory();
         $lastExtension = $defaultExtensionKey ?? $this->registry->get(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY);
-        $availableExtensions = $this->getAvailableExtensions();
+        $availableExtensions = $this->getAvailableExtensions($path);
         $io->text([
             'Building a new TYPO3 extension needs a unique identifier, the so called extension key. See:',
             'https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ExtensionArchitecture/BestPractises/ExtensionKey.html',
         ]);
 
-        $extensionKey = $io->choice(
-            'Which extension should be modified? ',
-            $availableExtensions,
-            $lastExtension,
-        );
+        if ($availableExtensions !== []) {
+            $extensionKey = $io->choice(
+                'Which extension should be modified? ',
+                $availableExtensions,
+                $lastExtension,
+            );
+            $this->registry->set(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY, $extensionKey);
+        } else {
+            $io->error('No extensions found at path ' . $path);
+            $io->info('Create an extension using command make:extension or make:site-package first. ');
+            die();
+        }
 
-        $this->registry->set(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY, $extensionKey);
         return $extensionKey;
     }
 
-    private function getAvailableExtensions(): array
+    private function getAvailableExtensions(string $path): array
     {
-        $path = Environment::getProjectPath() . DIRECTORY_SEPARATOR . ExtConf::create($this->extensionConfiguration)->getExportDirectory();
         if (!is_dir($path)) {
             return [];
         }
