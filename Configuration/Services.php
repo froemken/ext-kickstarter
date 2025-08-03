@@ -17,6 +17,7 @@ use StefanFroemken\ExtKickstarter\Creator\Middleware\MiddlewareCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase\ExtbasePluginCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Plugin\Native\NativePluginCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Property\TypeConverter\TypeConverterCreatorInterface;
+use StefanFroemken\ExtKickstarter\Creator\SitePackage\SitePackageCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\SiteSet\SiteSetCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\SiteSet\SiteSettingsDefinitionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Tca\Table\TcaTableCreatorInterface;
@@ -63,14 +64,17 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
         ->registerForAutoconfiguration(NativePluginCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.plugin.native');
     $container
-        ->registerForAutoconfiguration(TypeConverterCreatorInterface::class)
-        ->addTag('ext-kickstarter.creator.property.type-converter');
+        ->registerForAutoconfiguration(SitePackageCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.property.site-package');
     $container
         ->registerForAutoconfiguration(SiteSetCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.site-set');
     $container
         ->registerForAutoconfiguration(SiteSettingsDefinitionCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.site-settings-definition');
+    $container
+        ->registerForAutoconfiguration(TypeConverterCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.property.type-converter');
     $container
         ->registerForAutoconfiguration(TcaTableCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.tca.table');

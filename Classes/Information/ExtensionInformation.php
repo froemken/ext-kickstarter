@@ -19,7 +19,7 @@ use PhpParser\NodeFinder;
 use PhpParser\ParserFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-readonly class ExtensionInformation
+class ExtensionInformation
 {
     protected const SYSTEM_COLUMNS = [
         'endtime',
@@ -408,5 +408,20 @@ readonly class ExtensionInformation
     public function getCreatorInformation(): CreatorInformation
     {
         return $this->creatorInformation;
+    }
+
+    public function setExtensionKey(string $extensionKey): void
+    {
+        $this->extensionKey = $extensionKey;
+    }
+
+    public function setComposerPackageName(string $composerPackageName): void
+    {
+        $this->composerPackageName = $composerPackageName;
+    }
+
+    public function setExtensionPath(string $extensionPath): void
+    {
+        $this->extensionPath = $extensionPath;
     }
 }
