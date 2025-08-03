@@ -26,7 +26,9 @@
 		"source": "https://github.com/froemken/ext-kickstarter"
 	},
 	"require": {
+		"ext-curl": "*",
 		"ext-pdo": "*",
+		"ext-zip": "*",
 		"typo3/cms-core": "^13.4.3",
 		"typo3/cms-install": "^13.4.3",
 		"friendsofphp/php-cs-fixer": "^3.49"
