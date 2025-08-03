@@ -140,7 +140,7 @@ class SiteSetCreatorServiceTest extends AbstractServiceCreatorTestCase
         $creatorService->create($siteSetInfo);
 
         self::assertCount(1, $siteSetInfo->getCreatorInformation()->getFileModifications());
-        self::assertEquals(FileModificationType::CREATION_FAILED, $siteSetInfo->getCreatorInformation()->getFileModifications()[0]->getFileModificationType());
+        self::assertEquals(FileModificationType::MODIFICATION_FAILED, $siteSetInfo->getCreatorInformation()->getFileModifications()[0]->getFileModificationType());
     }
 
     public static function siteSetOverridingProvider(): array

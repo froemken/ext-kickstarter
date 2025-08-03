@@ -36,3 +36,6 @@ jobs:
 
       - name: 'PHPStan'
         run: Build/Scripts/runTests.sh -n -p ${{ matrix.php }} -s phpstan
+
+      - name: 'Functional Tests'
+        run: Build/Scripts/runTests.sh -n -p ${{ matrix.php }} -s functional
