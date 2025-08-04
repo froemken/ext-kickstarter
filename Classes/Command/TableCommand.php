@@ -81,24 +81,44 @@ class TableCommand extends Command
 
     private function askForTableName(SymfonyStyle $io, ExtensionInformation $extensionInformation): string
     {
-        $tableName = (string)$io->ask(
-            'Please provide the table name. Usually the table name starts with: ' . $extensionInformation->getTableNamePrefix(),
-        );
+        $prefix = $extensionInformation->getTableNamePrefix();
 
-        $tableName = strtolower($tableName);
-        if (str_starts_with($tableName, $extensionInformation->getTableNamePrefix())) {
-            // User has entered full expected table name. Use it.
-            return $tableName;
-        }
+        do {
+            $tableName = strtolower((string)$io->ask(
+                'Please provide the table name. Usually the table name starts with: ' . $prefix
+            ));
 
-        // User has entered something unexpected like "cars". Let him ask about "tx_myext_domain_model_cars"
-        $isTableNameConfirmed = (string)$io->confirm(
-            'Would you like to adopt the suggested table name: ' . $extensionInformation->getTableNamePrefix() . $tableName . '?',
-        );
+            // 1. Check if name is empty
+            if (trim($tableName) === '') {
+                $io->error('Table name must not be empty.');
+                $validTableName = false;
+                continue;
+            }
 
-        if ($isTableNameConfirmed !== '' && $isTableNameConfirmed !== '0') {
-            return $extensionInformation->getTableNamePrefix() . $tableName;
-        }
+            // 2. Check if name equals the prefix only (e.g., "tx_yyy_domain_model_")
+            if ($tableName === $prefix) {
+                $io->error('Table name must not be only the prefix: ' . $prefix);
+                $validTableName = false;
+                continue;
+            }
+
+            // 3. If name starts with prefix, accept it directly
+            if (str_starts_with($tableName, $prefix)) {
+                return $tableName;
+            }
+
+            // 4. Suggest prefix + name if user entered only suffix
+            $suggestedName = $prefix . $tableName;
+            $isTableNameConfirmed = $io->confirm(
+                'Would you like to adopt the suggested table name: ' . $suggestedName . '?'
+            );
+
+            if ($isTableNameConfirmed) {
+                return $suggestedName;
+            }
+
+            $validTableName = true; // user declined suggestion but provided valid name
+        } while (!$validTableName);
 
         return $tableName;
     }
@@ -112,7 +132,11 @@ class TableCommand extends Command
         do {
             $tableColumnName = (string)$io->ask('Enter column name we should create for you', $defaultColumnName);
 
-            if (preg_match('/^\d/', $tableColumnName)) {
+            if (trim($tableColumnName) === '') {
+                $io->error('Table column name must not be empty.');
+                $defaultColumnName = $this->tryToCorrectColumnName($tableColumnName);
+                $validTableColumnName = false;
+            } elseif (preg_match('/^\d/', $tableColumnName)) {
                 $io->error('Table column should not start with a number.');
                 $defaultColumnName = $this->tryToCorrectColumnName($tableColumnName);
                 $validTableColumnName = false;
