@@ -51,18 +51,8 @@ class ModelCreator implements DomainCreatorInterface
         $modelFilePath = $modelInformation->getModelFilePath();
         $fileStructure = $this->buildFileStructure($modelFilePath);
 
-        if (is_file($modelFilePath)) {
-            $modelInformation->getCreatorInformation()->fileExists(
-                $modelFilePath,
-                sprintf(
-                    'Models can only be created, not modified. The file %s already exists and cannot be overridden. ',
-                    $modelInformation->getModelFilename()
-                )
-            );
-            return;
-        }
         $this->addClassNodes($fileStructure, $modelInformation);
-        $this->fileManager->createFile($modelFilePath, $fileStructure->getFileContents(), $modelInformation->getCreatorInformation());
+        $this->fileManager->createOrModifyFile($modelFilePath, $fileStructure->getFileContents(), $modelInformation->getCreatorInformation());
     }
 
     private function addClassNodes(FileStructure $fileStructure, ModelInformation $modelInformation): void

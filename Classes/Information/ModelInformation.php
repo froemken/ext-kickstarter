@@ -22,9 +22,9 @@ readonly class ModelInformation
     public function __construct(
         private ExtensionInformation $extensionInformation,
         private string $modelClassName,
-        private string $mappedTableName,
-        private bool $abstractEntity,
-        private array $properties,
+        private ?string $mappedTableName = null,
+        private ?bool $abstractEntity = null,
+        private array $properties = [],
         private CreatorInformation $creatorInformation = new CreatorInformation()
     ) {}
 
