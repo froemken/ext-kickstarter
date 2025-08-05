@@ -6,9 +6,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
-use StefanFroemken\ExtKickstarter\Information\SiteSetInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService;
-use StefanFroemken\ExtKickstarter\Service\Creator\SiteSetCreatorService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 

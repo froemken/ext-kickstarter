@@ -24,6 +24,7 @@ return (new \PhpCsFixer\Config())
             ->ignoreVCSIgnored(true)
             ->in(__DIR__)
             ->exclude('.Build')
+            ->exclude('Fixtures')
     )
     ->setRiskyAllowed(true)
     ->setRules([

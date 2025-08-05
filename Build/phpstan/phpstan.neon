@@ -18,5 +18,6 @@ parameters:
     analyse:
       - ../../**/ext_emconf.php
       - ../../**/.Build
+      - ../../**/Fixtures/**
 
   tmpDir: ../../.Build/.cache/phpstan/
