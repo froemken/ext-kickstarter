@@ -96,7 +96,7 @@ class TypeConverterCreator implements TypeConverterCreatorInterface
                     ->addParam($this->builderFactory->param('convertedChildProperties')->setType('array')->setDefault([]))
                     ->addParam($this->builderFactory->param('configuration')->setType('?PropertyMappingConfigurationInterface')->setDefault(null))
                     ->makePublic()
-                    ->setReturnType('void')
+                    ->setReturnType($typeConverterInformation->getTarget())
                     ->getNode()
             )
         );
