@@ -121,6 +121,25 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                     FileModificationType::MODIFIED,
                 ]
             ],
+            'modify_model_add_property_datetime' => [
+                'modelClassName' => 'MyModel',
+                'mappedTableName' => 'tx_myextension_domain_model_mymodel',
+                'abstractEntity' => true,
+                'properties' => [
+                    [
+                        'propertyName' => 'xxx',
+                        'dataType' => \DateTime::class,
+                        'initializeObject' => true,
+                    ]
+                ],
+                'extensionKey' => 'my_extension',
+                'composerPackageName' => 'my-vendor/my-extension',
+                'expectedDir' => __DIR__ . '/Fixtures/my_extension_with_model_modified_datetime',
+                'inputPath' => __DIR__ . '/Fixtures/input/my_extension_with_model',
+                'createdFileModifications' => [
+                    FileModificationType::MODIFIED,
+                ]
+            ],
         ];
     }
 }
