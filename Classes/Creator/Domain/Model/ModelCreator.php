@@ -182,7 +182,7 @@ class ModelCreator implements DomainCreatorInterface
             $name = $initProp['propertyName'];
 
             $expr = match ($type) {
-                'ObjectStorage' => new \PhpParser\Node\Expr\New_(
+                ObjectStorage::class => new \PhpParser\Node\Expr\New_(
                     new \PhpParser\Node\Name('ObjectStorage')
                 ),
                 'DateTime' => new \PhpParser\Node\Expr\New_(
