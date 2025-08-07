@@ -29,5 +29,6 @@ final class MyOtherModel extends AbstractEntity
     }
     public function initializeObject(): void
     {
+        $this->yyy = new ObjectStorage();
     }
 }
