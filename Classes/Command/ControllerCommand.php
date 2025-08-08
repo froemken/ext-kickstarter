@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
 use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
@@ -33,8 +35,8 @@ class ControllerCommand extends Command
     use TryToCorrectClassNameTrait;
 
     public function __construct(
-        private readonly ControllerCreatorService $controllerCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly ControllerCreatorService   $controllerCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -50,7 +52,8 @@ class ControllerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -59,18 +62,22 @@ class ControllerCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $controllerInformation = $this->askForControllerInformation($io, $input);
+        $controllerInformation = $this->askForControllerInformation($commandContext);
         $this->controllerCreatorService->create($controllerInformation);
-        $this->printCreatorInformation($controllerInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($controllerInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForControllerInformation(SymfonyStyle $io, InputInterface $input): ControllerInformation
+    private function askForControllerInformation(CommandContext $commandContext): ControllerInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new ControllerInformation(

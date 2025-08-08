@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\SitePackageInformation;
@@ -33,6 +35,7 @@ class SitePackageCommand extends Command
 
     public function __construct(
         private readonly SitePackageCreatorService $sitePackageCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -69,7 +72,8 @@ class SitePackageCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -86,7 +90,7 @@ class SitePackageCommand extends Command
 
         $this->printInstallationInstructions($io, $sitePackageInformation);
 
-        $this->printCreatorInformation($sitePackageInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($sitePackageInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }

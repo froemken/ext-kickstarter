@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\CommandInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\CommandCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
@@ -32,6 +35,7 @@ class CommandCommand extends Command
 
     public function __construct(
         private readonly CommandCreatorService $commandCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -47,7 +51,8 @@ class CommandCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -56,18 +61,22 @@ class CommandCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $commandInformation = $this->askForCommandInformation($io, $input);
+        $commandInformation = $this->askForCommandInformation($commandContext);
         $this->commandCreatorService->create($commandInformation);
-        $this->printCreatorInformation($commandInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($commandInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForCommandInformation(SymfonyStyle $io, InputInterface $input): CommandInformation
+    private function askForCommandInformation(CommandContext $commandContext): CommandInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new CommandInformation(

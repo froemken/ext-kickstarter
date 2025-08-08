@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\PluginInformation;
@@ -33,8 +35,8 @@ class PluginCommand extends Command
     use FileStructureBuilderTrait;
 
     public function __construct(
-        private readonly PluginCreatorService $pluginCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly PluginCreatorService       $pluginCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -50,7 +52,8 @@ class PluginCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -59,20 +62,23 @@ class PluginCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $pluginInformation = $this->askForPluginInformation($io, $input);
+        $pluginInformation = $this->askForPluginInformation($commandContext);
         $this->pluginCreatorService->create($pluginInformation);
-        $this->printCreatorInformation($pluginInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($pluginInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForPluginInformation(SymfonyStyle $io, InputInterface $input): PluginInformation
+    private function askForPluginInformation(CommandContext $commandContext): PluginInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
-
         $pluginLabel = (string)$io->ask(
             'Please provide a label for your plugin. You will see the label in the backend',
         );

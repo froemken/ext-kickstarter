@@ -86,7 +86,7 @@ class ExtensionCommand extends Command
         $io->success(sprintf('The extension was saved to path %s', $path));
         $this->printInstallationInstructions($commandContext, $path, $extensionInformation);
 
-        $this->printCreatorInformation($extensionInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($extensionInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }

@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
 use StefanFroemken\ExtKickstarter\Information\ModelInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService;
@@ -44,8 +46,8 @@ class ModelCommand extends Command
     ];
 
     public function __construct(
-        private readonly ModelCreatorService $modelCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly ModelCreatorService        $modelCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -61,7 +63,8 @@ class ModelCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -70,18 +73,22 @@ class ModelCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $modelInformation = $this->askForModelInformation($io, $input);
+        $modelInformation = $this->askForModelInformation($commandContext);
         $this->modelCreatorService->create($modelInformation);
-        $this->printCreatorInformation($modelInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($modelInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForModelInformation(SymfonyStyle $io, InputInterface $input): ?ModelInformation
+    private function askForModelInformation(CommandContext $commandContext): ?ModelInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         do {

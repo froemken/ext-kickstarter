@@ -2,14 +2,15 @@
 
 namespace StefanFroemken\ExtKickstarter\Traits;
 
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
 use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 trait CreatorInformationTrait
 {
-    private function printCreatorInformation(CreatorInformation $creatorInformation, SymfonyStyle $io): void
+    private function printCreatorInformation(CreatorInformation $creatorInformation, CommandContext $commandContext): void
     {
+        $io = $commandContext->getIo();
         foreach ($creatorInformation->getFileModifications() as $fileModification) {
             switch ($fileModification->getFileModificationType()) {
                 case FileModificationType::CREATED:

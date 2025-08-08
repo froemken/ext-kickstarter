@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\EventInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
@@ -31,7 +33,7 @@ class EventCommand extends Command
 
     public function __construct(
         private readonly EventCreatorService $eventCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -47,7 +49,8 @@ class EventCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -56,23 +59,27 @@ class EventCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $eventInformation = $this->askForEventInformation($io, $input);
+        $eventInformation = $this->askForEventInformation($commandContext);
+
         $this->eventCreatorService->create($eventInformation);
-        $this->printCreatorInformation($eventInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($eventInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForEventInformation(SymfonyStyle $io, InputInterface $input): EventInformation
+    private function askForEventInformation(CommandContext $commandContext): EventInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new EventInformation(
             $extensionInformation,
-            $this->askForEventClassName($io),
+            $this->askForEventClassName($commandContext->getIo()),
         );
     }
 
