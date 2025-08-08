@@ -13,12 +13,14 @@ namespace StefanFroemken\ExtKickstarter\Creator\Extension;
 
 use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use StefanFroemken\ExtKickstarter\Templates\ServicesYamlTemplate;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ServicesYamlCreator implements ExtensionCreatorInterface
 {
     public function __construct(
         private readonly FileManager $fileManager,
+        private readonly ServicesYamlTemplate $servicesYamlTemplate,
     ) {}
 
     public function create(ExtensionInformation $extensionInformation): void
@@ -34,24 +36,8 @@ class ServicesYamlCreator implements ExtensionCreatorInterface
 
         $this->fileManager->createOrModifyFile(
             $servicesYamlPath . 'Services.yaml',
-            sprintf($this->getTemplate(), $extensionInformation->getNamespacePrefix()),
+            $this->servicesYamlTemplate->getTemplate($extensionInformation),
             $extensionInformation->getCreatorInformation()
         );
-    }
-
-    private function getTemplate(): string
-    {
-        return <<<'EOT'
-services:
-  _defaults:
-    autowire: true
-    autoconfigure: true
-    public: false
-
-  %s:
-    resource: '../Classes/*'
-    exclude:
-    - '../Classes/Domain/Model/*'
-EOT;
     }
 }
