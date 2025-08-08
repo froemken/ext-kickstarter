@@ -254,6 +254,9 @@ services:
   StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.email' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\EventClassNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-class' }
   StefanFroemken\ExtKickstarter\Command\Input\Question\ExtensionKeyQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.extension_key' }
