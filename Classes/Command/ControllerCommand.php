@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ControllerClassNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
@@ -80,10 +81,16 @@ class ControllerCommand extends Command
             $commandContext
         );
 
+        $className = (string)$this->questionCollection->askQuestion(
+            ControllerClassNameQuestion::ARGUMENT_NAME,
+            $commandContext,
+        );
+        $io->text('Class name '.$className.' will be used');
+
         return new ControllerInformation(
             $extensionInformation,
-            $io->confirm('Do you prefer to create an extbase based controller?'),
-            $this->askForControllerName($io),
+            $io->confirm('Do you prefer to create an Extbase based controller?'),
+            $className,
             $this->askForActionMethodNames($io),
             new CreatorInformation(),
         );
@@ -127,38 +134,5 @@ class ControllerCommand extends Command
         } while (!$validActionName);
 
         return $actionMethods;
-    }
-
-    private function askForControllerName(SymfonyStyle $io): string
-    {
-        $defaultControllerName = null;
-        do {
-            $controllerName = (string)$io->ask(
-                'Please provide the name of your controller',
-                $defaultControllerName,
-            );
-
-            if (preg_match('/^\d/', $controllerName)) {
-                $io->error('Controller name should not start with a number.');
-                $defaultControllerName = $this->tryToCorrectClassName($controllerName, 'Controller');
-                $validControllerName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $controllerName)) {
-                $io->error('Controller name contains invalid chars. Please provide just letters and numbers.');
-                $defaultControllerName = $this->tryToCorrectClassName($controllerName, 'Controller');
-                $validControllerName = false;
-            } elseif (preg_match('/^[a-z0-9]+$/', $controllerName)) {
-                $io->error('Controller must be written in UpperCamelCase like BlogExampleController.');
-                $defaultControllerName = $this->tryToCorrectClassName($controllerName, 'Controller');
-                $validControllerName = false;
-            } elseif (!str_ends_with($controllerName, 'Controller')) {
-                $io->error('Controller must end with "Controller".');
-                $defaultControllerName = $this->tryToCorrectClassName($controllerName, 'Controller');
-                $validControllerName = false;
-            } else {
-                $validControllerName = true;
-            }
-        } while (!$validControllerName);
-
-        return $controllerName;
     }
 }

@@ -251,6 +251,9 @@ services:
   StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.composer_name' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\ControllerClassNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.controller-class' }
   StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.email' }
