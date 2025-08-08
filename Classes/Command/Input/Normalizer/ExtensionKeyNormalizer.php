@@ -16,8 +16,11 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('ext-kickstarter.inputHandler.extension_key')]
 class ExtensionKeyNormalizer implements NormalizerInterface
 {
-    public function __invoke(string $userInput): string
+    public function __invoke(?string $userInput): string
     {
+        if ($userInput === null || $userInput === '') {
+            return '';
+        }
         // Lower case the given extension key
         $cleanedUserInput = strtolower($userInput);
 

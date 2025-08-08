@@ -13,5 +13,5 @@ namespace StefanFroemken\ExtKickstarter\Command\Input\Normalizer;
 
 interface NormalizerInterface
 {
-    public function __invoke(string $userInput): string;
+    public function __invoke(?string $userInput): string;
 }

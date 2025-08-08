@@ -12,24 +12,22 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\EventClassNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\EventInformation;
 use StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService;
 use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
 use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
-use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class EventCommand extends Command
 {
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
-    use TryToCorrectClassNameTrait;
 
     public function __construct(
         private readonly EventCreatorService $eventCreatorService,
@@ -76,44 +74,14 @@ class EventCommand extends Command
             ),
             $commandContext
         );
+        $eventClassName = (string)$this->questionCollection->askQuestion(
+            EventClassNameQuestion::ARGUMENT_NAME,
+            $commandContext,
+        );
 
         return new EventInformation(
             $extensionInformation,
-            $this->askForEventClassName($commandContext->getIo()),
+            $eventClassName,
         );
-    }
-
-    private function askForEventClassName(SymfonyStyle $io): string
-    {
-        $defaultEventClassName = null;
-
-        do {
-            $eventClassName = (string)$io->ask(
-                'Please provide the class name of your new Event',
-                $defaultEventClassName,
-            );
-
-            if (preg_match('/^\d/', $eventClassName)) {
-                $io->error('Class name should not start with a number.');
-                $defaultEventClassName = $this->tryToCorrectClassName($eventClassName, 'Event');
-                $validEventClassName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $eventClassName)) {
-                $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultEventClassName = $this->tryToCorrectClassName($eventClassName, 'Event');
-                $validEventClassName = false;
-            } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $eventClassName) === 0) {
-                $io->error('Action must be written in UpperCamelCase like "ProcessRequestEvent".');
-                $defaultEventClassName = $this->tryToCorrectClassName($eventClassName, 'Event');
-                $validEventClassName = false;
-            } elseif (!str_ends_with($eventClassName, 'Event')) {
-                $io->error('Class name must end with "Event".');
-                $defaultEventClassName = $this->tryToCorrectClassName($eventClassName, 'Event');
-                $validEventClassName = false;
-            } else {
-                $validEventClassName = true;
-            }
-        } while (!$validEventClassName);
-
-        return $eventClassName;
     }
 }
