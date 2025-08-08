@@ -14,8 +14,8 @@ namespace StefanFroemken\ExtKickstarter\Command\Input\Normalizer;
 use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('ext-kickstarter.inputHandler.event-class')]
-class EventClassNameDecorator implements NormalizerInterface
+#[AutoconfigureTag('ext-kickstarter.inputHandler.controller-class')]
+class ControllerClassNameNormalizer implements NormalizerInterface
 {
     use TryToCorrectClassNameTrait;
     public function __invoke(?string $userInput): string
@@ -24,6 +24,6 @@ class EventClassNameDecorator implements NormalizerInterface
             return '';
         }
 
-        return $this->tryToCorrectClassName($userInput, 'Event');
+        return $this->tryToCorrectClassName($userInput, 'Controller');
     }
 }
