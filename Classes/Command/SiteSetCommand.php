@@ -3,20 +3,23 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Information\SiteSetInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\SiteSetCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\AskForExtensionKeyTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\TryToCorrectClassNameTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Information\SiteSetInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\SiteSetCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,6 +35,7 @@ class SiteSetCommand extends Command
 
     public function __construct(
         private readonly SiteSetCreatorService $siteSetCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -47,7 +51,8 @@ class SiteSetCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -56,9 +61,9 @@ class SiteSetCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $siteSetInformation = $this->askForSiteSetInformation($io, $input, $output);
+        $siteSetInformation = $this->askForSiteSetInformation($commandContext);
         $this->siteSetCreatorService->create($siteSetInformation);
-        $this->printCreatorInformation($siteSetInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($siteSetInformation->getCreatorInformation(), $commandContext);
 
         $io->text([
             'You can include the site set in your site configuration with',
@@ -72,11 +77,15 @@ class SiteSetCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function askForSiteSetInformation(SymfonyStyle $io, InputInterface $input, OutputInterface $output): SiteSetInformation
+    private function askForSiteSetInformation(CommandContext $commandContext): SiteSetInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new SiteSetInformation(

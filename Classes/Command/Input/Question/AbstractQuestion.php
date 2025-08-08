@@ -8,6 +8,7 @@ use StefanFroemken\ExtKickstarter\Command\Input\Normalizer\NormalizerInterface;
 use StefanFroemken\ExtKickstarter\Command\Input\Validator\ValidatorInterface;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
 abstract readonly class AbstractQuestion implements QuestionInterface
@@ -62,6 +63,24 @@ abstract readonly class AbstractQuestion implements QuestionInterface
 
             if ($inputHandler instanceof AutoCompleteInterface) {
                 $symfonyQuestion->setAutocompleterCallback($inputHandler);
+            }
+        }
+
+        return $symfonyQuestion;
+    }
+
+    protected function createSymfonyChoiceQuestion(iterable $inputHandlers, array $choices, ?string $default = null): ChoiceQuestion
+    {
+        $symfonyQuestion = new ChoiceQuestion(
+            implode(' ', $this->getQuestion()),
+            $choices,
+            $default ?? $this->getDefault(),
+        );
+
+        foreach ($inputHandlers as $inputHandler) {
+            if ($inputHandler instanceof ValidatorInterface) {
+                $symfonyQuestion->setValidator($inputHandler);
+                continue;
             }
         }
 

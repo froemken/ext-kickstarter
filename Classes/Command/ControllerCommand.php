@@ -3,22 +3,24 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Information\ControllerInformation;
-use FriendsOfTYPO3\Kickstarter\Information\CreatorInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\ControllerCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\TryToCorrectClassNameTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
+use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,8 +35,8 @@ class ControllerCommand extends Command
     use TryToCorrectClassNameTrait;
 
     public function __construct(
-        private readonly ControllerCreatorService $controllerCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly ControllerCreatorService   $controllerCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -50,7 +52,8 @@ class ControllerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -59,18 +62,22 @@ class ControllerCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $controllerInformation = $this->askForControllerInformation($io, $input);
+        $controllerInformation = $this->askForControllerInformation($commandContext);
         $this->controllerCreatorService->create($controllerInformation);
-        $this->printCreatorInformation($controllerInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($controllerInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForControllerInformation(SymfonyStyle $io, InputInterface $input): ControllerInformation
+    private function askForControllerInformation(CommandContext $commandContext): ControllerInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new ControllerInformation(

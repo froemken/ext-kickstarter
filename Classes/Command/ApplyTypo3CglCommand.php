@@ -3,23 +3,24 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\RepositoryCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -34,8 +35,8 @@ class ApplyTypo3CglCommand extends Command
     ];
 
     public function __construct(
-        private readonly RepositoryCreatorService $repositoryCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly RepositoryCreatorService   $repositoryCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -51,7 +52,8 @@ class ApplyTypo3CglCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -93,7 +95,7 @@ class ApplyTypo3CglCommand extends Command
         }
 
         $phpCsFixerConfig = GeneralUtility::getFileAbsFileName(
-            'EXT:kickstarter/Build/cgl/.php-cs-fixer.dist.php'
+            'EXT:ext_kickstarter/Build/cgl/.php-cs-fixer.dist.php'
         );
 
         if (!is_file($phpCsFixerConfig)) {
@@ -102,8 +104,11 @@ class ApplyTypo3CglCommand extends Command
         }
 
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         $cmd = sprintf(

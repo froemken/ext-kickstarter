@@ -3,20 +3,23 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Information\MiddleWareInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\MiddlewareCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\AskForExtensionKeyTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\TryToCorrectClassNameTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Information\MiddleWareInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\MiddlewareCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,6 +37,7 @@ class MiddlewareCommand extends Command
     public function __construct(
         private readonly MiddlewareCreatorService $middlewareCreatorService,
         private readonly MiddlewareStackResolver $middlewareStackResolver,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -49,7 +53,8 @@ class MiddlewareCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -58,18 +63,22 @@ class MiddlewareCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $middlewareInformation = $this->askForMiddlewareInformation($io, $input);
+        $middlewareInformation = $this->askForMiddlewareInformation($commandContext);
         $this->middlewareCreatorService->create($middlewareInformation);
-        $this->printCreatorInformation($middlewareInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($middlewareInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForMiddlewareInformation(SymfonyStyle $io, InputInterface $input): MiddlewareInformation
+    private function askForMiddlewareInformation(CommandContext $commandContext): MiddlewareInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new MiddlewareInformation(

@@ -3,20 +3,22 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Information\TypeConverterInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\TypeConverterCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\TryToCorrectClassNameTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Information\TypeConverterInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\TypeConverterCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,7 +33,7 @@ class TypeConverterCommand extends Command
 
     public function __construct(
         private readonly TypeConverterCreatorService $typeConverterCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -47,7 +49,8 @@ class TypeConverterCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -56,18 +59,22 @@ class TypeConverterCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $typeConverterInformation = $this->askForTypeConverterInformation($io, $input);
+        $typeConverterInformation = $this->askForTypeConverterInformation($commandContext);
         $this->typeConverterCreatorService->create($typeConverterInformation);
-        $this->printCreatorInformation($typeConverterInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($typeConverterInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForTypeConverterInformation(SymfonyStyle $io, InputInterface $input): TypeConverterInformation
+    private function askForTypeConverterInformation(CommandContext $commandContext): TypeConverterInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new TypeConverterInformation(

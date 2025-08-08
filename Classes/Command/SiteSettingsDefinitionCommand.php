@@ -3,21 +3,24 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Information\SiteSetInformation;
-use FriendsOfTYPO3\Kickstarter\Information\SiteSettingsDefinitionInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\SiteSettingsDefinitionCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\AskForExtensionKeyTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\TryToCorrectClassNameTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Information\SiteSetInformation;
+use StefanFroemken\ExtKickstarter\Information\SiteSettingsDefinitionInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\SiteSettingsDefinitionCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +41,8 @@ class SiteSettingsDefinitionCommand extends Command
     public function __construct(
         private readonly SiteSettingsDefinitionCreatorService $siteSettingsDefinitionCreatorService,
         #[AutowireLocator('settings.type')]
-        private ServiceLocator $types
+        private ServiceLocator $types,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -62,7 +66,8 @@ class SiteSettingsDefinitionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -71,18 +76,22 @@ class SiteSettingsDefinitionCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $siteSettingsDefinitionInformation = $this->askForSiteSettingsDefinitionInformation($io, $input, $output);
+        $siteSettingsDefinitionInformation = $this->askForSiteSettingsDefinitionInformation($commandContext);
         $this->siteSettingsDefinitionCreatorService->create($siteSettingsDefinitionInformation);
-        $this->printCreatorInformation($siteSettingsDefinitionInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($siteSettingsDefinitionInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForSiteSettingsDefinitionInformation(SymfonyStyle $io, InputInterface $input, OutputInterface $output): SiteSettingsDefinitionInformation
+    private function askForSiteSettingsDefinitionInformation(CommandContext $commandContext): SiteSettingsDefinitionInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new SiteSettingsDefinitionInformation(

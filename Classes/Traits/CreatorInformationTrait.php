@@ -1,15 +1,16 @@
 <?php
 
-namespace FriendsOfTYPO3\Kickstarter\Traits;
+namespace StefanFroemken\ExtKickstarter\Traits;
 
-use FriendsOfTYPO3\Kickstarter\Enums\FileModificationType;
-use FriendsOfTYPO3\Kickstarter\Information\CreatorInformation;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
+use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
 
 trait CreatorInformationTrait
 {
-    private function printCreatorInformation(CreatorInformation $creatorInformation, SymfonyStyle $io): void
+    private function printCreatorInformation(CreatorInformation $creatorInformation, CommandContext $commandContext): void
     {
+        $io = $commandContext->getIo();
         foreach ($creatorInformation->getFileModifications() as $fileModification) {
             switch ($fileModification->getFileModificationType()) {
                 case FileModificationType::CREATED:

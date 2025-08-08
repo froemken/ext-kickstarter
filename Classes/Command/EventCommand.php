@@ -3,20 +3,22 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\EventCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\TryToCorrectClassNameTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Information\EventInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,7 +33,7 @@ class EventCommand extends Command
 
     public function __construct(
         private readonly EventCreatorService $eventCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -47,7 +49,8 @@ class EventCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -56,23 +59,27 @@ class EventCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $eventInformation = $this->askForEventInformation($io, $input);
+        $eventInformation = $this->askForEventInformation($commandContext);
+
         $this->eventCreatorService->create($eventInformation);
-        $this->printCreatorInformation($eventInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($eventInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForEventInformation(SymfonyStyle $io, InputInterface $input): EventInformation
+    private function askForEventInformation(CommandContext $commandContext): EventInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new EventInformation(
             $extensionInformation,
-            $this->askForEventClassName($io),
+            $this->askForEventClassName($commandContext->getIo()),
         );
     }
 

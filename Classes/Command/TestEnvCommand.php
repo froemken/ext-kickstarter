@@ -3,24 +3,25 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package friendsoftypo3/kickstarter.
+ * This file is part of the package stefanfroemken/ext-kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command;
+namespace StefanFroemken\ExtKickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Information\TestEnvInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\TestEnvCreatorService;
-use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
+use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use StefanFroemken\ExtKickstarter\Information\TestEnvInformation;
+use StefanFroemken\ExtKickstarter\Service\Creator\TestEnvCreatorService;
+use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
+use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class TestEnvCommand extends Command
 {
@@ -28,8 +29,8 @@ class TestEnvCommand extends Command
     use ExtensionInformationTrait;
 
     public function __construct(
-        private readonly TestEnvCreatorService $testEnvCreatorService,
-        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
+        private readonly TestEnvCreatorService      $testEnvCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -45,7 +46,8 @@ class TestEnvCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -54,18 +56,21 @@ class TestEnvCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $testEnvInformation = $this->askForTestEnvInformation($io, $input);
+        $testEnvInformation = $this->askForTestEnvInformation($commandContext);
         $this->testEnvCreatorService->create($testEnvInformation);
-        $this->printCreatorInformation($testEnvInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($testEnvInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForTestEnvInformation(SymfonyStyle $io, InputInterface $input): TestEnvInformation
+    private function askForTestEnvInformation(CommandContext $commandContext): TestEnvInformation
     {
         $extensionInformation = $this->getExtensionInformation(
-            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new TestEnvInformation(

@@ -22,6 +22,8 @@ services:
         command: 'make:command'
         description: 'Add a console command to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\ControllerCommand:
     tags:
@@ -29,6 +31,8 @@ services:
         command: 'make:controller'
         description: 'Add a controller to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\EventCommand:
     tags:
@@ -36,6 +40,8 @@ services:
         command: 'make:event'
         description: 'Create a new Event for your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\EventListenerCommand:
     tags:
@@ -43,6 +49,8 @@ services:
         command: 'make:eventlistener'
         description: 'Create a new Event Listener to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\ExtensionCommand:
     tags:
@@ -59,6 +67,8 @@ services:
         command: 'make:middleware'
         description: 'Add a middleware handler to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\ModelCommand:
     tags:
@@ -66,6 +76,8 @@ services:
         command: 'make:model'
         description: 'Add an extbase model to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\PluginCommand:
     tags:
@@ -73,6 +85,8 @@ services:
         command: 'make:plugin'
         description: 'Add a plugin to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\RepositoryCommand:
     tags:
@@ -80,6 +94,8 @@ services:
         command: 'make:repository'
         description: 'Add an extbase repository to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\SiteSetCommand:
     tags:
@@ -87,6 +103,8 @@ services:
         command: 'make:site-set'
         description: 'Add an site set configuration to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\SiteSettingsDefinitionCommand:
     tags:
@@ -94,6 +112,8 @@ services:
         command: 'make:site-settings-definition'
         description: 'Add an site settings definition to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\TableCommand:
     tags:
@@ -101,6 +121,8 @@ services:
         command: 'make:table'
         description: 'Add a TCA table to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\TestEnvCommand:
     tags:
@@ -108,6 +130,8 @@ services:
         command: 'make:testenv'
         description: 'Add test environment to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\ValidatorCommand:
     tags:
@@ -115,6 +139,8 @@ services:
         command: 'make:validator'
         description: 'Create a new Validator for a property or model. See also https://docs.typo3.org/permalink/t3coreapi:extbase-domain-validator'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\SitePackageCommand:
     tags:
@@ -122,6 +148,8 @@ services:
         command: 'make:site-package'
         description: 'Configures and loads a new site package from https://get.typo3.org.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\TypeConverterCommand:
     tags:
@@ -129,6 +157,8 @@ services:
         command: 'make:typeconverter'
         description: 'Create a new Extbase Type Converter to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\ApplyTypo3CglCommand:
     tags:
@@ -136,6 +166,8 @@ services:
         command: 'make:applycgl'
         description: 'Enforces TYPO3 Coding Guidelines (CGL) on extension code. Note: Requires TYPO3 to be installed in Composer mode.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   StefanFroemken\ExtKickstarter\Command\UpgradeWizardCommand:
     tags:
@@ -143,6 +175,8 @@ services:
         command: 'make:upgrade'
         description: 'Create a new Upgrade Wizard to your TYPO3 extension.'
         schedulable: false
+    arguments:
+      $questionCollection: '@questions.extension'
 
   ######################
   ## CREATOR SERVICES ##
