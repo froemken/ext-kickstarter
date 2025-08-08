@@ -13,6 +13,7 @@ namespace StefanFroemken\ExtKickstarter\Creator\Property\TypeConverter;
 
 use StefanFroemken\ExtKickstarter\Creator\FileManager;
 use StefanFroemken\ExtKickstarter\Information\TypeConverterInformation;
+use StefanFroemken\ExtKickstarter\Templates\ServicesYamlTemplate;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\Exception\MissingArrayPathException;
@@ -22,6 +23,7 @@ class RegisterTypeConverterCreator implements TypeConverterCreatorInterface
 {
     public function __construct(
         private readonly FileManager $fileManager,
+        private readonly ServicesYamlTemplate $servicesYamlTemplate,
     ) {}
 
     public function create(TypeConverterInformation $typeConverterInformation): void
@@ -30,8 +32,12 @@ class RegisterTypeConverterCreator implements TypeConverterCreatorInterface
         GeneralUtility::mkdir_deep($configurationPath);
 
         $servicesYamlPath = $configurationPath . 'Services.yaml';
+        if (!is_file($servicesYamlPath)) {
+            $servicesYamlData = Yaml::parse($this->servicesYamlTemplate->getTemplate($typeConverterInformation->getExtensionInformation()));
+        } else {
+            $servicesYamlData = Yaml::parseFile($servicesYamlPath);
+        }
 
-        $servicesYamlData = Yaml::parseFile($servicesYamlPath);
         if (!$this->hasRegisteredTypeConverter($servicesYamlData, $typeConverterInformation)) {
             $servicesYamlData = $this->addTypeConverterRegistration($servicesYamlData, $typeConverterInformation);
         }
