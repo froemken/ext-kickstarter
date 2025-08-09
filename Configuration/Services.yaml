@@ -251,6 +251,15 @@ services:
   StefanFroemken\ExtKickstarter\Command\Input\Question\ActionMethodNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.controller-action' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\CommandClassNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-class' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\CommandAliasQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-name' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\CommandNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-name' }
   StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.composer_name' }
