@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\CommandAliasQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\CommandClassNameQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\CommandNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\CommandInformation;
@@ -24,7 +27,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CommandCommand extends Command
 {
@@ -78,87 +80,36 @@ class CommandCommand extends Command
             ),
             $commandContext
         );
+        $commandName = (string)$this->questionCollection->askQuestion(
+            CommandNameQuestion::ARGUMENT_NAME,
+            $commandContext,
+            $extensionInformation->getExtensionKey().':doSomething'
+        );
+        $className =  (string)$this->questionCollection->askQuestion(
+            CommandClassNameQuestion::ARGUMENT_NAME,
+            $commandContext,
+            $commandName
+        );
 
         return new CommandInformation(
             $extensionInformation,
-            $this->askForCommandClassName($io),
-            $this->askForCommandName($io),
+            $className,
+            $commandName,
             (string)$io->ask('Provide a description for your command'),
-            $this->askForCommandAliases($io),
+            $this->askForCommandAliases($commandContext),
         );
     }
 
-    private function askForCommandClassName(SymfonyStyle $io): string
+    private function askForCommandAliases(CommandContext $commandContext): array
     {
-        $defaultCommandClassName = null;
-
-        do {
-            $commandClassName = (string)$io->ask(
-                'Please provide the class name of your new Command',
-                $defaultCommandClassName,
+        $commandAliases = [];
+        while ($commandContext->getIo()->confirm('Do you want to add (another) command alias? ', false)) {
+            $commandAliases[] = (string)$this->questionCollection->askQuestion(
+                CommandAliasQuestion::ARGUMENT_NAME,
+                $commandContext,
             );
-
-            if ($commandClassName === '') {
-                $io->error('Class name can not be empty.');
-                $validCommandClassName = false;
-            } elseif (preg_match('/^\d/', $commandClassName)) {
-                $io->error('Class name should not start with a number.');
-                $defaultCommandClassName = $this->tryToCorrectClassName($commandClassName, 'Command');
-                $validCommandClassName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $commandClassName)) {
-                $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultCommandClassName = $this->tryToCorrectClassName($commandClassName, 'Command');
-                $validCommandClassName = false;
-            } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $commandClassName) === 0) {
-                $io->error('Action must be written in UpperCamelCase like "DoSomethingCommand".');
-                $defaultCommandClassName = $this->tryToCorrectClassName($commandClassName, 'Command');
-                $validCommandClassName = false;
-            } elseif (!str_ends_with($commandClassName, 'Command')) {
-                $io->error('Class name must end with "Command".');
-                $defaultCommandClassName = $this->tryToCorrectClassName($commandClassName, 'Command');
-                $validCommandClassName = false;
-            } else {
-                $validCommandClassName = true;
-            }
-        } while (!$validCommandClassName);
-
-        return $commandClassName;
-    }
-
-    private function askForCommandName(SymfonyStyle $io): string
-    {
-        do {
-            $commandName = (string)$io->ask(
-                'Please provide the command name (example: "ext:clean")',
-            );
-
-            if ($commandName === '') {
-                $io->error('Command name can not be empty.');
-                $validCommandName = false;
-            } elseif (preg_match('/^\d/', $commandName)) {
-                $io->error('Command name should not start with a number.');
-                $validCommandName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9:]/', $commandName)) {
-                $io->error('Command name contains invalid chars. Please provide just letters, numbers and colon (:).');
-                $validCommandName = false;
-            } else {
-                $validCommandName = true;
-            }
-        } while (!$validCommandName);
-
-        return $commandName;
-    }
-
-    private function askForCommandAliases(SymfonyStyle $io): array
-    {
-        $commandAliases = (string)$io->ask(
-            'Provide an alias name for your command',
-        );
-
-        if ($commandAliases === '') {
-            return [];
         }
 
-        return [$commandAliases];
+        return $commandAliases;
     }
 }
