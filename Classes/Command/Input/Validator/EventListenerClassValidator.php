@@ -13,10 +13,10 @@ namespace StefanFroemken\ExtKickstarter\Command\Input\Validator;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('ext-kickstarter.inputHandler.event-class')]
-class EventClassValidator implements ValidatorInterface
+#[AutoconfigureTag('ext-kickstarter.inputHandler.event-listener-class-name')]
+class EventListenerClassValidator implements ValidatorInterface
 {
-    private const POSTFIX = 'Event';
+    private const POSTFIX = 'EventListener';
 
     public function __construct(
         private readonly ClassNameValidator $classNameValidator,
