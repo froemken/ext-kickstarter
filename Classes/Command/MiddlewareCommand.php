@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\MiddlewareClassNameQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\MiddlewareIdentifierQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\MiddleWareInformation;
@@ -81,88 +83,40 @@ class MiddlewareCommand extends Command
             $commandContext
         );
 
+        $className = (string)$this->questionCollection->askQuestion(
+            MiddlewareClassNameQuestion::ARGUMENT_NAME,
+            $commandContext
+        );
+        $stack = $this->askForMiddlewareStack($commandContext);
+        $prefix = str_replace('_', '', $extensionInformation->getExtensionKey());
+        $middlewareIdentifier = $this->askForMiddlewareIdentifier(
+            $commandContext,
+            $prefix . '/'.strtolower(preg_replace('/Middleware$/i', '', $className)), $stack
+        );
+
+
         return new MiddlewareInformation(
             $extensionInformation,
-            $this->askForClassName($io),
-            $stack = $this->askForMiddlewareStack($io),
-            $this->askForMiddlewareIdentifier($io, $extensionInformation->getComposerPackageName() . '/', $stack),
+            $className,
+            $stack,
+            $middlewareIdentifier,
             $this->askForBeforeAfter($io, $stack, 'before'),
             $this->askForBeforeAfter($io, $stack, 'after'),
         );
     }
 
-    private function askForClassName(SymfonyStyle $io): string
+    private function askForMiddlewareIdentifier(CommandContext $commandContext, string $default, string $stack): string
     {
-        $defaultMiddlewareClassName = null;
-
-        do {
-            $className = (string)$io->ask(
-                'Please provide the class name of your new Middleware',
-                $defaultMiddlewareClassName,
-            );
-
-            if (preg_match('/^\d/', $className)) {
-                $io->error('Class name should not start with a number.');
-                $defaultMiddlewareClassName = $this->tryToCorrectClassName($className, 'Middleware');
-                $validClassName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $className)) {
-                $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultMiddlewareClassName = $this->tryToCorrectClassName($className, 'Middleware');
-                $validClassName = false;
-            } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $className) === 0) {
-                $io->error('Class name must be written in UpperCamelCase like "StatusCheckMiddleware".');
-                $defaultMiddlewareClassName = $this->tryToCorrectClassName($className, 'Middleware');
-                $validClassName = false;
-            } elseif (!str_ends_with($className, 'Middleware')) {
-                $io->error('Class name must end with "Middleware".');
-                $defaultMiddlewareClassName = $this->tryToCorrectClassName($className, 'Middleware');
-                $validClassName = false;
-            } else {
-                $validClassName = true;
-            }
-        } while (!$validClassName);
-
-        return $className;
-    }
-
-    private function askForMiddlewareIdentifier(SymfonyStyle $io, string $vendorPrefix, string $stack): string
-    {
-        $default = null;
-
         do {
             $valid = false;
-            $identifier = (string)$io->ask(
-                'Please provide the middleware identifier (e.g., "' . $vendorPrefix . 'csp-headers")',
+            $identifier  = (string)$this->questionCollection->askQuestion(
+                MiddlewareIdentifierQuestion::ARGUMENT_NAME,
+                $commandContext,
                 $default
             );
 
-            // Simple check for empty input
-            if ($identifier === '') {
-                $io->warning('Middleware identifier cannot be empty.');
-                continue;
-            }
-
-            // Ensure prefix
-            if (!str_starts_with($identifier, $vendorPrefix)) {
-                $io->warning(sprintf('Identifier does not start with "%s". It must be prefixed.', $vendorPrefix));
-                $default = $vendorPrefix . ltrim($identifier, '/');
-                continue;
-            }
-
-            // Extract the part after the prefix for validation
-            $namePart = substr($identifier, strlen($vendorPrefix));
-
-            // Validate only the name part
-            if (preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $namePart) === 0) {
-                $io->warning('The part after the prefix must be lowercase, may include numbers, and can use hyphens.');
-                $corrected = $this->tryToCorrectIdentifier($namePart);
-                $identifier = $vendorPrefix . $corrected;
-                $default = $identifier;
-                continue;
-            }
             if (in_array($identifier, $this->middlewareStackResolver->resolve($stack), true)) {
-                $io->warning(sprintf('The identifier "%s" already exists in the configuration!', $identifier));
-                // you might still allow it, or force user to change:
+                $commandContext->getIo()->warning(sprintf('The identifier "%s" already exists in the configuration!', $identifier));
                 $default = $identifier;
                 continue;
             }
@@ -173,22 +127,9 @@ class MiddlewareCommand extends Command
         return $identifier;
     }
 
-    private function tryToCorrectIdentifier(string $identifier): string
+    private function askForMiddlewareStack(CommandContext $commandContext): string
     {
-        $corrected = strtolower($identifier);
-        $corrected = preg_replace('/[^a-z0-9]+/', '-', $corrected);
-        $corrected = trim($corrected, '-');
-
-        if ($corrected === '') {
-            return 'my-middleware';
-        }
-
-        return $corrected;
-    }
-
-    private function askForMiddlewareStack(SymfonyStyle $io): string
-    {
-        return $io->choice(
+        return $commandContext->getIo()->choice(
             'Is this middleware stack for the frontend or backend?',
             ['frontend', 'backend'],
             'frontend',
@@ -213,7 +154,7 @@ class MiddlewareCommand extends Command
 
         // Normalize the result
         if (in_array('none', $answer, true)) {
-            return []; // user chose "none" -> treat as no dependencies
+            return [];
         }
 
         return $answer;
