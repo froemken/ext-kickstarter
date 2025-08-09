@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter;
 
+use StefanFroemken\ExtKickstarter\Command\Input\Question\QuestionInterface;
 use StefanFroemken\ExtKickstarter\Creator\Command\CommandCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Controller\Extbase\ExtbaseControllerCreatorInterface;
 use StefanFroemken\ExtKickstarter\Creator\Controller\Native\NativeControllerCreatorInterface;
@@ -84,4 +85,8 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
     $container
         ->registerForAutoconfiguration(UpgradeWizardCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.upgrade-wizard');
+
+    $container
+        ->registerForAutoconfiguration(QuestionInterface::class)
+        ->addTag('ext-kickstarter.input.question');
 };
