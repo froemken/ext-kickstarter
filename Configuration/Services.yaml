@@ -284,6 +284,9 @@ services:
   StefanFroemken\ExtKickstarter\Command\Input\Question\MiddlewareIdentifierQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.middleware-identifier' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\ModelClassNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.model-class' }
   StefanFroemken\ExtKickstarter\Command\Input\Question\NamespaceQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.namespace' }

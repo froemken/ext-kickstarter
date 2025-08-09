@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\MiddlewareClassNameQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ModelClassNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
@@ -91,59 +93,38 @@ class ModelCommand extends Command
             $commandContext
         );
 
+
+        $mappedTableName = $this->askForMappedTableName($commandContext, $extensionInformation);
+
+        $modelClassName =
+            str_replace(sprintf('tx_%s_domain_model_',
+                str_replace('_', '', $extensionInformation->getExtensionKey())), '', $mappedTableName);
         do {
-            $modelClassName = $this->askForModelClassName($io);
+            $modelClassName = (string)$this->questionCollection->askQuestion(
+                ModelClassNameQuestion::ARGUMENT_NAME,
+                $commandContext,
+                $modelClassName
+            );
             $modelInformation = new ModelInformation(
                 $extensionInformation,
                 $modelClassName,
             );
         } while (file_exists($modelInformation->getModelFilePath()) && !$io->confirm('Model ' . $modelClassName . ' already exists. Do you want to extend it?'));
 
-        $mappedTableName = $this->askForMappedTableName($io, $modelClassName, $extensionInformation);
         return new ModelInformation(
             $extensionInformation,
             $modelClassName,
             $mappedTableName,
             $io->confirm('Should your model be created as entity? Else, it will be created as value object.'),
-            $this->askForProperties($io, $mappedTableName, $extensionInformation),
+            $this->askForProperties($commandContext, $mappedTableName, $extensionInformation),
         );
     }
 
-    private function askForModelClassName(SymfonyStyle $io): string
-    {
-        $defaultModelClassName = null;
-
-        do {
-            $modelClassName = (string)$io->ask(
-                'Please provide the class name of your new Extbase Model',
-                $defaultModelClassName,
-            );
-
-            if (preg_match('/^\d/', $modelClassName)) {
-                $io->error('Class name should not start with a number.');
-                $defaultModelClassName = $this->tryToCorrectClassName($modelClassName);
-                $validModelClassName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $modelClassName)) {
-                $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultModelClassName = $this->tryToCorrectClassName($modelClassName);
-                $validModelClassName = false;
-            } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $modelClassName) === 0) {
-                $io->error('Action must be written in UpperCamelCase like "Blog".');
-                $defaultModelClassName = $this->tryToCorrectClassName($modelClassName);
-                $validModelClassName = false;
-            } else {
-                $validModelClassName = true;
-            }
-        } while (!$validModelClassName);
-
-        return $modelClassName;
-    }
-
     private function askForMappedTableName(
-        SymfonyStyle $io,
-        string $modelClassName,
+        CommandContext $commandContext,
         ExtensionInformation $extensionInformation
     ): string {
+        $io = $commandContext->getIo();
         $configuredTcaTables = $extensionInformation->getConfiguredTcaTables();
 
         if ($configuredTcaTables === []) {
@@ -154,29 +135,23 @@ class ModelCommand extends Command
             die();
         }
 
-        $expectedTableName = sprintf(
-            'tx_%s_domain_model_%s',
-            str_replace('_', '', $extensionInformation->getExtensionKey()),
-            strtolower($modelClassName),
-        );
-
         $io->info([
-            'Your domain model "' . $modelClassName . '" has to be mapped to a TCA table.',
+            'Your domain model has to be mapped to a TCA table.',
             'In following list you see the configured TCA tables within your extension.',
         ]);
 
         return $io->choice(
             'Chose the TCA table you want to map your model to',
             $configuredTcaTables,
-            in_array($expectedTableName, $configuredTcaTables, true) ? $expectedTableName : null,
         );
     }
 
     private function askForProperties(
-        SymfonyStyle $io,
+        CommandContext $commandContext,
         string $mappedTableName,
         ExtensionInformation $extensionInformation
     ): array {
+        $io = $commandContext->getIo();
         $properties = [];
         $tableTca = $extensionInformation->getTcaForTable($mappedTableName);
 
@@ -188,7 +163,6 @@ class ModelCommand extends Command
             'All'
         );
 
-        $selectedDomainColumns = [];
         if ($domainFieldChoice === 'All') {
             $selectedDomainColumns = $domainColumns;
         } else {
@@ -247,7 +221,7 @@ class ModelCommand extends Command
 
             // 1) read TCA default, 2) convert to native, 3) ask user (pre-filled)
             $tcaDefault     = (string)($tableTca['columns'][$columnName]['config']['default'] ?? '');
-            $defaultValue   = $this->askForDefaultValue($io, $propertyName, $dataType, $tcaDefault);
+            $defaultValue   = $this->askForDefaultValue($commandContext, $propertyName, $dataType, $tcaDefault);
 
             $properties[$columnName]['defaultValue'] = $defaultValue;
         }
@@ -256,11 +230,12 @@ class ModelCommand extends Command
     }
 
     private function askForDefaultValue(
-        SymfonyStyle $io,
+        CommandContext $commandContext,
         string $propertyName,
         string $dataType,
         ?string $suggestedDefault = null
     ): mixed {
+        $io = $commandContext->getIo();
         return match ($dataType) {
             'int' => (int)$io->ask(sprintf("Default value for '%s' (int)", $propertyName), $suggestedDefault ?? '0'),
             'float' => (float)$io->ask(sprintf("Default value for '%s' (float)", $propertyName), $suggestedDefault ?? '0.0'),
