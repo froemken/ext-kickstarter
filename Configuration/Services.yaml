@@ -290,6 +290,9 @@ services:
   StefanFroemken\ExtKickstarter\Command\Input\Question\NamespaceQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.namespace' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\PluginNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.plugin-name' }
   StefanFroemken\ExtKickstarter\Command\Input\Question\VersionQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.version' }
