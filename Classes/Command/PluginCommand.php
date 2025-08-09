@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\PluginNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
@@ -25,8 +26,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PluginCommand extends Command
 {
@@ -35,7 +34,7 @@ class PluginCommand extends Command
     use FileStructureBuilderTrait;
 
     public function __construct(
-        private readonly PluginCreatorService       $pluginCreatorService,
+        private readonly PluginCreatorService $pluginCreatorService,
         private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
@@ -83,9 +82,10 @@ class PluginCommand extends Command
             'Please provide a label for your plugin. You will see the label in the backend',
         );
 
-        $pluginName = (string)$io->ask(
-            'Please provide the name of your plugin. This is an internal identifier and will be used to reference your plugin in the backend',
-            GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $pluginLabel)),
+        $pluginName = (string)$this->questionCollection->askQuestion(
+            PluginNameQuestion::ARGUMENT_NAME,
+            $commandContext,
+            $pluginLabel
         );
 
         $pluginDescription = (string)$io->ask(
@@ -108,11 +108,12 @@ class PluginCommand extends Command
             }
 
             $referencedControllerActions = $this->askForReferencedControllerActions(
-                $io,
+                $commandContext,
                 $extbaseControllerClassnames,
                 $extensionInformation,
             );
-            $isTypoScriptCreation = $io->confirm('Do you want to create the default TypoScript for plugin.tx_myextension_myplugin?');
+            $pluginCType = sprintf('tx_%s_%s', str_replace('_', '', $extensionInformation->getExtensionKey()), strtolower($pluginName));
+            $isTypoScriptCreation = $io->confirm(sprintf('Do you want to create the default TypoScript for %s?', $pluginCType));
             if ($isTypoScriptCreation) {
                 $setOptions = array_merge([$extensionInformation->getDefaultTypoScriptPath()], $extensionInformation->getSets());
 
@@ -144,10 +145,11 @@ class PluginCommand extends Command
     }
 
     private function askForReferencedControllerActions(
-        SymfonyStyle $io,
+        CommandContext $commandContext,
         array $extbaseControllerClassnames,
         ExtensionInformation $extensionInformation,
     ): array {
+        $io = $commandContext->getIo();
         $skipAction = 'no choice (skip)';
         $referencedControllerActions = [];
 
