@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace StefanFroemken\ExtKickstarter\Command;
 
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use StefanFroemken\ExtKickstarter\Command\Input\Question\EventListenerClassNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
 use StefanFroemken\ExtKickstarter\Context\CommandContext;
 use StefanFroemken\ExtKickstarter\Information\EventListenerInformation;
@@ -23,7 +24,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class EventListenerCommand extends Command
 {
@@ -68,7 +68,6 @@ class EventListenerCommand extends Command
 
     private function askForEventListenerInformation(CommandContext $commandContext): EventListenerInformation
     {
-        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
             (string)$this->questionCollection->askQuestion(
                 ChooseExtensionKeyQuestion::ARGUMENT_NAME,
@@ -77,43 +76,14 @@ class EventListenerCommand extends Command
             $commandContext
         );
 
+        $eventListenerClassName = (string)$this->questionCollection->askQuestion(
+            EventListenerClassNameQuestion::ARGUMENT_NAME,
+            $commandContext,
+        );
+
         return new EventListenerInformation(
             $extensionInformation,
-            $this->askForEventListenerClassName($io),
+            $eventListenerClassName,
         );
-    }
-
-    private function askForEventListenerClassName(SymfonyStyle $io): string
-    {
-        $defaultEventListenerClassName = null;
-
-        do {
-            $eventListenerClassName = (string)$io->ask(
-                'Please provide the class name of your new Event Listener',
-                $defaultEventListenerClassName,
-            );
-
-            if (preg_match('/^\d/', $eventListenerClassName)) {
-                $io->error('Class name should not start with a number.');
-                $defaultEventListenerClassName = $this->tryToCorrectClassName($eventListenerClassName, 'EventListener');
-                $validEventListenerClassName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $eventListenerClassName)) {
-                $io->error('Class name contains invalid chars. Please provide just letters and numbers.');
-                $defaultEventListenerClassName = $this->tryToCorrectClassName($eventListenerClassName, 'EventListener');
-                $validEventListenerClassName = false;
-            } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $eventListenerClassName) === 0) {
-                $io->error('Action must be written in UpperCamelCase like "HandleRequestEventListener".');
-                $defaultEventListenerClassName = $this->tryToCorrectClassName($eventListenerClassName, 'EventListener');
-                $validEventListenerClassName = false;
-            } elseif (!str_ends_with($eventListenerClassName, 'EventListener')) {
-                $io->error('Class name must end with "EventListener".');
-                $defaultEventListenerClassName = $this->tryToCorrectClassName($eventListenerClassName, 'EventListener');
-                $validEventListenerClassName = false;
-            } else {
-                $validEventListenerClassName = true;
-            }
-        } while (!$validEventListenerClassName);
-
-        return $eventListenerClassName;
     }
 }

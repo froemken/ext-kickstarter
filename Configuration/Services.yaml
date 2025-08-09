@@ -272,6 +272,9 @@ services:
   StefanFroemken\ExtKickstarter\Command\Input\Question\EventClassNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-class' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\EventListenerClassNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-listener-class-name' }
   StefanFroemken\ExtKickstarter\Command\Input\Question\ExtensionKeyQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.extension_key' }
