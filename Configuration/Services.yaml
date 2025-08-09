@@ -278,6 +278,12 @@ services:
   StefanFroemken\ExtKickstarter\Command\Input\Question\ExtensionKeyQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.extension_key' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\MiddlewareClassNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.middleware-class' }
+  StefanFroemken\ExtKickstarter\Command\Input\Question\MiddlewareIdentifierQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.middleware-identifier' }
   StefanFroemken\ExtKickstarter\Command\Input\Question\NamespaceQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.namespace' }
