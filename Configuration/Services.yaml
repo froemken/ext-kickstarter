@@ -248,6 +248,9 @@ services:
     arguments:
       $questions: !tagged_iterator { tag: 'ext-kickstarter.command.extension.question' }
 
+  StefanFroemken\ExtKickstarter\Command\Input\Question\ActionMethodNameQuestion:
+    arguments:
+      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.controller-action' }
   StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.composer_name' }
