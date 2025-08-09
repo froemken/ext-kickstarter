@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace StefanFroemken\ExtKickstarter\Command;
 
+use StefanFroemken\ExtKickstarter\Command\Input\Question\ActionMethodNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\Question\ControllerClassNameQuestion;
 use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
@@ -26,7 +27,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ControllerCommand extends Command
 {
@@ -91,47 +91,24 @@ class ControllerCommand extends Command
             $extensionInformation,
             $io->confirm('Do you prefer to create an Extbase based controller?'),
             $className,
-            $this->askForActionMethodNames($io),
+            $this->askForActionMethodNames($commandContext),
             new CreatorInformation(),
         );
     }
 
-    private function askForActionMethodNames(SymfonyStyle $io): array
+    private function askForActionMethodNames(CommandContext $commandContext): array
     {
         $actionMethods = [];
-        $validActionName = false;
         $defaultActionName = 'indexAction';
 
         do {
-            $actionMethod = (string)$io->ask(
-                'Please provide the name of your action method',
+            $actionMethods[] = (string)$this->questionCollection->askQuestion(
+                ActionMethodNameQuestion::ARGUMENT_NAME,
+                $commandContext,
                 $defaultActionName,
             );
-
-            if (preg_match('/^\d/', $actionMethod)) {
-                $io->error('Action name should not start with a number.');
-                $defaultActionName = $this->tryToCorrectClassName($actionMethod, 'Action');
-                $validActionName = false;
-            } elseif (preg_match('/[^a-zA-Z0-9]/', $actionMethod)) {
-                $io->error('Action name contains invalid chars. Please provide just letters and numbers.');
-                $defaultActionName = $this->tryToCorrectClassName($actionMethod, 'Action');
-                $validActionName = false;
-            } elseif (preg_match('/^[a-z0-9]+$/', $actionMethod)) {
-                $io->error('Action must be written in LowerCamelCase like showAction.');
-                $defaultActionName = $this->tryToCorrectClassName($actionMethod, 'Action');
-                $validActionName = false;
-            } elseif (!str_ends_with($actionMethod, 'Action')) {
-                $io->error('Action must end with "Action".');
-                $defaultActionName = $this->tryToCorrectClassName($actionMethod, 'Action');
-                $validActionName = false;
-            } else {
-                $actionMethods[] = $actionMethod;
-                if ($io->confirm('Do you want to add another action method?')) {
-                    continue;
-                }
-                $validActionName = true;
-            }
-        } while (!$validActionName);
+            $commandContext->getIo()->text('Action '.end($actionMethods).' was added.');
+        } while ($commandContext->getIo()->confirm('Do you want to add another action method?', false));
 
         return $actionMethods;
     }
