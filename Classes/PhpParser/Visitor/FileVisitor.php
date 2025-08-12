@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\PhpParser\Visitor;
+namespace FriendsOfTYPO3\Kickstarter\PhpParser\Visitor;
 
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure;
 
 /**
  * This visitor walks through all kind of detected PHP Parser nodes of any kind of PHP file

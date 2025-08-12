@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Traits;
+namespace FriendsOfTYPO3\Kickstarter\Traits;
 
-use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Configuration\ExtConf;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

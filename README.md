@@ -1,6 +1,6 @@
 # TYPO3 Extension Kickstarter
 
-`ext_kickstarter` is a TYPO3 extension that simplifies and accelerates the creation of new TYPO3 extensions by automating file generation, controller setup, and plugin registration through easy-to-use CLI commands. With a few CLI commands, it generates essential files like `LICENSE`, `ext_emconf.php`,`composer.json`, and more. Whether starting from scratch or extending existing functionality, `ext_kickstarter` helps streamline development.
+`kickstarter` is a TYPO3 extension that simplifies and accelerates the creation of new TYPO3 extensions by automating file generation, controller setup, and plugin registration through easy-to-use CLI commands. With a few CLI commands, it generates essential files like `LICENSE`, `ext_emconf.php`,`composer.json`, and more. Whether starting from scratch or extending existing functionality, `kickstarter` helps streamline development.
 
 ---
 
@@ -28,21 +28,21 @@
 
 Install the extension using Composer:
 ```bash
-composer req stefanfroemken/ext-kickstarter
+composer req --dev friendsoftypo3/kickstarter
 ```
 
 For DDEV:
 ```bash
-ddev composer req stefanfroemken/ext-kickstarter
+ddev composer req --dev friendsoftypo3/kickstarter
 ```
 
 ## Configuration
 
-By default, new extensions are created in `typo3temp/ext-kickstarter/[your_ext_key]`.
+By default, new extensions are created in `typo3temp/kickstarter/[your_ext_key]`.
 
 To change this location:
 
-- Navigate to **TYPO3 Backend → Admin Tools → Settings → Configure Extensions → `ext_kickstarter`**.
+- Navigate to **TYPO3 Backend → Admin Tools → Settings → Configure Extensions → `kickstarter`**.
 - For Composer-based installations, the recommended directory is `packages/`.
 
 ## Usage
@@ -167,9 +167,9 @@ ddev typo3 make:upgrade
 
 ---
 
-## Why Use ext_kickstarter
+## Why Use kickstarter
 
-Creating TYPO3 extensions often involves repetitive tasks like setting up configuration files and controllers. `ext_kickstarter` automates these steps, saving time and ensuring a consistent structure.
+Creating TYPO3 extensions often involves repetitive tasks like setting up configuration files and controllers. `kickstarter` automates these steps, saving time and ensuring a consistent structure.
 
 ---
 
@@ -180,6 +180,6 @@ Special thanks to [LiteGraph](https://github.com/jagenjo/litegraph.js) for their
 ---
 
 ## Contributions & Feedback
-Feedback and contributions are always welcome! Feel free to share your ideas or report issues in the [GitHub repository](https://github.com/stefanfroemken/ext-kickstarter).
+Feedback and contributions are always welcome! Feel free to share your ideas or report issues in the [GitHub repository](https://github.com/friendsoftypo3/kickstarter).
 
 ---

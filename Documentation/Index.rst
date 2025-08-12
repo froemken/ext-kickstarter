@@ -4,7 +4,7 @@
 Extension Kickstarter
 =====================
 
-The **Extension Kickstarter (ext_kickstarter)** is a tool that helps you to
+The **Extension Kickstarter (kickstarter)** is a tool that helps you to
 quickly create your own TYPO3 extensions. It provides a basic framework and
 templates. It has been designed to help you work more productively. This tool
 comes with a set of commands that can be used to create different parts of an

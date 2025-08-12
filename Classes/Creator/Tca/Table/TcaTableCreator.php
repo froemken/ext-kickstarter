@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Creator\Tca\Table;
+namespace FriendsOfTYPO3\Kickstarter\Creator\Tca\Table;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr;
@@ -17,10 +17,10 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Return_;
-use StefanFroemken\ExtKickstarter\Information\TableInformation;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\ReturnStructure;
-use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
+use FriendsOfTYPO3\Kickstarter\Information\TableInformation;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ReturnStructure;
+use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaTableCreator implements TcaTableCreatorInterface

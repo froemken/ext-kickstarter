@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Creator\Tca\Table;
+namespace FriendsOfTYPO3\Kickstarter\Creator\Tca\Table;
 
-use StefanFroemken\ExtKickstarter\Information\TableInformation;
-use StefanFroemken\ExtKickstarter\Service\TcaSchemaService;
+use FriendsOfTYPO3\Kickstarter\Information\TableInformation;
+use FriendsOfTYPO3\Kickstarter\Service\TcaSchemaService;
 
 class ExtTablesSqlCreator implements TcaTableCreatorInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-use StefanFroemken\ExtKickstarter\Controller;
+use FriendsOfTYPO3\Kickstarter\Controller;
 
 return [
     'ext_kickstarter_build' => [

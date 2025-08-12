@@ -9,7 +9,7 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Traits;
+namespace FriendsOfTYPO3\Kickstarter\Traits;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 

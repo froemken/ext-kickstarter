@@ -12,7 +12,7 @@ If you find a bug or have a feature request, please create an issue on our [GitH
 - A detailed description of the issue or feature request
 - Steps to reproduce the issue (for bugs)
 - Expected behavior and actual behavior
-- TYPO3 version and ext_kickstarter version
+- TYPO3 version and kickstarter version
 - Any relevant screenshots or error messages
 
 ## 🧑‍💻 Contributing Code

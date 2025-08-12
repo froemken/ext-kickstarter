@@ -15,7 +15,7 @@ Install the extension for development installations via Composer:
 
 ..  code-block:: bash
 
-    composer req stefanfroemken/ext-kickstarter --dev
+    composer req friendsoftypo3/kickstarter --dev
 
 ..  _installation-classic:
 
@@ -23,7 +23,7 @@ Install in Classic Mode
 =======================
 
 On non composer based TYPO3 installations you can install
-:t3ext:`ext_kickstarter` still over the ExtensionManager:
+:t3ext:`kickstarter` still over the ExtensionManager:
 
 ..  rst-class:: bignums
 
@@ -41,11 +41,11 @@ On non composer based TYPO3 installations you can install
     Choose `Get Extensions` from the upper selectbox and click on
     the `Update now` button at the upper right.
 
-4.  Install :t3ext:`ext_kickstarter`
+4.  Install :t3ext:`kickstarter`
 
-    Use the search field to find `ext_kickstarter`. Choose the `ext_kickstarter`
+    Use the search field to find `kickstarter`. Choose the `kickstarter`
     line from the search result and click on the cloud icon to
-    install `ext_kickstarter`.
+    install `kickstarter`.
 
 Next step
 =========

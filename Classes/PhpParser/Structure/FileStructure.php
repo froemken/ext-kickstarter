@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\PhpParser\Structure;
+namespace FriendsOfTYPO3\Kickstarter\PhpParser\Structure;
 
-use StefanFroemken\ExtKickstarter\PhpParser\Printer\PrettyTypo3Printer;
-use StefanFroemken\ExtKickstarter\PhpParser\StructureObjectStorage;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Printer\PrettyTypo3Printer;
+use FriendsOfTYPO3\Kickstarter\PhpParser\StructureObjectStorage;
 
 /**
  * Contains the AST of any kind of PHP file grouped by nodes.
