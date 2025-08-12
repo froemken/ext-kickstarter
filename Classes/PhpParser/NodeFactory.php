@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\PhpParser;
+namespace FriendsOfTYPO3\Kickstarter\PhpParser;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Arg;
@@ -34,7 +34,7 @@ use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\Stmt\Use_;
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 
 class NodeFactory
 {

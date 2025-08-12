@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Creator\Domain\Validator;
+namespace FriendsOfTYPO3\Kickstarter\Creator\Domain\Validator;
 
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr\BooleanNot;
@@ -20,17 +20,17 @@ use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
-use StefanFroemken\ExtKickstarter\Creator\FileManager;
-use StefanFroemken\ExtKickstarter\Enums\ValidatorType;
-use StefanFroemken\ExtKickstarter\Information\ValidatorInformation;
-use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
-use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
+use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
+use FriendsOfTYPO3\Kickstarter\Enums\ValidatorType;
+use FriendsOfTYPO3\Kickstarter\Information\ValidatorInformation;
+use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ClassStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\MethodStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\NamespaceStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
+use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ValidatorCreator implements ValidatorCreatorInterface

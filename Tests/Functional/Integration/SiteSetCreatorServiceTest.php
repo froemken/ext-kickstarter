@@ -1,12 +1,12 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Tests\Functional\Integration;
+namespace FriendsOfTYPO3\Kickstarter\Tests\Functional\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
-use StefanFroemken\ExtKickstarter\Information\SiteSetInformation;
-use StefanFroemken\ExtKickstarter\Service\Creator\SiteSetCreatorService;
+use FriendsOfTYPO3\Kickstarter\Enums\FileModificationType;
+use FriendsOfTYPO3\Kickstarter\Information\SiteSetInformation;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\SiteSetCreatorService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class SiteSetCreatorServiceTest extends AbstractServiceCreatorTestCase

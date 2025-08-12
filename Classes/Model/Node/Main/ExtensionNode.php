@@ -3,20 +3,20 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Model\Node\Main;
+namespace FriendsOfTYPO3\Kickstarter\Model\Node\Main;
 
-use StefanFroemken\ExtKickstarter\Model\AbstractNode;
-use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ControllerNode;
-use StefanFroemken\ExtKickstarter\Model\Node\Extbase\ModuleNode;
-use StefanFroemken\ExtKickstarter\Model\Node\Extbase\PluginNode;
-use StefanFroemken\ExtKickstarter\Model\Node\Extbase\RepositoryNode;
-use StefanFroemken\ExtKickstarter\Model\Node\Tca\TableNode;
+use FriendsOfTYPO3\Kickstarter\Model\AbstractNode;
+use FriendsOfTYPO3\Kickstarter\Model\Node\Extbase\ControllerNode;
+use FriendsOfTYPO3\Kickstarter\Model\Node\Extbase\ModuleNode;
+use FriendsOfTYPO3\Kickstarter\Model\Node\Extbase\PluginNode;
+use FriendsOfTYPO3\Kickstarter\Model\Node\Extbase\RepositoryNode;
+use FriendsOfTYPO3\Kickstarter\Model\Node\Tca\TableNode;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ExtensionNode extends AbstractNode

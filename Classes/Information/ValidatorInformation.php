@@ -1,8 +1,8 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Information;
+namespace FriendsOfTYPO3\Kickstarter\Information;
 
-use StefanFroemken\ExtKickstarter\Enums\ValidatorType;
+use FriendsOfTYPO3\Kickstarter\Enums\ValidatorType;
 
 readonly class ValidatorInformation
 {

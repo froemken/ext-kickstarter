@@ -1,8 +1,8 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Command\Question;
+namespace FriendsOfTYPO3\Kickstarter\Command\Question;
 
-use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
+use FriendsOfTYPO3\Kickstarter\Configuration\ExtConf;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Registry;

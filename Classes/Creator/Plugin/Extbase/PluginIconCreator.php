@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase;
+namespace FriendsOfTYPO3\Kickstarter\Creator\Plugin\Extbase;
 
-use StefanFroemken\ExtKickstarter\Creator\FileManager;
-use StefanFroemken\ExtKickstarter\Information\PluginInformation;
+use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
+use FriendsOfTYPO3\Kickstarter\Information\PluginInformation;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**

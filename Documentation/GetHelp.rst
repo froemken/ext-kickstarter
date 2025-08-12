@@ -17,4 +17,4 @@ Report Issues
 =============
 
 You can report issues at
-`GitHub <https://github.com/froemken/ext-kickstarter/issues>`_.
+`GitHub <https://github.com/FriendsOfTYPO3/kickstarter/issues>`_.

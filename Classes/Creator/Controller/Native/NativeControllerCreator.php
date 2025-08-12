@@ -3,24 +3,24 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Creator\Controller\Native;
+namespace FriendsOfTYPO3\Kickstarter\Creator\Controller\Native;
 
-use StefanFroemken\ExtKickstarter\Creator\FileManager;
-use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
-use StefanFroemken\ExtKickstarter\PhpParser\NodeFactory;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\ClassStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\DeclareStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\MethodStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\NamespaceStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\UseStructure;
-use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
+use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
+use FriendsOfTYPO3\Kickstarter\Information\ControllerInformation;
+use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ClassStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\MethodStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\NamespaceStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
+use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class NativeControllerCreator implements NativeControllerCreatorInterface

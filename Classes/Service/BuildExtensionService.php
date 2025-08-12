@@ -3,31 +3,31 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Service;
+namespace FriendsOfTYPO3\Kickstarter\Service;
 
 use Psr\Http\Message\ResponseInterface;
-use StefanFroemken\ExtKickstarter\Information\ControllerInformation;
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Information\ModelInformation;
-use StefanFroemken\ExtKickstarter\Information\PluginInformation;
-use StefanFroemken\ExtKickstarter\Information\RepositoryInformation;
-use StefanFroemken\ExtKickstarter\Information\TableInformation;
-use StefanFroemken\ExtKickstarter\Model\Graph;
-use StefanFroemken\ExtKickstarter\Model\Node\Main\AuthorNode;
-use StefanFroemken\ExtKickstarter\Model\Node\Main\ExtensionNode;
-use StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService;
-use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
-use StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService;
-use StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService;
-use StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService;
-use StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use FriendsOfTYPO3\Kickstarter\Information\ControllerInformation;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Information\ModelInformation;
+use FriendsOfTYPO3\Kickstarter\Information\PluginInformation;
+use FriendsOfTYPO3\Kickstarter\Information\RepositoryInformation;
+use FriendsOfTYPO3\Kickstarter\Information\TableInformation;
+use FriendsOfTYPO3\Kickstarter\Model\Graph;
+use FriendsOfTYPO3\Kickstarter\Model\Node\Main\AuthorNode;
+use FriendsOfTYPO3\Kickstarter\Model\Node\Main\ExtensionNode;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\ControllerCreatorService;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\ExtensionCreatorService;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\ModelCreatorService;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\PluginCreatorService;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\RepositoryCreatorService;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\TableCreatorService;
+use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
 use TYPO3\CMS\Core\Http\JsonResponse;
 
 readonly class BuildExtensionService
