@@ -24,8 +24,8 @@ use FriendsOfTYPO3\Kickstarter\Creator\SiteSet\SiteSettingsDefinitionCreatorInte
 use FriendsOfTYPO3\Kickstarter\Creator\Tca\Table\TcaTableCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Test\Environment\TestEnvCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Upgrade\UpgradeWizardCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Module\Extbase\ExtbaseModuleCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Module\Native\NativeModuleCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Module\Extbase\ExtbaseModuleCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Module\Native\NativeModuleCreatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
