@@ -98,7 +98,7 @@ class TypeConverterCommand extends Command
                 $defaultTypeConverterClassName = $this->tryToCorrectClassName($typeConverterClassName, 'TypeConverter');
                 $validTypeConverterClassName = false;
             } elseif (preg_match('/^[A-Z][a-zA-Z0-9]+$/', $typeConverterClassName) === 0) {
-                $io->error('Action must be written in UpperCamelCase like "FileUploadTypeConverter".');
+                $io->error('Class name must be written in UpperCamelCase like "FileUploadTypeConverter".');
                 $defaultTypeConverterClassName = $this->tryToCorrectClassName($typeConverterClassName, 'TypeConverter');
                 $validTypeConverterClassName = false;
             } elseif (!str_ends_with($typeConverterClassName, 'TypeConverter')) {
