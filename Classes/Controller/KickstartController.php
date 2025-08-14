@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Controller;
+namespace FriendsOfTYPO3\Kickstarter\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use StefanFroemken\ExtKickstarter\Model\Graph;
-use StefanFroemken\ExtKickstarter\Model\Input;
-use StefanFroemken\ExtKickstarter\Model\Link;
-use StefanFroemken\ExtKickstarter\Model\Output;
-use StefanFroemken\ExtKickstarter\Service\BuildExtensionService;
+use FriendsOfTYPO3\Kickstarter\Model\Graph;
+use FriendsOfTYPO3\Kickstarter\Model\Input;
+use FriendsOfTYPO3\Kickstarter\Model\Link;
+use FriendsOfTYPO3\Kickstarter\Model\Output;
+use FriendsOfTYPO3\Kickstarter\Service\BuildExtensionService;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerInterface;
@@ -113,7 +113,7 @@ class KickstartController implements ControllerInterface
         $typeNamespacePart = str_replace('/', '\\', $nodeType);
         $className = sprintf(
             '%s\\%sNode',
-            '\\StefanFroemken\\ExtKickstarter\\Model\\Node',
+            '\\FriendsOfTYPO3\\Kickstarter\\Model\\Node',
             $typeNamespacePart,
         );
 

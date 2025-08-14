@@ -190,4 +190,4 @@ The command will:
 #.  Apply TYPO3 coding guidelines to all applicable files in your extension
 #.  Display the results of the formatting process
 
-Note: The command uses a predefined configuration file located at ``EXT:ext_kickstarter/Build/cgl/.php-cs-fixer.dist.php``
+Note: The command uses a predefined configuration file located at ``EXT:kickstarter/Build/cgl/.php-cs-fixer.dist.php``

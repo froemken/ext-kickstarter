@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Configuration;
+namespace FriendsOfTYPO3\Kickstarter\Configuration;
 
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
@@ -62,11 +62,11 @@ final class ExtConf
         $exportDirectory = trim($this->exportDirectory);
 
         if (!$exportDirectory) {
-            // Fall back to typo3temp/ext-kickstarter
+            // Fall back to typo3temp/kickstarter
             return sprintf(
                 '/%s/%s/',
                 trim(Environment::getPublicPath(), '/'),
-                'typo3temp/ext-kickstarter',
+                'typo3temp/kickstarter',
             );
         }
 
