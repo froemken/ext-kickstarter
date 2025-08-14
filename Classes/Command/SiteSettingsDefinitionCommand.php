@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Information\SiteSetInformation;
 use FriendsOfTYPO3\Kickstarter\Information\SiteSettingsDefinitionInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\SiteSettingsDefinitionCreatorService;
@@ -38,7 +41,8 @@ class SiteSettingsDefinitionCommand extends Command
     public function __construct(
         private readonly SiteSettingsDefinitionCreatorService $siteSettingsDefinitionCreatorService,
         #[AutowireLocator('settings.type')]
-        private ServiceLocator $types
+        private ServiceLocator $types,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -62,7 +66,8 @@ class SiteSettingsDefinitionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -71,18 +76,22 @@ class SiteSettingsDefinitionCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $siteSettingsDefinitionInformation = $this->askForSiteSettingsDefinitionInformation($io, $input, $output);
+        $siteSettingsDefinitionInformation = $this->askForSiteSettingsDefinitionInformation($commandContext);
         $this->siteSettingsDefinitionCreatorService->create($siteSettingsDefinitionInformation);
-        $this->printCreatorInformation($siteSettingsDefinitionInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($siteSettingsDefinitionInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForSiteSettingsDefinitionInformation(SymfonyStyle $io, InputInterface $input, OutputInterface $output): SiteSettingsDefinitionInformation
+    private function askForSiteSettingsDefinitionInformation(CommandContext $commandContext): SiteSettingsDefinitionInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new SiteSettingsDefinitionInformation(

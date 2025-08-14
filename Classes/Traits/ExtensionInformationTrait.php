@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace FriendsOfTYPO3\Kickstarter\Traits;
 
 use FriendsOfTYPO3\Kickstarter\Configuration\ExtConf;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 trait ExtensionInformationTrait
@@ -22,11 +22,11 @@ trait ExtensionInformationTrait
      * Collects data from composer.json to build ExtensionInformation object.
      * Can only be called for existing extensions with existing composer.json file
      */
-    private function getExtensionInformation(string $extensionKey, SymfonyStyle $io): ExtensionInformation
+    private function getExtensionInformation(string $extensionKey, CommandContext $commandContext): ExtensionInformation
     {
         $extensionPath = $this->getExtensionPath($extensionKey);
         if (!is_dir($extensionPath)) {
-            $io->error([
+            $commandContext->getIo()->error([
                 'No extension found at: ' . $extensionPath,
                 'Please use command "make:extension" to create a new extension.',
             ]);
@@ -35,7 +35,7 @@ trait ExtensionInformationTrait
 
         $composerManifestPath = $extensionPath . 'composer.json';
         if (!is_file($composerManifestPath)) {
-            $io->error([
+            $commandContext->getIo()->error([
                 'Extension "' . $extensionKey . '" does not have a composer.json file.',
                 'Seems that the existing directory is no TYPO3 extension.',
                 'Please use command "make:extension" to create a new extension.',
@@ -46,7 +46,7 @@ trait ExtensionInformationTrait
         try {
             $composerManifest = json_decode((file_get_contents($composerManifestPath) ?: ''), true, 512, JSON_THROW_ON_ERROR) ?? [];
         } catch (\JsonException $e) {
-            $io->error(['Could not decode composer.json. Please check syntax: ' . $e->getMessage()]);
+            $commandContext->getIo()->error(['Could not decode composer.json. Please check syntax: ' . $e->getMessage()]);
             die();
         }
 

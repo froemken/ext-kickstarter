@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Enums\ValidatorType;
 use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 use FriendsOfTYPO3\Kickstarter\Information\ValidatorInformation;
@@ -34,6 +37,7 @@ class ValidatorCommand extends Command
 
     public function __construct(
         private readonly ValidatorCreatorService $validatorCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -49,7 +53,8 @@ class ValidatorCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -59,18 +64,22 @@ class ValidatorCommand extends Command
             'See https://docs.typo3.org/permalink/t3coreapi:extbase-domain-validator on how implement its functionality.',
         ]);
 
-        $validatorInformation = $this->askForValidatorInformation($io, $input);
+        $validatorInformation = $this->askForValidatorInformation($commandContext);
         $this->validatorCreatorService->create($validatorInformation);
-        $this->printCreatorInformation($validatorInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($validatorInformation->getCreatorInformation(), $commandContext);
 
         return Command::SUCCESS;
     }
 
-    private function askForValidatorInformation(SymfonyStyle $io, InputInterface $input): ValidatorInformation
+    private function askForValidatorInformation(CommandContext $commandContext): ValidatorInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         $name = $this->askForValidatorName($io);

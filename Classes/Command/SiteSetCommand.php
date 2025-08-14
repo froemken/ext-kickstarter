@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Information\SiteSetInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\SiteSetCreatorService;
 use FriendsOfTYPO3\Kickstarter\Traits\AskForExtensionKeyTrait;
@@ -32,6 +35,7 @@ class SiteSetCommand extends Command
 
     public function __construct(
         private readonly SiteSetCreatorService $siteSetCreatorService,
+        private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
     }
@@ -47,7 +51,8 @@ class SiteSetCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $commandContext = new CommandContext($input, $output);
+        $io = $commandContext->getIo();
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -56,9 +61,9 @@ class SiteSetCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $siteSetInformation = $this->askForSiteSetInformation($io, $input, $output);
+        $siteSetInformation = $this->askForSiteSetInformation($commandContext);
         $this->siteSetCreatorService->create($siteSetInformation);
-        $this->printCreatorInformation($siteSetInformation->getCreatorInformation(), $io);
+        $this->printCreatorInformation($siteSetInformation->getCreatorInformation(), $commandContext);
 
         $io->text([
             'You can include the site set in your site configuration with',
@@ -72,11 +77,15 @@ class SiteSetCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function askForSiteSetInformation(SymfonyStyle $io, InputInterface $input, OutputInterface $output): SiteSetInformation
+    private function askForSiteSetInformation(CommandContext $commandContext): SiteSetInformation
     {
+        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            $this->askForExtensionKey($io, $input->getArgument('extension_key')),
-            $io
+            (string)$this->questionCollection->askQuestion(
+                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
+                $commandContext,
+            ),
+            $commandContext
         );
 
         return new SiteSetInformation(
