@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2025-03-05T17:08:40Z" product-name="ext_kickstarter">
+	<file source-language="en" datatype="plaintext" original="messages" date="2025-03-05T17:08:40Z" product-name="kickstarter">
 		<header/>
 		<body>
 			<trans-unit id="mlang_tabs_tab">

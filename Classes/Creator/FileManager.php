@@ -1,8 +1,8 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Creator;
+namespace FriendsOfTYPO3\Kickstarter\Creator;
 
-use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
+use FriendsOfTYPO3\Kickstarter\Information\CreatorInformation;
 
 class FileManager
 {

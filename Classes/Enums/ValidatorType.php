@@ -1,6 +1,6 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Enums;
+namespace FriendsOfTYPO3\Kickstarter\Enums;
 
 enum ValidatorType: string
 {

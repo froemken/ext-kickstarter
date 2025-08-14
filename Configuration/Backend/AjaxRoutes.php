@@ -1,9 +1,9 @@
 <?php
 
-use StefanFroemken\ExtKickstarter\Controller\KickstartController;
+use FriendsOfTYPO3\Kickstarter\Controller\KickstartController;
 
 return [
-    'ext_kickstarter_build' => [
+    'kickstarter_build' => [
         'path' => '/ext-kickstarter/build',
         'methods' => ['POST'],
         'target' => KickstartController::class . '::build',

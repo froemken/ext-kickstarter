@@ -1,9 +1,9 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Traits;
+namespace FriendsOfTYPO3\Kickstarter\Traits;
 
-use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
-use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
+use FriendsOfTYPO3\Kickstarter\Enums\FileModificationType;
+use FriendsOfTYPO3\Kickstarter\Information\CreatorInformation;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 trait CreatorInformationTrait

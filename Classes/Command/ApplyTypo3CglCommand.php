@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Command;
+namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Command\Question\ChoseExtensionKeyQuestion;
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\RepositoryCreatorService;
+use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -93,7 +93,7 @@ class ApplyTypo3CglCommand extends Command
         }
 
         $phpCsFixerConfig = GeneralUtility::getFileAbsFileName(
-            'EXT:ext_kickstarter/Build/cgl/.php-cs-fixer.dist.php'
+            'EXT:kickstarter/Build/cgl/.php-cs-fixer.dist.php'
         );
 
         if (!is_file($phpCsFixerConfig)) {

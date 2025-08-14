@@ -21,7 +21,7 @@ This setting can not be set via CLI usage.
 activateModule
 ==============
 
-:t3ext:`ext_kickstarter` comes with a TYPO3 backend module to kickstart your
+:t3ext:`kickstarter` comes with a TYPO3 backend module to kickstart your
 extensions visually. Is this feature is not full featured and beta, this
 module is hidden by default. If you are really sure you want to experiment
 a bit, feel free to activate the module.

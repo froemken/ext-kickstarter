@@ -1,6 +1,6 @@
 ########################
 # ignore file for
-# EXT:ext_kickstarter
+# EXT:kickstarter
 ########################
 #
 # Don't ignore .rej and .orig as we want to see/clean files after conflict resolution.

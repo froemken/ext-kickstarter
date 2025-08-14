@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Creator\SiteSet;
+namespace FriendsOfTYPO3\Kickstarter\Creator\SiteSet;
 
-use StefanFroemken\ExtKickstarter\Creator\FileManager;
-use StefanFroemken\ExtKickstarter\Information\SiteSettingsDefinitionInformation;
-use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
+use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
+use FriendsOfTYPO3\Kickstarter\Information\SiteSettingsDefinitionInformation;
+use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

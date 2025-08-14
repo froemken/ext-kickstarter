@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace StefanFroemken\ExtKickstarter\Creator\SitePackage;
+namespace FriendsOfTYPO3\Kickstarter\Creator\SitePackage;
 
-use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
-use StefanFroemken\ExtKickstarter\Information\SitePackageInformation;
+use FriendsOfTYPO3\Kickstarter\Information\CreatorInformation;
+use FriendsOfTYPO3\Kickstarter\Information\SitePackageInformation;
 
 class SitePackageCreator implements SitePackageCreatorInterface
 {

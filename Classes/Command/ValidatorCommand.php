@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Command;
+namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Enums\ValidatorType;
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Information\ValidatorInformation;
-use StefanFroemken\ExtKickstarter\Service\Creator\ValidatorCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\AskForExtensionKeyTrait;
-use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
-use StefanFroemken\ExtKickstarter\Traits\TryToCorrectClassNameTrait;
+use FriendsOfTYPO3\Kickstarter\Enums\ValidatorType;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Information\ValidatorInformation;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\ValidatorCreatorService;
+use FriendsOfTYPO3\Kickstarter\Traits\AskForExtensionKeyTrait;
+use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
+use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
+use FriendsOfTYPO3\Kickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

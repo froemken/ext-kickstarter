@@ -1,14 +1,14 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Tests\Functional\Integration;
+namespace FriendsOfTYPO3\Kickstarter\Tests\Functional\Integration;
 
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 abstract class AbstractServiceCreatorTestCase extends FunctionalTestCase
 {
     protected array $testExtensionsToLoad = [
-        'ext_kickstarter',
+        'kickstarter',
     ];
 
     protected array $coreExtensionsToLoad = [

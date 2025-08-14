@@ -1,6 +1,6 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Tests\Functional\Integration;
+namespace FriendsOfTYPO3\Kickstarter\Tests\Functional\Integration;
 
 class FileSystemHelper
 {

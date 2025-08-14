@@ -1,11 +1,11 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Tests\Functional\Integration;
+namespace FriendsOfTYPO3\Kickstarter\Tests\Functional\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\ExtensionCreatorService;
 
 class ExtensionCreatorServiceTest extends AbstractServiceCreatorTestCase
 {

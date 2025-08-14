@@ -1,5 +1,5 @@
 {
-	"name": "stefanfroemken/ext-kickstarter",
+	"name": "friendsoftypo3/kickstarter",
 	"description": "Kickstart TYPO3 Extension",
 	"license": "GPL-2.0-or-later",
 	"type": "typo3-cms-extension",
@@ -13,17 +13,27 @@
 	],
 	"authors": [
 		{
+			"name": "Kickstarter Development Team",
+			"email": "friendsof@typo3.org",
+			"role": "Developer"
+		},
+		{
 			"name": "Stefan Froemken",
 			"email": "froemken@gmail.com",
 			"role": "Lead Developer"
+		},
+		{
+			"name": "Lina Wolf",
+			"email": "112@linawolf.de",
+			"role": "Maintainer"
 		}
 	],
-	"homepage": "https://www.typo3lexikon.de/",
+	"homepage": "https://extensions.typo3.org/extension/kickstarter",
 	"support": {
-		"docs": "https://docs.typo3.org/p/stefanfroemken/ext-kickstarter/main/en-us/Index.html",
-		"email": "froemken@gmail.com",
-		"issues": "https://github.com/froemken/ext-kickstarter/issues",
-		"source": "https://github.com/froemken/ext-kickstarter"
+		"docs": "https://docs.typo3.org/p/friendsoftypo3/kickstarter/main/en-us/Index.html",
+		"email": "friendsof@typo3.org",
+		"issues": "https://github.com/FriendsOfTYPO3/kickstarter/issues",
+		"source": "https://github.com/FriendsOfTYPO3/kickstarter"
 	},
 	"require": {
 		"ext-curl": "*",
@@ -39,21 +49,17 @@
 		"typo3/coding-standards": "^0.8",
 		"typo3/testing-framework": "^8.2"
 	},
-	"replace": {
-		"typo3-ter/ext-kickstarer": "self.version",
-		"typo3-ter/ext_kickstarer": "self.version"
-	},
 	"conflict": {
 		"b13/make": "*"
 	},
 	"autoload": {
 		"psr-4": {
-			"StefanFroemken\\ExtKickstarter\\": "Classes"
+			"FriendsOfTYPO3\\Kickstarter\\": "Classes"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"StefanFroemken\\ExtKickstarter\\Tests\\": "Tests"
+			"FriendsOfTYPO3\\Kickstarter\\Tests\\": "Tests"
 		}
 	},
 	"config": {
@@ -69,7 +75,7 @@
 	"extra": {
 		"typo3/cms": {
 			"app-dir": ".Build",
-			"extension-key": "ext_kickstarter",
+			"extension-key": "kickstarter",
 			"web-dir": ".Build/public"
 		}
 	}

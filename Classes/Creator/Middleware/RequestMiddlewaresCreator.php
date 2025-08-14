@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Creator\Middleware;
+namespace FriendsOfTYPO3\Kickstarter\Creator\Middleware;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
@@ -18,11 +18,11 @@ use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Return_;
-use StefanFroemken\ExtKickstarter\Creator\FileManager;
-use StefanFroemken\ExtKickstarter\Information\MiddleWareInformation;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\FileStructure;
-use StefanFroemken\ExtKickstarter\PhpParser\Structure\ReturnStructure;
-use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
+use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
+use FriendsOfTYPO3\Kickstarter\Information\MiddleWareInformation;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ReturnStructure;
+use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
