@@ -1,10 +1,10 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Traits;
+namespace FriendsOfTYPO3\Kickstarter\Traits;
 
-use StefanFroemken\ExtKickstarter\Context\CommandContext;
-use StefanFroemken\ExtKickstarter\Enums\FileModificationType;
-use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Enums\FileModificationType;
+use FriendsOfTYPO3\Kickstarter\Information\CreatorInformation;
 
 trait CreatorInformationTrait
 {

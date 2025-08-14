@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Command;
+namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
-use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
-use StefanFroemken\ExtKickstarter\Context\CommandContext;
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Information\TableInformation;
-use StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Information\TableInformation;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\TableCreatorService;
+use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
+use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

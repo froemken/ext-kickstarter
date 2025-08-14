@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace StefanFroemken\ExtKickstarter;
+namespace FriendsOfTYPO3\Kickstarter;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Question\QuestionInterface;
-use StefanFroemken\ExtKickstarter\Creator\Command\CommandCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Controller\Extbase\ExtbaseControllerCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Controller\Native\NativeControllerCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Domain\Model\DomainCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Domain\Repository\RepositoryCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Domain\Validator\ValidatorCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Event\EventCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\EventListener\EventListenerCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Extension\ExtensionCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Middleware\MiddlewareCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Plugin\Extbase\ExtbasePluginCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Plugin\Native\NativePluginCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Property\TypeConverter\TypeConverterCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\SitePackage\SitePackageCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\SiteSet\SiteSetCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\SiteSet\SiteSettingsDefinitionCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Tca\Table\TcaTableCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Test\Environment\TestEnvCreatorInterface;
-use StefanFroemken\ExtKickstarter\Creator\Upgrade\UpgradeWizardCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\QuestionInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Command\CommandCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Controller\Extbase\ExtbaseControllerCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Controller\Native\NativeControllerCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Domain\Model\DomainCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Domain\Repository\RepositoryCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Domain\Validator\ValidatorCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Event\EventCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\EventListener\EventListenerCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Extension\ExtensionCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Middleware\MiddlewareCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Plugin\Extbase\ExtbasePluginCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Plugin\Native\NativePluginCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Property\TypeConverter\TypeConverterCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\SitePackage\SitePackageCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\SiteSet\SiteSetCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\SiteSet\SiteSettingsDefinitionCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Tca\Table\TcaTableCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Test\Environment\TestEnvCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Upgrade\UpgradeWizardCreatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 

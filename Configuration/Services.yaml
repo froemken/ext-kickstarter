@@ -4,19 +4,19 @@ services:
     autoconfigure: true
     public: false
 
-  StefanFroemken\ExtKickstarter\:
+  FriendsOfTYPO3\Kickstarter\:
     resource: '../Classes/*'
     exclude:
       - '../Classes/Domain/Model/*'
 
-  StefanFroemken\ExtKickstarter\Configuration\ExtConf:
+  FriendsOfTYPO3\Kickstarter\Configuration\ExtConf:
     public: true
 
   ##############
   ## COMMANDS ##
   ##############
 
-  StefanFroemken\ExtKickstarter\Command\CommandCommand:
+  FriendsOfTYPO3\Kickstarter\Command\CommandCommand:
     tags:
       - name: console.command
         command: 'make:command'
@@ -25,7 +25,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\ControllerCommand:
+  FriendsOfTYPO3\Kickstarter\Command\ControllerCommand:
     tags:
       - name: console.command
         command: 'make:controller'
@@ -34,7 +34,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\EventCommand:
+  FriendsOfTYPO3\Kickstarter\Command\EventCommand:
     tags:
       - name: console.command
         command: 'make:event'
@@ -43,7 +43,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\EventListenerCommand:
+  FriendsOfTYPO3\Kickstarter\Command\EventListenerCommand:
     tags:
       - name: console.command
         command: 'make:eventlistener'
@@ -52,7 +52,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\ExtensionCommand:
+  FriendsOfTYPO3\Kickstarter\Command\ExtensionCommand:
     tags:
       - name: console.command
         command: 'make:extension'
@@ -61,7 +61,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\MiddlewareCommand:
+  FriendsOfTYPO3\Kickstarter\Command\MiddlewareCommand:
     tags:
       - name: console.command
         command: 'make:middleware'
@@ -70,7 +70,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\ModelCommand:
+  FriendsOfTYPO3\Kickstarter\Command\ModelCommand:
     tags:
       - name: console.command
         command: 'make:model'
@@ -79,7 +79,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\PluginCommand:
+  FriendsOfTYPO3\Kickstarter\Command\PluginCommand:
     tags:
       - name: console.command
         command: 'make:plugin'
@@ -88,7 +88,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\RepositoryCommand:
+  FriendsOfTYPO3\Kickstarter\Command\RepositoryCommand:
     tags:
       - name: console.command
         command: 'make:repository'
@@ -97,7 +97,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\SiteSetCommand:
+  FriendsOfTYPO3\Kickstarter\Command\SiteSetCommand:
     tags:
       - name: console.command
         command: 'make:site-set'
@@ -106,7 +106,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\SiteSettingsDefinitionCommand:
+  FriendsOfTYPO3\Kickstarter\Command\SiteSettingsDefinitionCommand:
     tags:
       - name: console.command
         command: 'make:site-settings-definition'
@@ -115,7 +115,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\TableCommand:
+  FriendsOfTYPO3\Kickstarter\Command\TableCommand:
     tags:
       - name: console.command
         command: 'make:table'
@@ -124,7 +124,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\TestEnvCommand:
+  FriendsOfTYPO3\Kickstarter\Command\TestEnvCommand:
     tags:
       - name: console.command
         command: 'make:testenv'
@@ -133,7 +133,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\ValidatorCommand:
+  FriendsOfTYPO3\Kickstarter\Command\ValidatorCommand:
     tags:
       - name: console.command
         command: 'make:validator'
@@ -142,7 +142,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\SitePackageCommand:
+  FriendsOfTYPO3\Kickstarter\Command\SitePackageCommand:
     tags:
       - name: console.command
         command: 'make:site-package'
@@ -151,7 +151,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\TypeConverterCommand:
+  FriendsOfTYPO3\Kickstarter\Command\TypeConverterCommand:
     tags:
       - name: console.command
         command: 'make:typeconverter'
@@ -160,7 +160,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\ApplyTypo3CglCommand:
+  FriendsOfTYPO3\Kickstarter\Command\ApplyTypo3CglCommand:
     tags:
       - name: console.command
         command: 'make:applycgl'
@@ -169,7 +169,7 @@ services:
     arguments:
       $questionCollection: '@questions.extension'
 
-  StefanFroemken\ExtKickstarter\Command\UpgradeWizardCommand:
+  FriendsOfTYPO3\Kickstarter\Command\UpgradeWizardCommand:
     tags:
       - name: console.command
         command: 'make:upgrade'
@@ -182,57 +182,57 @@ services:
   ## CREATOR SERVICES ##
   ######################
 
-  StefanFroemken\ExtKickstarter\Service\Creator\CommandCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\CommandCreatorService:
     arguments:
       $commandCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.command' }
-  StefanFroemken\ExtKickstarter\Service\Creator\ControllerCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\ControllerCreatorService:
     arguments:
       $extbaseControllerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.controller.extbase' }
       $nativeControllerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.controller.native' }
-  StefanFroemken\ExtKickstarter\Service\Creator\MiddlewareCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\MiddlewareCreatorService:
     arguments:
       $middlewareCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.middleware' }
-  StefanFroemken\ExtKickstarter\Service\Creator\ModelCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\ModelCreatorService:
     arguments:
       $modelCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.model' }
-  StefanFroemken\ExtKickstarter\Service\Creator\RepositoryCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\RepositoryCreatorService:
     arguments:
       $repositoryCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.repository' }
-  StefanFroemken\ExtKickstarter\Service\Creator\ValidatorCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\ValidatorCreatorService:
     arguments:
       $validatorCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.domain.validator' }
-  StefanFroemken\ExtKickstarter\Service\Creator\EventCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\EventCreatorService:
     arguments:
       $eventCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.event' }
-  StefanFroemken\ExtKickstarter\Service\Creator\EventListenerCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\EventListenerCreatorService:
     arguments:
       $eventListenerCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.event-listener' }
-  StefanFroemken\ExtKickstarter\Service\Creator\ExtensionCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\ExtensionCreatorService:
     arguments:
       $extensionCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.extension' }
-  StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\PluginCreatorService:
     arguments:
       $extbasePluginCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.plugin.extbase' }
       $nativePluginCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.plugin.native' }
-  StefanFroemken\ExtKickstarter\Service\Creator\SitePackageCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\SitePackageCreatorService:
     arguments:
       $sitePackageCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.property.site-package'}
-  StefanFroemken\ExtKickstarter\Service\Creator\TypeConverterCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\TypeConverterCreatorService:
     arguments:
       $typeConverterCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.property.type-converter' }
-  StefanFroemken\ExtKickstarter\Service\Creator\SiteSetCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\SiteSetCreatorService:
     arguments:
       $siteSetCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.site-set' }
-  StefanFroemken\ExtKickstarter\Service\Creator\SiteSettingsDefinitionCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\SiteSettingsDefinitionCreatorService:
     arguments:
       $siteSettingDefinitionCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.site-settings-definition' }
-  StefanFroemken\ExtKickstarter\Service\Creator\TableCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\TableCreatorService:
     arguments:
       $tableCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.tca.table' }
-  StefanFroemken\ExtKickstarter\Service\Creator\TestEnvCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\TestEnvCreatorService:
     arguments:
       $testEnvCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.test.env' }
-  StefanFroemken\ExtKickstarter\Service\Creator\UpgradeWizardCreatorService:
+  FriendsOfTYPO3\Kickstarter\Service\Creator\UpgradeWizardCreatorService:
     arguments:
       $upgradeCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.upgrade-wizard' }
 
@@ -241,58 +241,58 @@ services:
   ###############
 
   factory.question:
-    class: StefanFroemken\ExtKickstarter\Command\Input\QuestionFactory
+    class: FriendsOfTYPO3\Kickstarter\Command\Input\QuestionFactory
 
   questions.extension:
-    class: StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection
+    class: FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection
     arguments:
       $questions: !tagged_iterator { tag: 'ext-kickstarter.command.extension.question' }
 
-  StefanFroemken\ExtKickstarter\Command\Input\Question\ActionMethodNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ActionMethodNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.controller-action' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\CommandClassNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\CommandClassNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-class' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\CommandAliasQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\CommandAliasQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-name' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\CommandNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\CommandNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-name' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ComposerNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.composer_name' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\ControllerClassNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ControllerClassNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.controller-class' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\EmailQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\EmailQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.email' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\EventClassNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\EventClassNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-class' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\EventListenerClassNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\EventListenerClassNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-listener-class-name' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\ExtensionKeyQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ExtensionKeyQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.extension_key' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\MiddlewareClassNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\MiddlewareClassNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.middleware-class' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\MiddlewareIdentifierQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\MiddlewareIdentifierQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.middleware-identifier' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\ModelClassNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ModelClassNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.model-class' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\NamespaceQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\NamespaceQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.namespace' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\PluginNameQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\PluginNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.plugin-name' }
-  StefanFroemken\ExtKickstarter\Command\Input\Question\VersionQuestion:
+  FriendsOfTYPO3\Kickstarter\Command\Input\Question\VersionQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.version' }

@@ -3,25 +3,25 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Command;
+namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
-use StefanFroemken\ExtKickstarter\Command\Input\Question\PluginNameQuestion;
-use StefanFroemken\ExtKickstarter\Command\Input\QuestionCollection;
-use StefanFroemken\ExtKickstarter\Context\CommandContext;
-use StefanFroemken\ExtKickstarter\Information\CreatorInformation;
-use StefanFroemken\ExtKickstarter\Information\ExtensionInformation;
-use StefanFroemken\ExtKickstarter\Information\PluginInformation;
-use StefanFroemken\ExtKickstarter\Service\Creator\PluginCreatorService;
-use StefanFroemken\ExtKickstarter\Traits\CreatorInformationTrait;
-use StefanFroemken\ExtKickstarter\Traits\ExtensionInformationTrait;
-use StefanFroemken\ExtKickstarter\Traits\FileStructureBuilderTrait;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\PluginNameQuestion;
+use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Information\CreatorInformation;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Information\PluginInformation;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\PluginCreatorService;
+use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
+use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
+use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

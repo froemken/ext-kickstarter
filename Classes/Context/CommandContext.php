@@ -1,6 +1,6 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Context;
+namespace FriendsOfTYPO3\Kickstarter\Context;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Command\Input;
+namespace FriendsOfTYPO3\Kickstarter\Command\Input;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Question\QuestionInterface;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\QuestionInterface;
 
 readonly class QuestionFactory
 {

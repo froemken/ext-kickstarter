@@ -1,12 +1,12 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
+namespace FriendsOfTYPO3\Kickstarter\Command\Input\Question;
 
-use StefanFroemken\ExtKickstarter\Command\Input\AutoComplete\AutoCompleteInterface;
-use StefanFroemken\ExtKickstarter\Command\Input\Decorator\DecoratorInterface;
-use StefanFroemken\ExtKickstarter\Command\Input\Normalizer\NormalizerInterface;
-use StefanFroemken\ExtKickstarter\Command\Input\Validator\ValidatorInterface;
-use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Command\Input\AutoComplete\AutoCompleteInterface;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Decorator\DecoratorInterface;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Normalizer\NormalizerInterface;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;

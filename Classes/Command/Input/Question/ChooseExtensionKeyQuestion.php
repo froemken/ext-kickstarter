@@ -1,10 +1,10 @@
 <?php
 
-namespace StefanFroemken\ExtKickstarter\Command\Input\Question;
+namespace FriendsOfTYPO3\Kickstarter\Command\Input\Question;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Question\AbstractQuestion;
-use StefanFroemken\ExtKickstarter\Configuration\ExtConf;
-use StefanFroemken\ExtKickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\AbstractQuestion;
+use FriendsOfTYPO3\Kickstarter\Configuration\ExtConf;
+use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Registry;

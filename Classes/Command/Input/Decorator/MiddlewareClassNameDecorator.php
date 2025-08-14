@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Command\Input\Decorator;
+namespace FriendsOfTYPO3\Kickstarter\Command\Input\Decorator;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Decorator\DecoratorInterface;
-use StefanFroemken\ExtKickstarter\Command\Input\Normalizer\MiddlewareClassNameNormalizer;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Decorator\DecoratorInterface;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Normalizer\MiddlewareClassNameNormalizer;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('ext-kickstarter.inputHandler.middleware-class')]

@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the package stefanfroemken/ext-kickstarter.
+ * This file is part of the package friendsoftypo3/kickstarter.
  *
  * For the full copyright and license information, please read the
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\ExtKickstarter\Command\Input\Validator;
+namespace FriendsOfTYPO3\Kickstarter\Command\Input\Validator;
 
-use StefanFroemken\ExtKickstarter\Command\Input\Question\ComposerNameQuestion;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ComposerNameQuestion;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('ext-kickstarter.inputHandler.composer_name')]
