@@ -15,6 +15,8 @@ use FriendsOfTYPO3\Kickstarter\Creator\Event\EventCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\EventListener\EventListenerCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Extension\ExtensionCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Middleware\MiddlewareCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Module\Extbase\ExtbaseModuleCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Module\Native\NativeModuleCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Plugin\Extbase\ExtbasePluginCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Plugin\Native\NativePluginCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Property\TypeConverter\TypeConverterCreatorInterface;
@@ -24,8 +26,6 @@ use FriendsOfTYPO3\Kickstarter\Creator\SiteSet\SiteSettingsDefinitionCreatorInte
 use FriendsOfTYPO3\Kickstarter\Creator\Tca\Table\TcaTableCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Test\Environment\TestEnvCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Upgrade\UpgradeWizardCreatorInterface;
-use FriendsOfTYPO3\Kickstarter\Creator\Module\Extbase\ExtbaseModuleCreatorInterface;
-use FriendsOfTYPO3\Kickstarter\Creator\Module\Native\NativeModuleCreatorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
