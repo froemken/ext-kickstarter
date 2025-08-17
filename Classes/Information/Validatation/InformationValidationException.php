@@ -8,5 +8,8 @@ final class InformationValidationException extends \RuntimeException
     {
         parent::__construct('Validation failed', $code);
     }
-    public function getErrors(): array { return $this->errors; }
+
+    public function getErrors(): array {
+        return $this->errors;
+    }
 }
