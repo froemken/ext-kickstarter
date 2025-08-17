@@ -41,6 +41,6 @@ readonly class QuestionAttributeCollection
             }
         }
 
-        throw new \InvalidArgumentException('No question for information type '.$information::class.' argument ' . $argumentName . ' found.', 5078287218);
+        throw new \InvalidArgumentException('No question for information type ' . $information::class . ' argument ' . $argumentName . ' found.', 5078287218);
     }
 }
