@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 class EventClassNameNormalizer implements NormalizerInterface
 {
     use TryToCorrectClassNameTrait;
+
     public function __invoke(?string $userInput): string
     {
         if ($userInput === null || $userInput === '') {
