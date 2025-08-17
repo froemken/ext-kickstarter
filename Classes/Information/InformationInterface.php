@@ -2,7 +2,4 @@
 
 namespace FriendsOfTYPO3\Kickstarter\Information;
 
-interface InformationInterface
-{
-
-}
+interface InformationInterface {}
