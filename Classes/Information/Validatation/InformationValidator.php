@@ -3,14 +3,13 @@
 namespace FriendsOfTYPO3\Kickstarter\Information\Validatation;
 
 use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface;
-use ReflectionClass;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class InformationValidator
 {
     public function validate(object $information): void
     {
-        $rc = new ReflectionClass($information);
+        $rc = new \ReflectionClass($information);
         $errors = [];
 
         foreach ($rc->getProperties() as $prop) {

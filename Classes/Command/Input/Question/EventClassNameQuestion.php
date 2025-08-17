@@ -20,15 +20,14 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 readonly class EventClassNameQuestion extends AbstractAttributeQuestion
 {
     public const ARGUMENT_NAME = 'eventClassName';
+
     public const INFORMATION_CLASS = EventInformation::class;
 
     private const QUESTION = [
         'Please provide the class name of your new Event',
     ];
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     protected function getQuestion(): array
     {
@@ -49,5 +48,4 @@ readonly class EventClassNameQuestion extends AbstractAttributeQuestion
             $commandContext
         ));
     }
-
 }

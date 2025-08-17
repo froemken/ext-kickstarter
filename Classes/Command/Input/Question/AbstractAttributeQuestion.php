@@ -6,7 +6,6 @@ use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Information\InformationInterface;
 use FriendsOfTYPO3\Kickstarter\Information\Normalization\UseNormalizer;
 use FriendsOfTYPO3\Kickstarter\Information\Validatation\UseValidator;
-use ReflectionClass;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Question\Question;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -35,7 +34,8 @@ abstract readonly class AbstractAttributeQuestion implements AttributeQuestionIn
 
         if (!defined($calledClass . '::INFORMATION_CLASS')) {
             throw new \RuntimeException(
-                sprintf('Class %s must define the constant INFORMATION_CLASS.', $calledClass), 9394169090,
+                sprintf('Class %s must define the constant INFORMATION_CLASS.', $calledClass),
+                9394169090,
             );
         }
 
@@ -54,7 +54,7 @@ abstract readonly class AbstractAttributeQuestion implements AttributeQuestionIn
             $default ?? $this->getDefault(),
         );
 
-        $rc = new ReflectionClass($information);
+        $rc = new \ReflectionClass($information);
 
         foreach ($rc->getProperties() as $prop) {
             $valAttr = $prop->getAttributes(UseValidator::class)[0] ?? null;

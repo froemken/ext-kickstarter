@@ -21,6 +21,7 @@ class EventInformation implements InformationInterface
     private const EVENT_PATH = 'Classes/Event/';
 
     private ?ExtensionInformation $extensionInformation = null;
+
     #[UseValidator(EventClassValidator::class)]
     #[UseNormalizer(EventClassNameNormalizer::class)]
     private ?string $eventClassName = null;
@@ -85,5 +86,4 @@ class EventInformation implements InformationInterface
     {
         $this->creatorInformation = $creatorInformation;
     }
-
 }
