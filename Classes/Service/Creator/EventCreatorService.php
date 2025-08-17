@@ -12,15 +12,19 @@ declare(strict_types=1);
 namespace FriendsOfTYPO3\Kickstarter\Service\Creator;
 
 use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
+use FriendsOfTYPO3\Kickstarter\Information\Validatation\InformationValidator;
 
 readonly class EventCreatorService
 {
     public function __construct(
         private iterable $eventCreators,
+        private InformationValidator $infoValidator,
     ) {}
 
     public function create(EventInformation $eventInformation): void
     {
+        $this->infoValidator->validate($eventInformation);
+
         foreach ($this->eventCreators as $creator) {
             $creator->create($eventInformation);
         }

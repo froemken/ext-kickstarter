@@ -9,11 +9,13 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Command\Input\Validator;
+namespace FriendsOfTYPO3\Kickstarter\Information\Validatation;
 
+use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ClassNameValidator;
+use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('ext-kickstarter.inputHandler.event-class')]
+#[AutoconfigureTag('ext-kickstarter.information.validator')]
 class EventClassValidator implements ValidatorInterface
 {
     private const POSTFIX = 'Event';

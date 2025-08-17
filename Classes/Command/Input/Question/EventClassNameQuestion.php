@@ -12,26 +12,22 @@ declare(strict_types=1);
 namespace FriendsOfTYPO3\Kickstarter\Command\Input\Question;
 
 use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
+use FriendsOfTYPO3\Kickstarter\Information\InformationInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('ext-kickstarter.command.extension.question')]
-readonly class EventClassNameQuestion extends AbstractQuestion
+#[AutoconfigureTag('ext-kickstarter.command.extension.attribute.question')]
+readonly class EventClassNameQuestion extends AbstractAttributeQuestion
 {
-    public const ARGUMENT_NAME = 'event-class-name';
+    public const ARGUMENT_NAME = 'eventClassName';
+    public const INFORMATION_CLASS = EventInformation::class;
 
     private const QUESTION = [
         'Please provide the class name of your new Event',
     ];
 
-    private const DESCRIPTION = [];
-
-    public function __construct(
-        private iterable $inputHandlers,
-    ) {}
-
-    protected function getDescription(): array
+    public function __construct()
     {
-        return self::DESCRIPTION;
     }
 
     protected function getQuestion(): array
@@ -39,13 +35,19 @@ readonly class EventClassNameQuestion extends AbstractQuestion
         return self::QUESTION;
     }
 
-    public function ask(CommandContext $commandContext, ?string $default = null): mixed
+    public function ask(CommandContext $commandContext, InformationInterface $information, ?string $default = null): void
     {
-        $commandContext->getIo()->text($this->getDescription());
-
-        return $this->askQuestion(
-            $this->createSymfonyQuestion($this->inputHandlers, $default),
+        if (!$information instanceof EventInformation) {
+            throw new \InvalidArgumentException(sprintf(
+                'Expected %s, got %s',
+                self::INFORMATION_CLASS,
+                get_debug_type($information)
+            ), 6481694059);
+        }
+        $information->setEventClassName($this->askQuestion(
+            $this->createSymfonyQuestion($information, $default),
             $commandContext
-        );
+        ));
     }
+
 }

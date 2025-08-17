@@ -12,6 +12,12 @@ services:
   FriendsOfTYPO3\Kickstarter\Configuration\ExtConf:
     public: true
 
+  _instanceof:
+    FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface:
+      public: true
+    FriendsOfTYPO3\Kickstarter\Command\Input\Normalizer\NormalizerInterface:
+      public: true
+
   ##############
   ## COMMANDS ##
   ##############
@@ -240,6 +246,10 @@ services:
   ## QUESTIONS ##
   ###############
 
+  FriendsOfTYPO3\Kickstarter\Command\Input\QuestionAttributeCollection:
+    arguments:
+      $questions: !tagged_iterator { tag: 'ext-kickstarter.command.extension.attribute.question' }
+
   factory.question:
     class: FriendsOfTYPO3\Kickstarter\Command\Input\QuestionFactory
 
@@ -269,9 +279,6 @@ services:
   FriendsOfTYPO3\Kickstarter\Command\Input\Question\EmailQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.email' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\EventClassNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-class' }
   FriendsOfTYPO3\Kickstarter\Command\Input\Question\EventListenerClassNameQuestion:
     arguments:
       $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-listener-class-name' }

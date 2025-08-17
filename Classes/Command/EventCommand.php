@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
 use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\EventClassNameQuestion;
+use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionAttributeCollection;
 use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
 use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
@@ -32,6 +32,7 @@ class EventCommand extends Command
     public function __construct(
         private readonly EventCreatorService $eventCreatorService,
         private readonly QuestionCollection $questionCollection,
+        private readonly QuestionAttributeCollection $questionAttributeCollection,
     ) {
         parent::__construct();
     }
@@ -67,21 +68,20 @@ class EventCommand extends Command
 
     private function askForEventInformation(CommandContext $commandContext): EventInformation
     {
-        $extensionInformation = $this->getExtensionInformation(
+        $eventInformation = new EventInformation();
+        $eventInformation->setExtensionInformation($this->getExtensionInformation(
             (string)$this->questionCollection->askQuestion(
                 ChooseExtensionKeyQuestion::ARGUMENT_NAME,
                 $commandContext,
             ),
             $commandContext
-        );
-        $eventClassName = (string)$this->questionCollection->askQuestion(
-            EventClassNameQuestion::ARGUMENT_NAME,
+        ));
+        $this->questionAttributeCollection->askQuestion(
+            $eventInformation,
+            'eventClassName',
             $commandContext,
         );
 
-        return new EventInformation(
-            $extensionInformation,
-            $eventClassName,
-        );
+        return $eventInformation;
     }
 }
