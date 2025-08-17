@@ -35,8 +35,7 @@ abstract readonly class AbstractAttributeQuestion implements AttributeQuestionIn
 
         if (!defined($calledClass . '::INFORMATION_CLASS')) {
             throw new \RuntimeException(
-                sprintf('Class %s must define the constant INFORMATION_CLASS.', $calledClass),
-                3362475211
+                sprintf('Class %s must define the constant INFORMATION_CLASS.', $calledClass), 9394169090,
             );
         }
 

@@ -2,6 +2,7 @@
 
 namespace FriendsOfTYPO3\Kickstarter\Information\Validatation;
 
+use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface;
 use ReflectionClass;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -20,7 +21,7 @@ class InformationValidator
 
             /** @var UseValidator $meta */
             $meta = $attr->newInstance();
-            $validator = GeneralUtility::makeInstance($meta->serviceId);
+            $validator = $this->getValidator($meta);
 
             $value = $this->readValue($information, $prop->getName());
 
@@ -44,10 +45,21 @@ class InformationValidator
         if (method_exists($object, $getter)) {
             return $object->$getter();
         }
+        // Use a isser if it exists
+        $getter = 'is' . ucfirst($propName);
+        if (method_exists($object, $getter)) {
+            return $object->$getter();
+        }
+        // Use a hasser if it exists
+        $getter = 'has' . ucfirst($propName);
+        if (method_exists($object, $getter)) {
+            return $object->$getter();
+        }
+        throw new \BadMethodCallException(sprintf('Method %s does not exist', $getter), 6315933720);
+    }
 
-        // Fallback to reflection (works with private props)
-        $rp = (new \ReflectionObject($object))->getProperty($propName);
-        $rp->setAccessible(true);
-        return $rp->getValue($object);
+    public function getValidator(UseValidator $meta): ValidatorInterface
+    {
+        return GeneralUtility::makeInstance($meta->serviceId);
     }
 }
