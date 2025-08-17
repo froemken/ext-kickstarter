@@ -7,7 +7,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class InformationValidator
 {
-
     public function validate(object $information): void
     {
         $rc = new ReflectionClass($information);
