@@ -44,47 +44,20 @@ readonly class ChooseExtensionKeyQuestion extends AbstractQuestion
 
     public function ask(CommandContext $commandContext, ?string $default = null): mixed
     {
-        $path = ExtConf::create($this->extensionConfiguration)->getExportDirectory();
+        $extConf = ExtConf::create($this->extensionConfiguration);
         $lastExtension = $default ?? $this->registry->get(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY);
-        $availableExtensions = $this->getAvailableExtensions($path);
+        $availableExtensions = $extConf->getAvailableExtensions();
         $commandContext->getIo()->text($this->getDescription());
 
         if ($availableExtensions !== []) {
             $extensionKey = $this->askQuestion($this->createSymfonyChoiceQuestion([], $availableExtensions, $default ?? $lastExtension), $commandContext);
             $this->registry->set(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY, $extensionKey);
         } else {
-            $commandContext->getIo()->error('No extensions found at path ' . $path);
+            $commandContext->getIo()->error('No extensions found at path ' . $extConf->getExportDirectory());
             $commandContext->getIo()->info('Create an extension using command make:extension or make:site-package first. ');
             die();
         }
 
         return $extensionKey;
-    }
-
-    private function getAvailableExtensions(string $path): array
-    {
-        if (!is_dir($path)) {
-            return [];
-        }
-
-        $extensions = [];
-        $directories = scandir($path);
-
-        foreach ($directories as $dir) {
-            if ($dir === '.') {
-                continue;
-            }
-            if ($dir === '..') {
-                continue;
-            }
-            $fullPath = $path . DIRECTORY_SEPARATOR . $dir;
-
-            // Check if it is a directory and has a composer.json
-            if (is_dir($fullPath) && file_exists($fullPath . DIRECTORY_SEPARATOR . 'composer.json')) {
-                $extensions[] = $dir;
-            }
-        }
-
-        return $extensions;
     }
 }

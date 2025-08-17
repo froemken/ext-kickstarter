@@ -3,15 +3,25 @@
 namespace FriendsOfTYPO3\Kickstarter\Command\Input\Question;
 
 use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Information\DefaultValue\DefaultValueInterface;
+use FriendsOfTYPO3\Kickstarter\Information\DefaultValue\ProvideDefaultValue;
 use FriendsOfTYPO3\Kickstarter\Information\InformationInterface;
 use FriendsOfTYPO3\Kickstarter\Information\Normalization\UseNormalizer;
+use FriendsOfTYPO3\Kickstarter\Information\Options\OptionsInterface;
+use FriendsOfTYPO3\Kickstarter\Information\Options\ProvideOptions;
 use FriendsOfTYPO3\Kickstarter\Information\Validatation\UseValidator;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract readonly class AbstractAttributeQuestion implements AttributeQuestionInterface
 {
+    public function getDefaultValueGenerator(ProvideDefaultValue $meta): DefaultValueInterface
+    {
+        return GeneralUtility::makeInstance($meta->serviceId);
+    }
+
     abstract protected function getQuestion(): array;
 
     public function getArgumentName(): string
@@ -42,8 +52,18 @@ abstract readonly class AbstractAttributeQuestion implements AttributeQuestionIn
         return $calledClass::INFORMATION_CLASS;
     }
 
-    protected function getDefault(): ?string
+    protected function getDefault(InformationInterface $information): ?string
     {
+        $rc = new \ReflectionClass($information);
+        foreach ($rc->getProperties() as $prop) {
+            $defaultValueAttribute = $prop->getAttributes(ProvideDefaultValue::class)[0] ?? null;
+            if ($defaultValueAttribute !== null) {
+                /** @var ProvideDefaultValue $meta */
+                $meta = $defaultValueAttribute->newInstance();
+                $defaultValueGenerator = $this->getDefaultValueGenerator($meta);
+                return $defaultValueGenerator->getDefaultValue($information);
+            }
+        }
         return null;
     }
 
@@ -51,7 +71,7 @@ abstract readonly class AbstractAttributeQuestion implements AttributeQuestionIn
     {
         $symfonyQuestion = new Question(
             implode(' ', $this->getQuestion()),
-            $default ?? $this->getDefault(),
+            $default ?? $this->getDefault($information),
         );
 
         $rc = new \ReflectionClass($information);
@@ -74,6 +94,28 @@ abstract readonly class AbstractAttributeQuestion implements AttributeQuestionIn
         }
 
         return $symfonyQuestion;
+    }
+
+    protected function createSymfonyChoiceQuestion(InformationInterface $information, ?string $default = null): ChoiceQuestion
+    {
+        $rc = new \ReflectionClass($information);
+        $choices = [];
+        foreach ($rc->getProperties() as $prop) {
+            $optionsAttribute = $prop->getAttributes(ProvideOptions::class)[0] ?? null;
+            if ($optionsAttribute !== null) {
+                /** @var UseNormalizer $meta */
+                $meta = $optionsAttribute->newInstance();
+                /** @var OptionsInterface $optionsGenerator */
+                $optionsGenerator = GeneralUtility::makeInstance($meta->serviceId);
+                $choices = $optionsGenerator->getOptions($information);
+            }
+        }
+
+        return new ChoiceQuestion(
+            implode(' ', $this->getQuestion()),
+            $choices,
+            $default ?? $this->getDefault($information),
+        );
     }
 
     protected function askQuestion(Question $question, CommandContext $commandContext): mixed

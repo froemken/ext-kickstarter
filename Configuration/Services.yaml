@@ -17,6 +17,10 @@ services:
       public: true
     FriendsOfTYPO3\Kickstarter\Command\Input\Normalizer\NormalizerInterface:
       public: true
+    FriendsOfTYPO3\Kickstarter\Information\DefaultValue\DefaultValueInterface:
+      public: true
+    FriendsOfTYPO3\Kickstarter\Information\Options\OptionsInterface:
+      public: true
 
   ##############
   ## COMMANDS ##
@@ -46,8 +50,6 @@ services:
         command: 'make:event'
         description: 'Create a new Event for your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\EventListenerCommand:
     tags:

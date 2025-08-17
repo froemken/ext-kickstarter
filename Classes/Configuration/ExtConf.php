@@ -59,6 +59,34 @@ final class ExtConf
         );
     }
 
+    public function getAvailableExtensions(): array
+    {
+        $path = $this->getExportDirectory();
+        if (!is_dir($path)) {
+            return [];
+        }
+
+        $extensions = [];
+        $directories = scandir($path);
+
+        foreach ($directories as $dir) {
+            if ($dir === '.') {
+                continue;
+            }
+            if ($dir === '..') {
+                continue;
+            }
+            $fullPath = $path . DIRECTORY_SEPARATOR . $dir;
+
+            // Check if it is a directory and has a composer.json
+            if (is_dir($fullPath) && file_exists($fullPath . DIRECTORY_SEPARATOR . 'composer.json')) {
+                $extensions[] = $dir;
+            }
+        }
+
+        return $extensions;
+    }
+
     public function getExportDirectory(): string
     {
         $exportDirectory = trim($this->exportDirectory);

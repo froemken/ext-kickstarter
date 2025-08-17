@@ -11,14 +11,11 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
 use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionAttributeCollection;
-use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
 use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\EventCreatorService;
 use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
-use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,11 +24,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class EventCommand extends Command
 {
     use CreatorInformationTrait;
-    use ExtensionInformationTrait;
 
     public function __construct(
         private readonly EventCreatorService $eventCreatorService,
-        private readonly QuestionCollection $questionCollection,
         private readonly QuestionAttributeCollection $questionAttributeCollection,
     ) {
         parent::__construct();
@@ -69,13 +64,11 @@ class EventCommand extends Command
     private function askForEventInformation(CommandContext $commandContext): EventInformation
     {
         $eventInformation = new EventInformation();
-        $eventInformation->setExtensionInformation($this->getExtensionInformation(
-            (string)$this->questionCollection->askQuestion(
-                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
-                $commandContext,
-            ),
-            $commandContext
-        ));
+        $this->questionAttributeCollection->askQuestion(
+            $eventInformation,
+            'extensionInformation',
+            $commandContext,
+        );
         $this->questionAttributeCollection->askQuestion(
             $eventInformation,
             'eventClassName',

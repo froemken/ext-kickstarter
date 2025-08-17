@@ -16,11 +16,9 @@ use FriendsOfTYPO3\Kickstarter\Information\Normalization\UseNormalizer;
 use FriendsOfTYPO3\Kickstarter\Information\Validatation\EventClassValidator;
 use FriendsOfTYPO3\Kickstarter\Information\Validatation\UseValidator;
 
-class EventInformation implements InformationInterface
+class EventInformation implements ExtensionRelatedInformationInterface
 {
-    private const EVENT_PATH = 'Classes/Event/';
-
-    private ?ExtensionInformation $extensionInformation = null;
+    private ?ExtensionMappingInformation $extensionInformation = null;
 
     #[UseValidator(EventClassValidator::class)]
     #[UseNormalizer(EventClassNameNormalizer::class)]
@@ -29,7 +27,7 @@ class EventInformation implements InformationInterface
     private CreatorInformation $creatorInformation;
 
     public function __construct(
-        ?ExtensionInformation $extensionInformation = null,
+        ?ExtensionMappingInformation $extensionInformation = null,
         ?string $eventClassName = null,
     ) {
         $this->creatorInformation = new CreatorInformation();
@@ -37,7 +35,7 @@ class EventInformation implements InformationInterface
         $this->eventClassName = $eventClassName;
     }
 
-    public function getExtensionInformation(): ExtensionInformation
+    public function getExtensionInformation(): ?ExtensionMappingInformation
     {
         return $this->extensionInformation;
     }
@@ -52,29 +50,14 @@ class EventInformation implements InformationInterface
         return $this->eventClassName . '.php';
     }
 
-    public function getEventFilePath(): string
-    {
-        return $this->getEventPath() . $this->getEventFilename();
-    }
-
-    public function getEventPath(): string
-    {
-        return $this->extensionInformation->getExtensionPath() . self::EVENT_PATH;
-    }
-
-    public function getNamespace(): string
-    {
-        return $this->extensionInformation->getNamespacePrefix() . 'Event';
-    }
-
     public function getCreatorInformation(): CreatorInformation
     {
         return $this->creatorInformation;
     }
 
-    public function setExtensionInformation(ExtensionInformation $extensionInformation): void
+    public function setExtensionInformation(ExtensionMappingInformation $extensionMappingInformation): void
     {
-        $this->extensionInformation = $extensionInformation;
+        $this->extensionInformation = $extensionMappingInformation;
     }
 
     public function setEventClassName(string $eventClassName): void

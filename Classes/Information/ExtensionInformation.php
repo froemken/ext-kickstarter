@@ -42,6 +42,10 @@ class ExtensionInformation
 
     private const TYPOSCRIPT_DEFAULT_PATH = 'Configuration/TypoScript/';
 
+    private const EVENT_PATH = 'Event/';
+
+    private const CLASSES_PATH = 'Classes/';
+
     public function __construct(
         private string $extensionKey,
         private string $composerPackageName,
@@ -140,6 +144,11 @@ class ExtensionInformation
     public function getExtensionPath(): string
     {
         return $this->extensionPath;
+    }
+
+    public function getClassesPath(): string
+    {
+        return $this->extensionPath . self::CLASSES_PATH;
     }
 
     public function getControllerPath(): string
@@ -423,5 +432,15 @@ class ExtensionInformation
     public function setExtensionPath(string $extensionPath): void
     {
         $this->extensionPath = $extensionPath;
+    }
+
+    public function getEventPath(): string
+    {
+        return $this->getClassesPath() . self::EVENT_PATH;
+    }
+
+    public function getEventNamespace(): string
+    {
+        return $this->getNamespaceForAutoload() . str_replace('/', '\\', self::EVENT_PATH);
     }
 }

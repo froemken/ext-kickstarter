@@ -91,7 +91,7 @@ class NodeFactory
 EOT;
 
         return $this->factory
-            ->namespace($namespace)
+            ->namespace(trim($namespace, '\\'))
             ->setDocComment(
                 str_replace('{PACKAGE_NAME}', $extensionInformation->getComposerPackageName(), $docComment)
             )

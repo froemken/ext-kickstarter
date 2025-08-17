@@ -13,6 +13,8 @@ namespace FriendsOfTYPO3\Kickstarter\Creator\Event;
 
 use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
 use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Parser\ExtensionInformationParser;
 use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ClassStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
@@ -33,6 +35,7 @@ class EventCreator implements EventCreatorInterface
     public function __construct(
         NodeFactory $nodeFactory,
         private readonly FileManager $fileManager,
+        private ExtensionInformationParser $extensionInformationParser,
     ) {
         $this->nodeFactory = $nodeFactory;
         $this->builderFactory = new BuilderFactory();
@@ -40,9 +43,10 @@ class EventCreator implements EventCreatorInterface
 
     public function create(EventInformation $eventInformation): void
     {
-        GeneralUtility::mkdir_deep($eventInformation->getEventPath());
+        $extensionInformation = $this->extensionInformationParser->parse($eventInformation->getExtensionInformation());
+        GeneralUtility::mkdir_deep($extensionInformation->getEventPath());
 
-        $eventFilePath = $eventInformation->getEventFilePath();
+        $eventFilePath = $extensionInformation->getEventPath() . $eventInformation->getEventFilename();
         $fileStructure = $this->buildFileStructure($eventFilePath);
 
         if (is_file($eventFilePath)) {
@@ -55,19 +59,19 @@ class EventCreator implements EventCreatorInterface
             );
             return;
         }
-        $this->addClassNodes($fileStructure, $eventInformation);
+        $this->addClassNodes($fileStructure, $eventInformation, $extensionInformation);
         $this->fileManager->createFile($eventFilePath, $fileStructure->getFileContents(), $eventInformation->getCreatorInformation());
     }
 
-    private function addClassNodes(FileStructure $fileStructure, EventInformation $eventInformation): void
+    private function addClassNodes(FileStructure $fileStructure, EventInformation $eventInformation, ExtensionInformation $extensionInformation): void
     {
         $fileStructure->addDeclareStructure(
             new DeclareStructure($this->nodeFactory->createDeclareStrictTypes())
         );
         $fileStructure->addNamespaceStructure(
             new NamespaceStructure($this->nodeFactory->createNamespace(
-                $eventInformation->getNamespace(),
-                $eventInformation->getExtensionInformation(),
+                $extensionInformation->getEventNamespace(),
+                $extensionInformation,
             ))
         );
         $fileStructure->addClassStructure(
