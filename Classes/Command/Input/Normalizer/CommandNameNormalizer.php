@@ -19,7 +19,7 @@ class CommandNameNormalizer implements NormalizerInterface
     public function __invoke(?string $userInput): string
     {
         // Remove invalid chars
-        $cleanedCommandName = preg_replace('/[^a-zA-Z0-9:]/', '', $userInput??'');
+        $cleanedCommandName = preg_replace('/[^a-zA-Z0-9:]/', '', $userInput ?? '');
 
         return $cleanedCommandName;
     }

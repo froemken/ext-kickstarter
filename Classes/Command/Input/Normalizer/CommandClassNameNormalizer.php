@@ -18,7 +18,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 class CommandClassNameNormalizer implements NormalizerInterface
 {
     use TryToCorrectClassNameTrait;
+
     private const POSTFIX = 'Command';
+
     public function __invoke(?string $userInput): string
     {
         if ($userInput === null || $userInput === '') {

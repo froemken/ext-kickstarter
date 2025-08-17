@@ -18,8 +18,8 @@ class ModelClassValidator implements ValidatorInterface
 {
     public function __construct(
         private readonly ClassNameValidator $classNameValidator,
-    ) {
-    }
+    ) {}
+
     public function __invoke(mixed $answer): string
     {
         return $this->classNameValidator->__invoke($answer);

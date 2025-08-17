@@ -18,13 +18,15 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 class MiddlewareClassNameNormalizer implements NormalizerInterface
 {
     use TryToCorrectClassNameTrait;
+
     private const POSTFIX = 'Middleware';
+
     public function __invoke(?string $userInput): string
     {
         if ($userInput === null || $userInput === '') {
             return '';
         }
-        if(str_contains($userInput, '/')){
+        if (str_contains($userInput, '/')) {
             $userInput = substr($userInput, strpos($userInput, '/') + 1);
         }
 

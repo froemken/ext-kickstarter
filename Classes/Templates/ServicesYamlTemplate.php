@@ -7,10 +7,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ServicesYamlTemplate
 {
-    public function getAbsoluteFileName(ExtensionInformation $extensionInformation): void {
+    public function getAbsoluteFileName(ExtensionInformation $extensionInformation): void
+    {
         $configurationPath = $extensionInformation->getExtensionPath() . 'Configuration/';
         GeneralUtility::mkdir_deep($configurationPath);
     }
+
     public function getTemplate(ExtensionInformation $extensionInformation): string
     {
         return sprintf(<<<'EOT'

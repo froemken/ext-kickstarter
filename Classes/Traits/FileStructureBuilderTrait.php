@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Traits;
 
-use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Visitor\FileVisitor;
+use PhpParser\NodeTraverser;
+use PhpParser\ParserFactory;
 
 trait FileStructureBuilderTrait
 {

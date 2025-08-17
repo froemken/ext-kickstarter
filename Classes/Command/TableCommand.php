@@ -32,7 +32,7 @@ class TableCommand extends Command
     use ExtensionInformationTrait;
 
     public function __construct(
-        private readonly TableCreatorService        $tableCreatorService,
+        private readonly TableCreatorService $tableCreatorService,
         private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();

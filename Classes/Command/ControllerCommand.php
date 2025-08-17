@@ -36,7 +36,7 @@ class ControllerCommand extends Command
     use TryToCorrectClassNameTrait;
 
     public function __construct(
-        private readonly ControllerCreatorService   $controllerCreatorService,
+        private readonly ControllerCreatorService $controllerCreatorService,
         private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
@@ -85,7 +85,7 @@ class ControllerCommand extends Command
             ControllerClassNameQuestion::ARGUMENT_NAME,
             $commandContext,
         );
-        $io->text('Class name '.$className.' will be used');
+        $io->text('Class name ' . $className . ' will be used');
 
         return new ControllerInformation(
             $extensionInformation,
@@ -107,7 +107,7 @@ class ControllerCommand extends Command
                 $commandContext,
                 $defaultActionName,
             );
-            $commandContext->getIo()->text('Action '.end($actionMethods).' was added.');
+            $commandContext->getIo()->text('Action ' . end($actionMethods) . ' was added.');
         } while ($commandContext->getIo()->confirm('Do you want to add another action method?', false));
 
         return $actionMethods;
