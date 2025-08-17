@@ -2,11 +2,11 @@
 
 namespace FriendsOfTYPO3\Kickstarter\Tests\Functional\Integration;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use FriendsOfTYPO3\Kickstarter\Enums\FileModificationType;
 use FriendsOfTYPO3\Kickstarter\Information\SiteSetInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\SiteSetCreatorService;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class SiteSetCreatorServiceTest extends AbstractServiceCreatorTestCase

@@ -35,7 +35,7 @@ class ApplyTypo3CglCommand extends Command
     ];
 
     public function __construct(
-        private readonly RepositoryCreatorService   $repositoryCreatorService,
+        private readonly RepositoryCreatorService $repositoryCreatorService,
         private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();

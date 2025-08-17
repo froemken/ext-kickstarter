@@ -91,9 +91,9 @@ class MiddlewareCommand extends Command
         $prefix = str_replace('_', '', $extensionInformation->getExtensionKey());
         $middlewareIdentifier = $this->askForMiddlewareIdentifier(
             $commandContext,
-            $prefix . '/'.strtolower(preg_replace('/Middleware$/i', '', $className)), $stack
+            $prefix . '/' . strtolower(preg_replace('/Middleware$/i', '', $className)),
+            $stack
         );
-
 
         return new MiddlewareInformation(
             $extensionInformation,

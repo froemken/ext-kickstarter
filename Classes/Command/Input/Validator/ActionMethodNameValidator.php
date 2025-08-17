@@ -18,8 +18,8 @@ class ActionMethodNameValidator implements ValidatorInterface
 {
     public function __construct(
         private readonly MethodNameValidator $methodNameValidator,
-    ) {
-    }
+    ) {}
+
     public function __invoke(mixed $answer): string
     {
         $answer = $this->methodNameValidator->__invoke($answer);

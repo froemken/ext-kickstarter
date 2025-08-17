@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Creator\Domain\Repository;
 
-use PhpParser\BuilderFactory;
 use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
 use FriendsOfTYPO3\Kickstarter\Information\RepositoryInformation;
 use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
@@ -21,6 +20,7 @@ use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\NamespaceStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
 use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
+use PhpParser\BuilderFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RepositoryCreator implements RepositoryCreatorInterface

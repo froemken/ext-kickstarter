@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\PhpParser;
 
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -34,7 +35,6 @@ use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\Stmt\Use_;
-use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 
 class NodeFactory
 {

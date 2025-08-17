@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Creator\Extension;
 
-use PhpParser\BuilderFactory;
-use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Stmt\Expression;
 use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
 use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ExpressionStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
 use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
+use PhpParser\BuilderFactory;
+use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Stmt\Expression;
 
 class ExtEmconfCreator implements ExtensionCreatorInterface
 {

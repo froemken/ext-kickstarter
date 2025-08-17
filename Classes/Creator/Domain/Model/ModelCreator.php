@@ -11,9 +11,6 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Creator\Domain\Model;
 
-use PhpParser\BuilderFactory;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Stmt\Return_;
 use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
 use FriendsOfTYPO3\Kickstarter\Information\ModelInformation;
 use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
@@ -25,6 +22,9 @@ use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\NamespaceStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\PropertyStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
 use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
+use PhpParser\BuilderFactory;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Stmt\Return_;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 

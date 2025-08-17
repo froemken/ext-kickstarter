@@ -46,7 +46,7 @@ class ModelCommand extends Command
     ];
 
     public function __construct(
-        private readonly ModelCreatorService        $modelCreatorService,
+        private readonly ModelCreatorService $modelCreatorService,
         private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();
@@ -91,12 +91,13 @@ class ModelCommand extends Command
             $commandContext
         );
 
-
         $mappedTableName = $this->askForMappedTableName($commandContext, $extensionInformation);
 
         $modelClassName =
-            str_replace(sprintf('tx_%s_domain_model_',
-                str_replace('_', '', $extensionInformation->getExtensionKey())), '', $mappedTableName);
+            str_replace(sprintf(
+                'tx_%s_domain_model_',
+                str_replace('_', '', $extensionInformation->getExtensionKey())
+            ), '', $mappedTableName);
         do {
             $modelClassName = (string)$this->questionCollection->askQuestion(
                 ModelClassNameQuestion::ARGUMENT_NAME,
