@@ -36,7 +36,7 @@ readonly class QuestionAttributeCollection
     private function resolveQuestion(InformationInterface $information, string $argumentName): AbstractAttributeQuestion
     {
         foreach ($this->questions as $question) {
-            if (\is_a($information, $question->getInformationClass()) &&  $question->getArgumentName() === $argumentName) {
+            if (\is_a($information, $question->getInformationClass()) && $question->getArgumentName() === $argumentName) {
                 return $question;
             }
         }
