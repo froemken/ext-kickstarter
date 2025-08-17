@@ -15,6 +15,8 @@ use FriendsOfTYPO3\Kickstarter\Creator\Event\EventCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\EventListener\EventListenerCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Extension\ExtensionCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Middleware\MiddlewareCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Module\Extbase\ExtbaseModuleCreatorInterface;
+use FriendsOfTYPO3\Kickstarter\Creator\Module\Native\NativeModuleCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Plugin\Extbase\ExtbasePluginCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Plugin\Native\NativePluginCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Property\TypeConverter\TypeConverterCreatorInterface;
@@ -58,6 +60,12 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
     $container
         ->registerForAutoconfiguration(MiddlewareCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.middleware');
+    $container
+        ->registerForAutoconfiguration(ExtbaseModuleCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.module.extbase');
+    $container
+        ->registerForAutoconfiguration(NativeModuleCreatorInterface::class)
+        ->addTag('ext-kickstarter.creator.module.native');
     $container
         ->registerForAutoconfiguration(ExtbasePluginCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.plugin.extbase');
