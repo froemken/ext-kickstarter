@@ -14,6 +14,8 @@ namespace FriendsOfTYPO3\Kickstarter\Command;
 use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionAttributeCollection;
 use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionMappingInformation;
+use FriendsOfTYPO3\Kickstarter\Parser\ExtensionInformationParser;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\EventCreatorService;
 use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
 use Symfony\Component\Console\Command\Command;
@@ -28,6 +30,7 @@ class EventCommand extends Command
     public function __construct(
         private readonly EventCreatorService $eventCreatorService,
         private readonly QuestionAttributeCollection $questionAttributeCollection,
+        private readonly ExtensionInformationParser $extensionInformationParser,
     ) {
         parent::__construct();
     }
@@ -64,11 +67,13 @@ class EventCommand extends Command
     private function askForEventInformation(CommandContext $commandContext): EventInformation
     {
         $eventInformation = new EventInformation();
+        $extensionMappingInformation = new ExtensionMappingInformation();
         $this->questionAttributeCollection->askQuestion(
-            $eventInformation,
-            'extensionInformation',
+            $extensionMappingInformation,
+            'extensionKey',
             $commandContext,
         );
+        $eventInformation->setExtensionInformation($this->extensionInformationParser->parse($extensionMappingInformation));
         $this->questionAttributeCollection->askQuestion(
             $eventInformation,
             'eventClassName',

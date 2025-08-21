@@ -13,13 +13,18 @@ services:
     public: true
 
   _instanceof:
+    FriendsOfTYPO3\Kickstarter\Information\DefaultValue\DefaultValueInterface:
+      public: true
+    FriendsOfTYPO3\Kickstarter\Information\Normalization\NormalizerInterface:
+      public: true
+    FriendsOfTYPO3\Kickstarter\Information\Options\OptionsInterface:
+      public: true
+    FriendsOfTYPO3\Kickstarter\Information\Validation\ValidatorInterface:
+      public: true
+    # Todo: Remove those once all validators are transformed
     FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface:
       public: true
     FriendsOfTYPO3\Kickstarter\Command\Input\Normalizer\NormalizerInterface:
-      public: true
-    FriendsOfTYPO3\Kickstarter\Information\DefaultValue\DefaultValueInterface:
-      public: true
-    FriendsOfTYPO3\Kickstarter\Information\Options\OptionsInterface:
       public: true
 
   ##############

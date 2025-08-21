@@ -1,13 +1,13 @@
 <?php
 
-namespace FriendsOfTYPO3\Kickstarter\Information\Validatation;
+namespace FriendsOfTYPO3\Kickstarter\Information\Validation;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface;
+use FriendsOfTYPO3\Kickstarter\Information\InformationInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class InformationValidator
 {
-    public function validate(object $information): void
+    public function validate(InformationInterface $information): void
     {
         $rc = new \ReflectionClass($information);
         $errors = [];
@@ -26,7 +26,7 @@ class InformationValidator
 
             try {
                 // ValidatorInterface is invokable
-                $validator($value);
+                $validator($value, $information, ['fieldName' => $prop->getName()]);
             } catch (\RuntimeException $e) {
                 $errors[$prop->getName()] = $e->getMessage();
             }

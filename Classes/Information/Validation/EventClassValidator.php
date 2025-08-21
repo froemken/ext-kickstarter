@@ -9,10 +9,9 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace FriendsOfTYPO3\Kickstarter\Information\Validatation;
+namespace FriendsOfTYPO3\Kickstarter\Information\Validation;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ClassNameValidator;
-use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface;
+use FriendsOfTYPO3\Kickstarter\Information\InformationInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('ext-kickstarter.information.validator')]
@@ -24,9 +23,9 @@ class EventClassValidator implements ValidatorInterface
         private readonly ClassNameValidator $classNameValidator,
     ) {}
 
-    public function __invoke(mixed $answer): string
+    public function __invoke(mixed $answer, InformationInterface $information, array $context = []): string
     {
-        $answer = $this->classNameValidator->__invoke($answer);
+        $answer = $this->classNameValidator->__invoke($answer, $information);
         if (!str_ends_with($answer, self::POSTFIX)) {
             throw new \RuntimeException(sprintf('Class name must end with "%s".', self::POSTFIX), 9245301485);
         }

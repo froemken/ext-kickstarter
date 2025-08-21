@@ -1,8 +1,6 @@
 <?php
 
-namespace FriendsOfTYPO3\Kickstarter\Information\Validatation;
-
-use FriendsOfTYPO3\Kickstarter\Command\Input\Validator\ValidatorInterface;
+namespace FriendsOfTYPO3\Kickstarter\Information\Validation;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class UseValidator

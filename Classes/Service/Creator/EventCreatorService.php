@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace FriendsOfTYPO3\Kickstarter\Service\Creator;
 
 use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
-use FriendsOfTYPO3\Kickstarter\Information\Validatation\InformationValidator;
+use FriendsOfTYPO3\Kickstarter\Information\Validation\InformationValidator;
 
 readonly class EventCreatorService
 {

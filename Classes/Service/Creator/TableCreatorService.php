@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace FriendsOfTYPO3\Kickstarter\Service\Creator;
 
 use FriendsOfTYPO3\Kickstarter\Information\TableInformation;
+use FriendsOfTYPO3\Kickstarter\Information\Validation\InformationValidator;
 
 readonly class TableCreatorService
 {
@@ -121,10 +122,16 @@ readonly class TableCreatorService
 
     public function __construct(
         private iterable $tableCreators,
+        private InformationValidator $infoValidator,
     ) {}
 
     public function create(TableInformation $tableInformation): void
     {
+        $this->infoValidator->validate($tableInformation);
+        foreach ($tableInformation->getColumns() as $column) {
+            $this->infoValidator->validate($column);
+        }
+
         foreach ($this->tableCreators as $creator) {
             $creator->create($tableInformation);
         }

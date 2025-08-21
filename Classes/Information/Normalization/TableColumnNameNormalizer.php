@@ -12,20 +12,21 @@ declare(strict_types=1);
 namespace FriendsOfTYPO3\Kickstarter\Information\Normalization;
 
 use FriendsOfTYPO3\Kickstarter\Information\InformationInterface;
-use FriendsOfTYPO3\Kickstarter\Traits\TryToCorrectClassNameTrait;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 #[AutoconfigureTag('ext-kickstarter.inputHandler.event-class')]
-class EventClassNameNormalizer implements NormalizerInterface
+class TableColumnNameNormalizer implements NormalizerInterface
 {
-    use TryToCorrectClassNameTrait;
-
     public function __invoke(?string $userInput, InformationInterface $information): string
     {
-        if ($userInput === null || $userInput === '') {
-            return '';
-        }
+        // Change dash to underscore
+        $cleanedColumnName = str_replace('-', '_', $userInput ?? '');
 
-        return $this->tryToCorrectClassName($userInput, 'Event');
+        // Change column name to lower camel case. Add underscores before upper case letters. BlogExample => blog_example
+        $cleanedColumnName = GeneralUtility::camelCaseToLowerCaseUnderscored($cleanedColumnName);
+
+        // Remove invalid chars
+        return preg_replace('/[^a-zA-Z0-9_]/', '', $cleanedColumnName);
     }
 }

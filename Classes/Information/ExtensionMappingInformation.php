@@ -6,8 +6,8 @@ use FriendsOfTYPO3\Kickstarter\Information\DefaultValue\ExtensionKeyMappingDefau
 use FriendsOfTYPO3\Kickstarter\Information\DefaultValue\ProvideDefaultValue;
 use FriendsOfTYPO3\Kickstarter\Information\Options\ExtensionKeyMappingOptions;
 use FriendsOfTYPO3\Kickstarter\Information\Options\ProvideOptions;
-use FriendsOfTYPO3\Kickstarter\Information\Validatation\ExtensionMappingValidator;
-use FriendsOfTYPO3\Kickstarter\Information\Validatation\UseValidator;
+use FriendsOfTYPO3\Kickstarter\Information\Validation\ExtensionMappingValidator;
+use FriendsOfTYPO3\Kickstarter\Information\Validation\UseValidator;
 
 class ExtensionMappingInformation implements InformationInterface
 {

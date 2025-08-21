@@ -106,11 +106,15 @@ class ExtTablesSqlCreator implements TcaTableCreatorInterface
     {
         $columnDefinitionLines = [];
 
-        foreach ($tableInformation->getColumns() as $tableColumnName => $columnConfiguration) {
+        foreach ($tableInformation->getColumns() as $tableColumnName => $tableColumnInformation) {
+            $columnConfiguration = [
+                'columnName' => $tableColumnInformation->getColumnName(),
+                'type' => $tableColumnInformation->getType(),
+            ];
             $columnConfiguration['config']['columnName'] = $tableColumnName;
             $extTablesSqlInformation = $this->tcaSchemaService->getExtTablesSqlInformationBasedOnTca(
-                $columnConfiguration['config']['type'],
-                $columnConfiguration['config']
+                $tableColumnInformation->getType(),
+                $columnConfiguration
             );
 
             $columnDefinitionLines[] = $extTablesSqlInformation->getColumnDefinitionSql();
