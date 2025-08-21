@@ -11,37 +11,32 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ComposerNameQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\EmailQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\NamespaceQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\VersionQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
-use FriendsOfTYPO3\Kickstarter\Configuration\ExtConf;
-use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Creator\Extension\ExtensionCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\ExtensionCreatorService;
+use FriendsOfTYPO3\Kickstarter\Traits\AskForExtensionKeyTrait;
 use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
 use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Registry;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * @param iterable<ExtensionCreatorInterface> $creators
  */
 class ExtensionCommand extends Command
 {
+    use AskForExtensionKeyTrait;
     use CreatorInformationTrait;
     use ExtensionInformationTrait;
 
     public function __construct(
         private readonly ExtensionCreatorService $extensionCreatorService,
-        private readonly QuestionCollection $questionCollection,
         private readonly Registry $registry,
     ) {
         parent::__construct();
@@ -58,8 +53,7 @@ class ExtensionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $commandContext = new CommandContext($input, $output);
-        $io = $commandContext->getIo();
+        $io = new SymfonyStyle($input, $output);
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -70,30 +64,25 @@ class ExtensionCommand extends Command
 
         $io->title('Questions to build a new TYPO3 Extension');
 
-        $extensionKey = (string)$this->questionCollection->askQuestion(
-            ExtensionKeyQuestion::ARGUMENT_NAME,
-            $commandContext
+        $extensionInformation = $this->askForExtensionInformation(
+            $io,
+            $this->askForExtensionKey($this->registry, $io, $input->getArgument('extension_key'))
         );
-
-        $this->registry->set(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY, $extensionKey);
-
-        $extensionInformation = $this->askForExtensionInformation($commandContext, $extensionKey);
 
         $this->extensionCreatorService->create($extensionInformation);
 
         $path = $extensionInformation->getExtensionPath();
 
         $io->success(sprintf('The extension was saved to path %s', $path));
-        $this->printInstallationInstructions($commandContext, $path, $extensionInformation);
+        $this->printInstallationInstructions($io, $path, $extensionInformation);
 
-        $this->printCreatorInformation($extensionInformation->getCreatorInformation(), $commandContext);
+        $this->printCreatorInformation($extensionInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
 
-    public function printInstallationInstructions(CommandContext $commandContext, string $path, ExtensionInformation $extensionInformation): void
+    public function printInstallationInstructions(SymfonyStyle $io, string $path, ExtensionInformation $extensionInformation): void
     {
-        $io = $commandContext->getIo();
         if (Environment::isComposerMode()) {
             if (str_contains($path, 'typo3temp')) {
                 $io->writeln([
@@ -138,9 +127,8 @@ class ExtensionCommand extends Command
         ]);
     }
 
-    private function askForExtensionInformation(CommandContext $commandContext, string $extensionKey): ExtensionInformation
+    private function askForExtensionInformation(SymfonyStyle $io, string $extensionKey): ExtensionInformation
     {
-        $io = $commandContext->getIo();
         $io->info([
             'The extension will be exported to directory: ' . $this->getExtensionPath($extensionKey),
             'You can configure the export directory in extension settings (available in InstallTool)',
@@ -161,10 +149,7 @@ class ExtensionCommand extends Command
             }
         }
 
-        $composerPackageName = (string)$this->questionCollection->askQuestion(
-            ComposerNameQuestion::ARGUMENT_NAME,
-            $commandContext,
-        );
+        $composerPackageName = $this->askForComposerPackageName($io);
 
         $io->text([
             'The title of the extension will be used to identify the extension much easier',
@@ -181,10 +166,7 @@ class ExtensionCommand extends Command
         ]);
         $description = (string)$io->ask('Description');
 
-        $version = (string)$this->questionCollection->askQuestion(
-            VersionQuestion::ARGUMENT_NAME,
-            $commandContext,
-        );
+        $version = $this->askForVersion($io);
 
         $io->text([
             'The category is used to group your extension in the TYPO3 ExtensionManager.',
@@ -231,10 +213,11 @@ class ExtensionCommand extends Command
         ]);
         $author = (string)$io->ask('Author name');
 
-        $authorEmail = (string)$this->questionCollection->askQuestion(
-            EmailQuestion::ARGUMENT_NAME,
-            $commandContext,
-        );
+        $io->text([
+            'Please enter the email of the author (see above)',
+            'It must be a valid email address.',
+        ]);
+        $authorEmail = $this->askForEmail($io);
 
         $io->text([
             'Enter the company name of the author (see above)',
@@ -242,10 +225,14 @@ class ExtensionCommand extends Command
         ]);
         $authorCompany = (string)$io->ask('Company name');
 
-        $namespacePrefix = (string)$this->questionCollection->askQuestion(
-            NamespaceQuestion::ARGUMENT_NAME,
-            $commandContext,
-            $composerPackageName,
+        $io->text([
+            'To find PHP classes much faster in your extension TYPO3 uses the auto-loading',
+            'mechanism of composer (https://getcomposer.org/doc/01-basic-usage.md#autoloading)',
+            'Please enter the PSR-4 autoload namespace for your extension',
+        ]);
+        $namespacePrefix = (string)$io->ask(
+            'PSR-4 AutoLoading Namespace',
+            $this->convertComposerPackageNameToNamespacePrefix($composerPackageName),
         );
 
         return new ExtensionInformation(
@@ -262,5 +249,93 @@ class ExtensionCommand extends Command
             $namespacePrefix,
             $this->createExtensionPath($extensionKey, true),
         );
+    }
+
+    private function askForComposerPackageName(SymfonyStyle $io): string
+    {
+        $io->text([
+            'To build a new TYPO3 extension, we need to use Composer to manage dependencies.',
+            'Composer is like a package manager for PHP projects.',
+            'For more information about Composer, visit https://getcomposer.org/',
+            'Example: my-vendor/my-extension',
+        ]);
+
+        $defaultComposerPackageName = null;
+
+        do {
+            $composerPackageName = (string)$io->ask('Composer package name', $defaultComposerPackageName);
+
+            if (in_array(preg_match('#^[a-z0-9]([_.-]?[a-z0-9]+)*/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*$#', $composerPackageName), [0, false], true)) {
+                $io->error('Invalid composer package name. Package name must follow a specific pattern (see: https://getcomposer.org/doc/04-schema.md#name)');
+                $defaultComposerPackageName = preg_replace(
+                    '/[^0-9a-z-\/_]/',
+                    '',
+                    strtolower($composerPackageName)
+                );
+                $validComposerPackageName = false;
+            } else {
+                $validComposerPackageName = true;
+            }
+        } while (!$validComposerPackageName);
+
+        return $composerPackageName;
+    }
+
+    private function askForVersion(SymfonyStyle $io): string
+    {
+        $io->text([
+            'The version is needed to differ between the releases of your extension.',
+            'Please use semantic version (https://semver.org/)',
+            'Use 0.0.* versions for bugfix releases.',
+            'Use 0.*.0 versions, if there are any new features.',
+            'Use *.0.0 versions, if something huge has changed like supported TYPO3 version or contained API.',
+        ]);
+
+        do {
+            $version = (string)$io->ask('Version', '0.0.1');
+
+            if (in_array(preg_match('#^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$#', $version), [0, false], true)) {
+                $io->error('Invalid version string. The version must match a specific pattern (see: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string)');
+                $validVersion = false;
+            } else {
+                $validVersion = true;
+            }
+        } while (!$validVersion);
+
+        return $version;
+    }
+
+    private function askForEmail(SymfonyStyle $io): string
+    {
+        do {
+            $email = (string)$io->ask('Email address');
+            if ($email !== '' && !GeneralUtility::validEmail($email)) {
+                $io->error('You have entered an invalid email address.');
+                $validEmail = false;
+            } else {
+                $validEmail = true;
+            }
+        } while (!$validEmail);
+
+        return $email;
+    }
+
+    private function convertComposerPackageNameToNamespacePrefix(string $composerPackageName): string
+    {
+        return implode(
+            '\\\\',
+            array_map(
+                fn($part): string|array => str_replace(
+                    [
+                        '-',
+                        '_',
+                        '.',
+                    ],
+                    '',
+                    ucwords($part, '-_ .')
+                ),
+                explode('/', $composerPackageName)
+            )
+        ) . '\\\\';
     }
 }

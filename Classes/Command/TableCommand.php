@@ -11,9 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
-use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 use FriendsOfTYPO3\Kickstarter\Information\TableInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\TableCreatorService;
@@ -32,8 +30,8 @@ class TableCommand extends Command
     use ExtensionInformationTrait;
 
     public function __construct(
-        private readonly TableCreatorService        $tableCreatorService,
-        private readonly QuestionCollection $questionCollection,
+        private readonly TableCreatorService $tableCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -49,8 +47,7 @@ class TableCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $commandContext = new CommandContext($input, $output);
-        $io = $commandContext->getIo();
+        $io = new SymfonyStyle($input, $output);
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -59,22 +56,18 @@ class TableCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $tableInformation = $this->askForTableInformation($commandContext);
+        $tableInformation = $this->askForTableInformation($io, $input);
         $this->tableCreatorService->create($tableInformation);
-        $this->printCreatorInformation($tableInformation->getCreatorInformation(), $commandContext);
+        $this->printCreatorInformation($tableInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
 
-    private function askForTableInformation(CommandContext $commandContext): TableInformation
+    private function askForTableInformation(SymfonyStyle $io, InputInterface $input): TableInformation
     {
-        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            (string)$this->questionCollection->askQuestion(
-                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
-                $commandContext,
-            ),
-            $commandContext
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
+            $io
         );
 
         return new TableInformation(

@@ -7,14 +7,10 @@ services:
   FriendsOfTYPO3\Kickstarter\:
     resource: '../Classes/*'
     exclude:
-      - '../Classes/Domain/Model/*'
+    - '../Classes/Domain/Model/*'
 
   FriendsOfTYPO3\Kickstarter\Configuration\ExtConf:
     public: true
-
-  ##############
-  ## COMMANDS ##
-  ##############
 
   FriendsOfTYPO3\Kickstarter\Command\CommandCommand:
     tags:
@@ -22,8 +18,6 @@ services:
         command: 'make:command'
         description: 'Add a console command to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\ControllerCommand:
     tags:
@@ -31,8 +25,6 @@ services:
         command: 'make:controller'
         description: 'Add a controller to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\EventCommand:
     tags:
@@ -40,8 +32,6 @@ services:
         command: 'make:event'
         description: 'Create a new Event for your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\EventListenerCommand:
     tags:
@@ -49,8 +39,6 @@ services:
         command: 'make:eventlistener'
         description: 'Create a new Event Listener to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\ExtensionCommand:
     tags:
@@ -58,8 +46,6 @@ services:
         command: 'make:extension'
         description: 'Create basic files for a new TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\MiddlewareCommand:
     tags:
@@ -67,8 +53,6 @@ services:
         command: 'make:middleware'
         description: 'Add a middleware handler to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\ModelCommand:
     tags:
@@ -76,8 +60,6 @@ services:
         command: 'make:model'
         description: 'Add an extbase model to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\PluginCommand:
     tags:
@@ -85,8 +67,6 @@ services:
         command: 'make:plugin'
         description: 'Add a plugin to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\RepositoryCommand:
     tags:
@@ -94,8 +74,6 @@ services:
         command: 'make:repository'
         description: 'Add an extbase repository to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\SiteSetCommand:
     tags:
@@ -103,8 +81,6 @@ services:
         command: 'make:site-set'
         description: 'Add an site set configuration to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\SiteSettingsDefinitionCommand:
     tags:
@@ -112,8 +88,6 @@ services:
         command: 'make:site-settings-definition'
         description: 'Add an site settings definition to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\TableCommand:
     tags:
@@ -121,8 +95,6 @@ services:
         command: 'make:table'
         description: 'Add a TCA table to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\TestEnvCommand:
     tags:
@@ -130,8 +102,6 @@ services:
         command: 'make:testenv'
         description: 'Add test environment to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\ValidatorCommand:
     tags:
@@ -139,8 +109,6 @@ services:
         command: 'make:validator'
         description: 'Create a new Validator for a property or model. See also https://docs.typo3.org/permalink/t3coreapi:extbase-domain-validator'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\SitePackageCommand:
     tags:
@@ -148,8 +116,6 @@ services:
         command: 'make:site-package'
         description: 'Configures and loads a new site package from https://get.typo3.org.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\TypeConverterCommand:
     tags:
@@ -157,8 +123,6 @@ services:
         command: 'make:typeconverter'
         description: 'Create a new Extbase Type Converter to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\ApplyTypo3CglCommand:
     tags:
@@ -166,8 +130,6 @@ services:
         command: 'make:applycgl'
         description: 'Enforces TYPO3 Coding Guidelines (CGL) on extension code. Note: Requires TYPO3 to be installed in Composer mode.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
 
   FriendsOfTYPO3\Kickstarter\Command\UpgradeWizardCommand:
     tags:
@@ -175,12 +137,6 @@ services:
         command: 'make:upgrade'
         description: 'Create a new Upgrade Wizard to your TYPO3 extension.'
         schedulable: false
-    arguments:
-      $questionCollection: '@questions.extension'
-
-  ######################
-  ## CREATOR SERVICES ##
-  ######################
 
   FriendsOfTYPO3\Kickstarter\Service\Creator\CommandCreatorService:
     arguments:
@@ -235,64 +191,3 @@ services:
   FriendsOfTYPO3\Kickstarter\Service\Creator\UpgradeWizardCreatorService:
     arguments:
       $upgradeCreators: !tagged_iterator { tag: 'ext-kickstarter.creator.upgrade-wizard' }
-
-  ###############
-  ## QUESTIONS ##
-  ###############
-
-  factory.question:
-    class: FriendsOfTYPO3\Kickstarter\Command\Input\QuestionFactory
-
-  questions.extension:
-    class: FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection
-    arguments:
-      $questions: !tagged_iterator { tag: 'ext-kickstarter.command.extension.question' }
-
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ActionMethodNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.controller-action' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\CommandClassNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-class' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\CommandAliasQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-name' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\CommandNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.command-name' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ComposerNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.composer_name' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ControllerClassNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.controller-class' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\EmailQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.email' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\EventClassNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-class' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\EventListenerClassNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.event-listener-class-name' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ExtensionKeyQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.extension_key' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\MiddlewareClassNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.middleware-class' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\MiddlewareIdentifierQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.middleware-identifier' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\ModelClassNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.model-class' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\NamespaceQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.namespace' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\PluginNameQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.plugin-name' }
-  FriendsOfTYPO3\Kickstarter\Command\Input\Question\VersionQuestion:
-    arguments:
-      $inputHandlers: !tagged_iterator { tag: 'ext-kickstarter.inputHandler.version' }

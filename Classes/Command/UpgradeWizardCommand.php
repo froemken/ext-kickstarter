@@ -11,9 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
-use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use FriendsOfTYPO3\Kickstarter\Information\UpgradeWizardInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\UpgradeWizardCreatorService;
 use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
@@ -33,7 +31,7 @@ class UpgradeWizardCommand extends Command
 
     public function __construct(
         private readonly UpgradeWizardCreatorService $upgradeWizardCreatorService,
-        private readonly QuestionCollection $questionCollection,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -49,8 +47,7 @@ class UpgradeWizardCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $commandContext = new CommandContext($input, $output);
-        $io = $commandContext->getIo();
+        $io = new SymfonyStyle($input, $output);
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -59,22 +56,18 @@ class UpgradeWizardCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $upgradeWizardInformation = $this->askForUpgradeWizardInformation($commandContext);
+        $upgradeWizardInformation = $this->askForUpgradeWizardInformation($io, $input);
         $this->upgradeWizardCreatorService->create($upgradeWizardInformation);
-        $this->printCreatorInformation($upgradeWizardInformation->getCreatorInformation(), $commandContext);
+        $this->printCreatorInformation($upgradeWizardInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
 
-    private function askForUpgradeWizardInformation(CommandContext $commandContext): UpgradeWizardInformation
+    private function askForUpgradeWizardInformation(SymfonyStyle $io, InputInterface $input): UpgradeWizardInformation
     {
-        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            (string)$this->questionCollection->askQuestion(
-                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
-                $commandContext,
-            ),
-            $commandContext
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
+            $io
         );
 
         return new UpgradeWizardInformation(

@@ -11,9 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
-use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use FriendsOfTYPO3\Kickstarter\Information\RepositoryInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\RepositoryCreatorService;
 use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
@@ -32,8 +30,8 @@ class RepositoryCommand extends Command
     use TryToCorrectClassNameTrait;
 
     public function __construct(
-        private readonly RepositoryCreatorService   $repositoryCreatorService,
-        private readonly QuestionCollection $questionCollection,
+        private readonly RepositoryCreatorService $repositoryCreatorService,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -49,8 +47,7 @@ class RepositoryCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $commandContext = new CommandContext($input, $output);
-        $io = $commandContext->getIo();
+        $io = new SymfonyStyle($input, $output);
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -59,22 +56,18 @@ class RepositoryCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $repositoryInformation = $this->askForRepositoryInformation($commandContext);
+        $repositoryInformation = $this->askForRepositoryInformation($io, $input);
         $this->repositoryCreatorService->create($repositoryInformation);
-        $this->printCreatorInformation($repositoryInformation->getCreatorInformation(), $commandContext);
+        $this->printCreatorInformation($repositoryInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
 
-    private function askForRepositoryInformation(CommandContext $commandContext): RepositoryInformation
+    private function askForRepositoryInformation(SymfonyStyle $io, InputInterface $input): RepositoryInformation
     {
-        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            (string)$this->questionCollection->askQuestion(
-                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
-                $commandContext,
-            ),
-            $commandContext
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
+            $io
         );
 
         return new RepositoryInformation(

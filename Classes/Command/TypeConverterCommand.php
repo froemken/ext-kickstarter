@@ -11,9 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\ChooseExtensionKeyQuestion;
-use FriendsOfTYPO3\Kickstarter\Command\Input\QuestionCollection;
-use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
+use FriendsOfTYPO3\Kickstarter\Command\Question\ChoseExtensionKeyQuestion;
 use FriendsOfTYPO3\Kickstarter\Information\TypeConverterInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\TypeConverterCreatorService;
 use FriendsOfTYPO3\Kickstarter\Traits\CreatorInformationTrait;
@@ -33,7 +31,7 @@ class TypeConverterCommand extends Command
 
     public function __construct(
         private readonly TypeConverterCreatorService $typeConverterCreatorService,
-        private readonly QuestionCollection $questionCollection,
+        private readonly ChoseExtensionKeyQuestion $choseExtensionKeyQuestion,
     ) {
         parent::__construct();
     }
@@ -49,8 +47,7 @@ class TypeConverterCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $commandContext = new CommandContext($input, $output);
-        $io = $commandContext->getIo();
+        $io = new SymfonyStyle($input, $output);
         $io->title('Welcome to the TYPO3 Extension Builder');
 
         $io->text([
@@ -59,22 +56,18 @@ class TypeConverterCommand extends Command
             'Please take your time to answer them.',
         ]);
 
-        $typeConverterInformation = $this->askForTypeConverterInformation($commandContext);
+        $typeConverterInformation = $this->askForTypeConverterInformation($io, $input);
         $this->typeConverterCreatorService->create($typeConverterInformation);
-        $this->printCreatorInformation($typeConverterInformation->getCreatorInformation(), $commandContext);
+        $this->printCreatorInformation($typeConverterInformation->getCreatorInformation(), $io);
 
         return Command::SUCCESS;
     }
 
-    private function askForTypeConverterInformation(CommandContext $commandContext): TypeConverterInformation
+    private function askForTypeConverterInformation(SymfonyStyle $io, InputInterface $input): TypeConverterInformation
     {
-        $io = $commandContext->getIo();
         $extensionInformation = $this->getExtensionInformation(
-            (string)$this->questionCollection->askQuestion(
-                ChooseExtensionKeyQuestion::ARGUMENT_NAME,
-                $commandContext,
-            ),
-            $commandContext
+            $this->choseExtensionKeyQuestion->ask($io, $input->getArgument('extension_key')),
+            $io
         );
 
         return new TypeConverterInformation(

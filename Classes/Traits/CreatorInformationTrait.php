@@ -2,15 +2,14 @@
 
 namespace FriendsOfTYPO3\Kickstarter\Traits;
 
-use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use FriendsOfTYPO3\Kickstarter\Enums\FileModificationType;
 use FriendsOfTYPO3\Kickstarter\Information\CreatorInformation;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 trait CreatorInformationTrait
 {
-    private function printCreatorInformation(CreatorInformation $creatorInformation, CommandContext $commandContext): void
+    private function printCreatorInformation(CreatorInformation $creatorInformation, SymfonyStyle $io): void
     {
-        $io = $commandContext->getIo();
         foreach ($creatorInformation->getFileModifications() as $fileModification) {
             switch ($fileModification->getFileModificationType()) {
                 case FileModificationType::CREATED:

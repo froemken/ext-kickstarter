@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter;
 
-use FriendsOfTYPO3\Kickstarter\Command\Input\Question\QuestionInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Command\CommandCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Controller\Extbase\ExtbaseControllerCreatorInterface;
 use FriendsOfTYPO3\Kickstarter\Creator\Controller\Native\NativeControllerCreatorInterface;
@@ -85,8 +84,4 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
     $container
         ->registerForAutoconfiguration(UpgradeWizardCreatorInterface::class)
         ->addTag('ext-kickstarter.creator.upgrade-wizard');
-
-    $container
-        ->registerForAutoconfiguration(QuestionInterface::class)
-        ->addTag('ext-kickstarter.input.question');
 };
