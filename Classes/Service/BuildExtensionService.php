@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Service;
 
+use Psr\Http\Message\ResponseInterface;
 use FriendsOfTYPO3\Kickstarter\Information\ControllerInformation;
 use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
 use FriendsOfTYPO3\Kickstarter\Information\ModelInformation;
@@ -27,7 +28,6 @@ use FriendsOfTYPO3\Kickstarter\Service\Creator\PluginCreatorService;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\RepositoryCreatorService;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\TableCreatorService;
 use FriendsOfTYPO3\Kickstarter\Traits\ExtensionInformationTrait;
-use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
 
 readonly class BuildExtensionService

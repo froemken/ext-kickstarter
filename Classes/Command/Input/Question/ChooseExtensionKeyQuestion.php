@@ -2,6 +2,7 @@
 
 namespace FriendsOfTYPO3\Kickstarter\Command\Input\Question;
 
+use FriendsOfTYPO3\Kickstarter\Command\Input\Question\AbstractQuestion;
 use FriendsOfTYPO3\Kickstarter\Configuration\ExtConf;
 use FriendsOfTYPO3\Kickstarter\Context\CommandContext;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -26,11 +27,11 @@ readonly class ChooseExtensionKeyQuestion extends AbstractQuestion
     {
         return self::ARGUMENT_NAME;
     }
-
     public function __construct(
         private Registry $registry,
         private ExtensionConfiguration $extensionConfiguration,
     ) {}
+
 
     protected function getDescription(): array
     {
@@ -50,7 +51,7 @@ readonly class ChooseExtensionKeyQuestion extends AbstractQuestion
         $commandContext->getIo()->text($this->getDescription());
 
         if ($availableExtensions !== []) {
-            $extensionKey = $this->askQuestion($this->createSymfonyChoiceQuestion([], $availableExtensions, $default ?? $lastExtension), $commandContext);
+            $extensionKey = $this->askQuestion($this->createSymfonyChoiceQuestion([], $availableExtensions, $default??$lastExtension), $commandContext);
             $this->registry->set(ExtConf::EXT_KEY, ExtConf::LAST_EXTENSION_REGISTRY_KEY, $extensionKey);
         } else {
             $commandContext->getIo()->error('No extensions found at path ' . $path);

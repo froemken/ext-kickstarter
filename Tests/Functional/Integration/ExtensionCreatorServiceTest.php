@@ -2,10 +2,10 @@
 
 namespace FriendsOfTYPO3\Kickstarter\Tests\Functional\Integration;
 
-use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
-use FriendsOfTYPO3\Kickstarter\Service\Creator\ExtensionCreatorService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use FriendsOfTYPO3\Kickstarter\Information\ExtensionInformation;
+use FriendsOfTYPO3\Kickstarter\Service\Creator\ExtensionCreatorService;
 
 class ExtensionCreatorServiceTest extends AbstractServiceCreatorTestCase
 {

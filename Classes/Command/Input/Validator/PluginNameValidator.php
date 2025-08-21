@@ -19,7 +19,7 @@ class PluginNameValidator implements ValidatorInterface
     public function __invoke(mixed $answer): string
     {
         // Simple check for empty input
-        if (($answer ?? '') === '') {
+        if (($answer??'') === '') {
             throw new \RuntimeException('Plugin name cannot be empty.', 5117711087);
         }
 

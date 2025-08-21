@@ -29,7 +29,7 @@ class TestEnvCommand extends Command
     use ExtensionInformationTrait;
 
     public function __construct(
-        private readonly TestEnvCreatorService $testEnvCreatorService,
+        private readonly TestEnvCreatorService      $testEnvCreatorService,
         private readonly QuestionCollection $questionCollection,
     ) {
         parent::__construct();

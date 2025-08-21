@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Controller;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use FriendsOfTYPO3\Kickstarter\Model\Graph;
 use FriendsOfTYPO3\Kickstarter\Model\Input;
 use FriendsOfTYPO3\Kickstarter\Model\Link;
 use FriendsOfTYPO3\Kickstarter\Model\Output;
 use FriendsOfTYPO3\Kickstarter\Service\BuildExtensionService;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerInterface;

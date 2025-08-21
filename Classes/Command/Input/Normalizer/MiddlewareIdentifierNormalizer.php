@@ -18,7 +18,7 @@ class MiddlewareIdentifierNormalizer implements NormalizerInterface
 {
     public function __invoke(?string $userInput): string
     {
-        $corrected = strtolower($userInput ?? '');
+        $corrected = strtolower($userInput??'');
         $corrected = preg_replace('#[^a-z0-9-/]+#', '-', $corrected);
         return trim($corrected, '-');
     }

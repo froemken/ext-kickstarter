@@ -18,7 +18,6 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 class ActionMethodNameNormalizer implements NormalizerInterface
 {
     use TryToCorrectMethodNameTrait;
-
     public function __invoke(?string $userInput): string
     {
         if ($userInput === null || $userInput === '') {

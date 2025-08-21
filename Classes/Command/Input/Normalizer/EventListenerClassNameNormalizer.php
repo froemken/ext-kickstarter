@@ -18,9 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 class EventListenerClassNameNormalizer implements NormalizerInterface
 {
     use TryToCorrectClassNameTrait;
-
     private const POSTFIX = 'EventListener';
-
     public function __invoke(?string $userInput): string
     {
         if ($userInput === null || $userInput === '') {

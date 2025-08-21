@@ -11,14 +11,6 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Creator\Domain\Model;
 
-use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
-use FriendsOfTYPO3\Kickstarter\Information\ModelInformation;
-use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ReturnStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
-use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
@@ -27,6 +19,14 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Return_;
+use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
+use FriendsOfTYPO3\Kickstarter\Information\ModelInformation;
+use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ReturnStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
+use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ClassMapCreator implements DomainCreatorInterface

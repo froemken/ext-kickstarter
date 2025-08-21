@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command\Input\Decorator;
 
+use FriendsOfTYPO3\Kickstarter\Command\Input\Decorator\DecoratorInterface;
 use FriendsOfTYPO3\Kickstarter\Command\Input\Normalizer\CommandClassNameNormalizer;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -19,12 +20,14 @@ class CommandClassNameDecorator implements DecoratorInterface
 {
     public function __construct(
         private CommandClassNameNormalizer $commandClassNameNormalizer
-    ) {}
+    )
+    {
+    }
 
     public function __invoke(?string $defaultValue = null): string
     {
-        $className = $defaultValue ?? '';
-        if (str_contains($className, ':')) {
+        $className = $defaultValue??'';
+        if(str_contains($className, ':')){
             $className = substr($className, strpos($className, ':') + 1);
         }
         return $this->commandClassNameNormalizer->__invoke($className);

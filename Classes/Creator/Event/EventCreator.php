@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Creator\Event;
 
+use PhpParser\BuilderFactory;
 use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
 use FriendsOfTYPO3\Kickstarter\Information\EventInformation;
 use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
@@ -19,7 +20,6 @@ use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\NamespaceStructure;
 use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
-use PhpParser\BuilderFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class EventCreator implements EventCreatorInterface

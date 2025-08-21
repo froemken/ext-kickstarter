@@ -2,11 +2,11 @@
 
 namespace FriendsOfTYPO3\Kickstarter\Tests\Functional\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use FriendsOfTYPO3\Kickstarter\Enums\FileModificationType;
 use FriendsOfTYPO3\Kickstarter\Information\ModelInformation;
 use FriendsOfTYPO3\Kickstarter\Service\Creator\ModelCreatorService;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -15,15 +15,15 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
     #[Test]
     #[DataProvider('modelCreationProvider')]
     public function testItCreatesExpectedModel(
-        string $modelClassName,
+        string  $modelClassName,
         ?string $mappedTableName,
-        ?bool $abstractEntity,
-        array $properties,
-        string $extensionKey,
-        string $composerPackageName,
-        string $expectedDir,
-        string $inputPath,
-        array $createdFileModifications,
+        ?bool   $abstractEntity,
+        array   $properties,
+        string  $extensionKey,
+        string  $composerPackageName,
+        string  $expectedDir,
+        string  $inputPath,
+        array   $createdFileModifications,
     ): void {
         $extensionPath = $this->instancePath . '/' . $extensionKey . '/';
         $generatedPath = $this->instancePath . '/' . $extensionKey . '/';
@@ -71,7 +71,7 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                         'propertyName' => 'yyy',
                         'dataType' => 'string',
                         'defaultValue' => '',
-                    ],
+                    ]
                 ],
                 'extensionKey' => 'my_extension',
                 'composerPackageName' => 'my-vendor/my-extension',
@@ -80,7 +80,7 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                 'createdFileModifications' => [
                     FileModificationType::CREATED,
                     FileModificationType::CREATED,
-                ],
+                ]
             ],
             'add_model_with_initializeObject' => [
                 'modelClassName' => 'MyOtherModel',
@@ -91,7 +91,7 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                         'propertyName' => 'yyy',
                         'dataType' => ObjectStorage::class,
                         'initializeObject' => true,
-                    ],
+                    ]
                 ],
                 'extensionKey' => 'my_extension',
                 'composerPackageName' => 'my-vendor/my-extension',
@@ -100,7 +100,7 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                 'createdFileModifications' => [
                     FileModificationType::CREATED,
                     FileModificationType::CREATED,
-                ],
+                ]
             ],
             'modify_model_add_property' => [
                 'modelClassName' => 'MyModel',
@@ -111,7 +111,7 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                         'propertyName' => 'xxx',
                         'dataType' => 'string',
                         'defaultValue' => '',
-                    ],
+                    ]
                 ],
                 'extensionKey' => 'my_extension',
                 'composerPackageName' => 'my-vendor/my-extension',
@@ -119,7 +119,7 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                 'inputPath' => __DIR__ . '/Fixtures/input/my_extension_with_model',
                 'createdFileModifications' => [
                     FileModificationType::MODIFIED,
-                ],
+                ]
             ],
             'modify_model_add_property_datetime' => [
                 'modelClassName' => 'MyModel',
@@ -130,7 +130,7 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                         'propertyName' => 'xxx',
                         'dataType' => \DateTime::class,
                         'initializeObject' => true,
-                    ],
+                    ]
                 ],
                 'extensionKey' => 'my_extension',
                 'composerPackageName' => 'my-vendor/my-extension',
@@ -138,7 +138,7 @@ class ModelCreatorServiceTest extends AbstractServiceCreatorTestCase
                 'inputPath' => __DIR__ . '/Fixtures/input/my_extension_with_model',
                 'createdFileModifications' => [
                     FileModificationType::MODIFIED,
-                ],
+                ]
             ],
         ];
     }

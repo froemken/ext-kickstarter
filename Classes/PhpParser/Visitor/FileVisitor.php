@@ -11,18 +11,6 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\PhpParser\Visitor;
 
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ClassConstStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ClassStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ExpressionStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FunctionStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\MethodStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\NamespaceStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\PropertyStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ReturnStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\TraitStructure;
-use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassConst;
@@ -36,6 +24,18 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ClassConstStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ClassStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ExpressionStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FileStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\FunctionStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\MethodStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\NamespaceStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\PropertyStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ReturnStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\TraitStructure;
+use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
 
 /**
  * This visitor walks through all kind of detected PHP Parser nodes of any kind of PHP file

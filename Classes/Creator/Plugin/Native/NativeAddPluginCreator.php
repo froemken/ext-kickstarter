@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Creator\Plugin\Native;
 
+use PhpParser\BuilderFactory;
+use PhpParser\Node\Stmt\Expression;
 use FriendsOfTYPO3\Kickstarter\Creator\FileManager;
 use FriendsOfTYPO3\Kickstarter\Information\PluginInformation;
 use FriendsOfTYPO3\Kickstarter\PhpParser\NodeFactory;
@@ -18,8 +20,6 @@ use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\DeclareStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\ExpressionStructure;
 use FriendsOfTYPO3\Kickstarter\PhpParser\Structure\UseStructure;
 use FriendsOfTYPO3\Kickstarter\Traits\FileStructureBuilderTrait;
-use PhpParser\BuilderFactory;
-use PhpParser\Node\Stmt\Expression;
 
 class NativeAddPluginCreator implements NativePluginCreatorInterface
 {

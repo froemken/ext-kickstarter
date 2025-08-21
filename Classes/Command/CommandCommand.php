@@ -83,7 +83,7 @@ class CommandCommand extends Command
         $commandName = (string)$this->questionCollection->askQuestion(
             CommandNameQuestion::ARGUMENT_NAME,
             $commandContext,
-            $extensionInformation->getExtensionKey() . ':doSomething'
+            $extensionInformation->getExtensionKey().':doSomething'
         );
         $className =  (string)$this->questionCollection->askQuestion(
             CommandClassNameQuestion::ARGUMENT_NAME,

@@ -19,7 +19,7 @@ class MiddlewareIdentifierValidator implements ValidatorInterface
     public function __invoke(mixed $answer): string
     {
         // Simple check for empty input
-        if (($answer ?? '') === '') {
+        if (($answer??'') === '') {
             throw new \RuntimeException('Middleware identifier cannot be empty.', 6775210887);
         }
 

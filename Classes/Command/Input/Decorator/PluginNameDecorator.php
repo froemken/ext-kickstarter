@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace FriendsOfTYPO3\Kickstarter\Command\Input\Decorator;
 
+use FriendsOfTYPO3\Kickstarter\Command\Input\Decorator\DecoratorInterface;
 use FriendsOfTYPO3\Kickstarter\Command\Input\Normalizer\PluginNameNormalizer;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -20,11 +21,13 @@ class PluginNameDecorator implements DecoratorInterface
 {
     public function __construct(
         private PluginNameNormalizer $pluginNameNormalizer
-    ) {}
+    )
+    {
+    }
 
     public function __invoke(?string $defaultValue = null): string
     {
-        $pluginName = GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $defaultValue ?? ''));
+        $pluginName = GeneralUtility::underscoredToUpperCamelCase(str_replace(' ', '_', $defaultValue??''));
         return $this->pluginNameNormalizer->__invoke($pluginName);
     }
 }
